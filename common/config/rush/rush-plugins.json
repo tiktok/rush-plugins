@@ -1,0 +1,55 @@
+/**
+ * This configuration file manages Rush's plugin feature.
+ */
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/rush-plugins.schema.json",
+  "plugins": [
+    /**
+     * Each item defines a plugin configuration used by Rush.
+     */
+    // {
+    //   /**
+    //    * The name of the rush plugin package.
+    //    */
+    //   "packageName": "@scope/my-rush-plugin",
+    //   /**
+    //    * The name of the plugin provided by rush plugin package
+    //    */
+    //   "pluginName": "my-plugin-name",
+    //   /**
+    //    * Autoinstaller name used to install the plugin.
+    //    */
+    //   "autoinstallerName": "plugins"
+    // }
+    {
+      "packageName": "rush-init-project-plugin",
+      "pluginName": "rush-init-project-plugin",
+      "autoinstallerName": "command-plugins" // the name of autoinstaller you created before
+    },
+    {
+      "packageName": "rush-archive-project-plugin",
+      "pluginName": "rush-archive-project-plugin",
+      "autoinstallerName": "command-plugins" // the name of autoinstaller you created before
+    },
+    {
+      "packageName": "rush-audit-cache-plugin",
+      "pluginName": "rush-audit-cache-plugin",
+      "autoinstallerName": "command-plugins" // the name of autoinstaller you created before
+    },
+    {
+      "packageName": "rush-lint-staged-plugin",
+      "pluginName": "rush-lint-staged-plugin",
+      "autoinstallerName": "command-plugins" // the name of autoinstaller you created before
+    },
+    {
+      "packageName": "rush-sort-package-json",
+      "pluginName": "rush-sort-package-json",
+      "autoinstallerName": "command-plugins" // the name of autoinstaller you created before
+    },
+    {
+      "packageName": "rush-upgrade-self-plugin",
+      "pluginName": "rush-upgrade-self-plugin",
+      "autoinstallerName": "command-plugins" // the name of autoinstaller you created before
+    }
+  ]
+}

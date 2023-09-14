@@ -1,0 +1,154 @@
+{
+  "name": "rush-upgrade-self-plugin",
+  "entries": [
+    {
+      "version": "1.0.7",
+      "tag": "rush-upgrade-self-plugin_v1.0.7",
+      "date": "Wed, 31 Aug 2022 04:09:13 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Update readme"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.6",
+      "tag": "rush-upgrade-self-plugin_v1.0.6",
+      "date": "Thu, 24 Feb 2022 11:57:31 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Upgrade rush-sdk to load rushConfiguration"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.5",
+      "tag": "rush-upgrade-self-plugin_v1.0.5",
+      "date": "Thu, 16 Dec 2021 16:10:36 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Update @rushstack/rush-sdk version as well"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.4",
+      "tag": "rush-upgrade-self-plugin_v1.0.4",
+      "date": "Mon, 13 Dec 2021 00:58:24 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "update readme"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.3",
+      "tag": "rush-upgrade-self-plugin_v1.0.3",
+      "date": "Fri, 10 Dec 2021 08:54:01 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "update readme only"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.2",
+      "tag": "rush-upgrade-self-plugin_v1.0.2",
+      "date": "Fri, 10 Dec 2021 03:27:48 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "pretty log"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.1",
+      "tag": "rush-upgrade-self-plugin_v1.0.1",
+      "date": "Fri, 10 Dec 2021 02:55:26 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix run rush update"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.0",
+      "tag": "rush-upgrade-self-plugin_v1.0.0",
+      "date": "Thu, 09 Dec 2021 19:50:06 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix update autoinstaller"
+          }
+        ],
+        "major": [
+          {
+            "comment": "first formal release"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.4.0",
+      "tag": "rush-upgrade-self-plugin_v0.4.0",
+      "date": "Thu, 09 Dec 2021 19:33:35 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "ignore invalid package.json'"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.3.0",
+      "tag": "rush-upgrade-self-plugin_v0.3.0",
+      "date": "Thu, 09 Dec 2021 19:08:21 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "add workaround for rush-sdk"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.2.0",
+      "tag": "rush-upgrade-self-plugin_v0.2.0",
+      "date": "Thu, 09 Dec 2021 18:03:31 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "should not ignore command-line.json"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.0",
+      "tag": "rush-upgrade-self-plugin_v0.1.0",
+      "date": "Thu, 09 Dec 2021 17:50:47 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "initial implementation"
+          }
+        ]
+      }
+    }
+  ]
+}

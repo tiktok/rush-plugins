@@ -1,0 +1,221 @@
+{
+  "name": "rush-audit-cache-plugin",
+  "entries": [
+    {
+      "version": "0.2.3",
+      "tag": "rush-audit-cache-plugin_v0.2.3",
+      "date": "Wed, 23 Aug 2023 05:01:48 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "rush-audit-cache-plugin support dependsOnAdditionalFiles"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.2.2",
+      "tag": "rush-audit-cache-plugin_v0.2.2",
+      "date": "Mon, 05 Jun 2023 04:43:06 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "build cache audit tool support phased command"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.2.1",
+      "tag": "rush-audit-cache-plugin_v0.2.1",
+      "date": "Wed, 01 Mar 2023 04:51:48 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "audit cache if select project, will not audit dependencies projects"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.2.0",
+      "tag": "rush-audit-cache-plugin_v0.2.0",
+      "date": "Tue, 28 Feb 2023 08:06:50 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "rush audit cache plugin support multiple projects"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.10",
+      "tag": "rush-audit-cache-plugin_v0.1.10",
+      "date": "Mon, 12 Dec 2022 02:58:12 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix outputFolderNames bug and support schema"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.9",
+      "tag": "rush-audit-cache-plugin_v0.1.9",
+      "date": "Mon, 28 Nov 2022 08:16:15 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "add repo audit cache config"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.8",
+      "tag": "rush-audit-cache-plugin_v0.1.8",
+      "date": "Fri, 25 Nov 2022 06:42:23 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix rush-audit-cache-plugin parser file director error"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.7",
+      "tag": "rush-audit-cache-plugin_v0.1.7",
+      "date": "Tue, 22 Nov 2022 05:56:31 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "change output of audit specific project and support rush-audit-cache.json"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.6",
+      "tag": "rush-audit-cache-plugin_v0.1.6",
+      "date": "Mon, 07 Nov 2022 13:26:33 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "rush audit cache add some low risk path"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.5",
+      "tag": "rush-audit-cache-plugin_v0.1.5",
+      "date": "Mon, 07 Nov 2022 12:07:21 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix linux parse log bug"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.4",
+      "tag": "rush-audit-cache-plugin_v0.1.4",
+      "date": "Mon, 07 Nov 2022 08:20:01 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "use -ff to separate strace log and disable rush build cache when rebuild"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.3",
+      "tag": "rush-audit-cache-plugin_v0.1.3",
+      "date": "Thu, 03 Nov 2022 02:10:44 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "rush audit cache add --exclude parameter and filter directory"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.2",
+      "tag": "rush-audit-cache-plugin_v0.1.2",
+      "date": "Thu, 27 Oct 2022 13:12:33 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "rush install before run rebuild"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.1",
+      "tag": "rush-audit-cache-plugin_v0.1.1",
+      "date": "Wed, 26 Oct 2022 13:03:49 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix rush-audit-cache-plugin rebuild bug"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.0",
+      "tag": "rush-audit-cache-plugin_v0.1.0",
+      "date": "Wed, 26 Oct 2022 07:19:37 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Add --all parameter to select all cache configured projects"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.0.3",
+      "tag": "rush-audit-cache-plugin_v0.0.3",
+      "date": "Fri, 21 Oct 2022 01:41:04 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix rush project json path"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.0.2",
+      "tag": "rush-audit-cache-plugin_v0.0.2",
+      "date": "Wed, 19 Oct 2022 14:08:21 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix shellCommand"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.0.1",
+      "tag": "rush-audit-cache-plugin_v0.0.1",
+      "date": "Wed, 19 Oct 2022 14:02:29 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Initial Release"
+          }
+        ]
+      }
+    }
+  ]
+}

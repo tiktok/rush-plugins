@@ -1,0 +1,75 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/command-line.schema.json",
+  "commands": [
+    {
+      "name": "audit-cache",
+      "commandKind": "global",
+      "summary": "Audit cache configuration by diagnosing the build processes of the target project and its dependencies",
+      "shellCommand": "node <packageFolder>/lib/bin.js",
+      "safeForSimultaneousRushProcesses": true
+    }
+  ],
+  "parameters": [
+    {
+      "parameterKind": "stringList",
+      "description": "The package name of the project",
+      "longName": "--project",
+      "shortName": "-p",
+      "argumentName": "PACKAGE_NAME",
+      "associatedCommands": ["audit-cache"],
+      "required": false
+    },
+    {
+      "parameterKind": "flag",
+      "description": "Audit all cache configured project",
+      "longName": "--all",
+      "shortName": "-a",
+      "associatedCommands": ["audit-cache"],
+      "required": false
+    },
+    {
+      "parameterKind": "stringList",
+      "description": "Exclude package from audit cache",
+      "longName": "--exclude",
+      "shortName": "-e",
+      "argumentName": "EXCLUDE_PACKAGE_NAME",
+      "associatedCommands": ["audit-cache"],
+      "required": false
+    },
+    {
+      "parameterKind": "stringList",
+      "description": "Phased commands need to be audit",
+      "longName": "--phased-commands",
+      "shortName": "-P",
+      "argumentName": "PHASED_COMMANDS_NAMES",
+      "associatedCommands": ["audit-cache"],
+      "required": false
+    },
+    {
+      "parameterKind": "string",
+      "description": "verbosity that can be increased",
+      "longName": "--verbose",
+      "shortName": "-v",
+      "argumentName": "VERBOSE",
+      "associatedCommands": ["audit-cache"],
+      "required": false
+    },
+    {
+      "parameterKind": "flag",
+      "description": "show current version",
+      "longName": "--version",
+      "shortName": "-V",
+      "associatedCommands": ["audit-cache"],
+      "required": false
+    },
+    {
+      "parameterKind": "string",
+      "description": "Specifies the maximum number of concurrent processes to launch during a build. (eg. '50% | '5')",
+      "longName": "--parallelism",
+      "shortName": "-c",
+      "argumentName": "COUNT",
+      "associatedCommands": ["audit-cache"],
+      "required": false
+    }
+  ]
+}

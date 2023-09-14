@@ -1,0 +1,21 @@
+{
+  "version": "0.2",
+  "ignorePaths": [],
+  "dictionaryDefinitions": [],
+  "dictionaries": [],
+  "words": [
+    "buildable",
+    "lilconfig",
+    "nonbrowser",
+    "noreply",
+    "npmjs",
+    "npmrc",
+    "packument",
+    "pacote",
+    "plopfile",
+    "subfolders",
+    "unshift"
+  ],
+  "ignoreWords": [],
+  "import": []
+}

@@ -1,0 +1,40 @@
+{
+  "name": "rush-sort-package-json",
+  "version": "0.0.4",
+  "description": "Rush plugin for sort package.json file in the project",
+  "keywords": [
+    "rush",
+    "plugin",
+    "command",
+    "sort",
+    "package.json"
+  ],
+  "homepage": "https://github.com/tiktok/rush-plugins#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tiktok/rush-plugins",
+    "directory": "rush-plugins/rush-sort-package-json"
+  },
+  "license": "MIT",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "heft build --clean",
+    "build:watch": "heft build --watch",
+    "prepublishOnly": "npm run build",
+    "test": "heft test"
+  },
+  "dependencies": {
+    "@rushstack/node-core-library": "3.44.1",
+    "@rushstack/rush-sdk": "5.62.4",
+    "sort-package-json": "1.54.0"
+  },
+  "devDependencies": {
+    "@rushstack/eslint-config": "2.4.5",
+    "@rushstack/heft": "0.43.2",
+    "@rushstack/heft-node-rig": "1.2.31",
+    "@types/heft-jest": "1.0.1",
+    "@types/node": "12.20.24",
+    "eslint": "7.32.0",
+    "typescript": "4.4.2"
+  }
+}

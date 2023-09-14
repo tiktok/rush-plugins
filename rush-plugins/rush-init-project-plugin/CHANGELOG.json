@@ -1,0 +1,316 @@
+{
+  "name": "rush-init-project-plugin",
+  "entries": [
+    {
+      "version": "0.9.0",
+      "tag": "rush-init-project-plugin_v0.9.0",
+      "date": "Mon, 20 Mar 2023 07:15:13 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "add global plugin"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.8.2",
+      "tag": "rush-init-project-plugin_v0.8.2",
+      "date": "Thu, 16 Mar 2023 12:08:26 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix in -a mode answers are not complete"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.8.1",
+      "tag": "rush-init-project-plugin_v0.8.1",
+      "date": "Thu, 16 Mar 2023 08:30:30 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "remove duplicate loadTemplateConfiguration"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.8.0",
+      "tag": "rush-init-project-plugin_v0.8.0",
+      "date": "Mon, 13 Mar 2023 09:45:27 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "add template schema to manage templates and add assign unscopedPackageName after inquery"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.7.2",
+      "tag": "rush-init-project-plugin_v0.7.2",
+      "date": "Tue, 28 Feb 2023 08:06:50 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "remove filter prompts in rush init-project"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.7.1",
+      "tag": "rush-init-project-plugin_v0.7.1",
+      "date": "Thu, 02 Feb 2023 11:25:18 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix ui comfirm"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.7.0",
+      "tag": "rush-init-project-plugin_v0.7.0",
+      "date": "Wed, 01 Feb 2023 09:06:22 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "add ui option in cli"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.6.1",
+      "tag": "rush-init-project-plugin_v0.6.1",
+      "date": "Wed, 07 Dec 2022 09:05:36 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix getGitUserName logic"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.6.0",
+      "tag": "rush-init-project-plugin_v0.6.0",
+      "date": "Mon, 05 Dec 2022 13:00:38 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Add done hook"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.5.0",
+      "tag": "rush-init-project-plugin_v0.5.0",
+      "date": "Mon, 28 Nov 2022 03:27:55 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Support displayName to IConfig in init config file for rush-init-project-plugin"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.4.0",
+      "tag": "rush-init-project-plugin_v0.4.0",
+      "date": "Wed, 23 Nov 2022 06:29:45 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "set git config user.name as default authorName"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.3.1",
+      "tag": "rush-init-project-plugin_v0.3.1",
+      "date": "Wed, 31 Aug 2022 04:09:13 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Update readme"
+          },
+          {
+            "comment": "Update readme"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.3.0",
+      "tag": "rush-init-project-plugin_v0.3.0",
+      "date": "Tue, 30 Aug 2022 17:47:59 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "Add tests"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "Adds \"decoupledLocalDependencies\" and \"tags\" to the fields of the default rush project configuration"
+          },
+          {
+            "comment": "Add CLI parameters -a, --answer to accept answers from external JSON"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.2.2",
+      "tag": "rush-init-project-plugin_v0.2.2",
+      "date": "Tue, 22 Mar 2022 03:26:29 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "upgrade sort-package-json version"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.2.1",
+      "tag": "rush-init-project-plugin_v0.2.1",
+      "date": "Thu, 24 Feb 2022 11:57:31 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Upgrade rush-sdk to load rushConfiguration"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.2.0",
+      "tag": "rush-init-project-plugin_v0.2.0",
+      "date": "Wed, 09 Feb 2022 11:08:02 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Add defaultProjectConfiguration & related hook in template configuration"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.4",
+      "tag": "rush-init-project-plugin_v0.1.4",
+      "date": "Tue, 18 Jan 2022 17:04:14 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Dot files in template should be added now"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.3",
+      "tag": "rush-init-project-plugin_v0.1.3",
+      "date": "Tue, 18 Jan 2022 16:54:18 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix add 0 template files in Windows"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.2",
+      "tag": "rush-init-project-plugin_v0.1.2",
+      "date": "Mon, 27 Dec 2021 12:51:25 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix template file glob options"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.1",
+      "tag": "rush-init-project-plugin_v0.1.1",
+      "date": "Mon, 27 Dec 2021 08:30:37 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Add a workaround for rushVersion validaty"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.0",
+      "tag": "rush-init-project-plugin_v0.1.0",
+      "date": "Sun, 26 Dec 2021 11:48:25 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Add configuration and plugin system"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.0.5",
+      "tag": "rush-init-project-plugin_v0.0.5",
+      "date": "Fri, 24 Dec 2021 15:37:38 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Update readme"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.0.4",
+      "tag": "rush-init-project-plugin_v0.0.4",
+      "date": "Fri, 24 Dec 2021 15:31:53 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Update package.json"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.0.3",
+      "tag": "rush-init-project-plugin_v0.0.3",
+      "date": "Fri, 24 Dec 2021 15:25:33 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Update readme"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.0.2",
+      "tag": "rush-init-project-plugin_v0.0.2",
+      "date": "Fri, 24 Dec 2021 14:54:41 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "first impl"
+          }
+        ]
+      }
+    }
+  ]
+}
