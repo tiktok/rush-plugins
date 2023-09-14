@@ -9,6 +9,10 @@ export interface ITemplatesHook {
   templates: ITemplatePathNameType[];
 }
 
+interface TestInterface {
+  name: string;
+}
+
 export interface IPromptsHookParams {
   /**
    * The queue of prompt question. and question will be prompt to use in sequence order
