@@ -20,6 +20,7 @@
   "scripts": {
     "build": "heft build --clean",
     "build:watch": "heft build --watch",
+    "start": "heft build-watch",
     "prepublishOnly": "npm run build",
     "test": "heft test"
   },
@@ -28,12 +29,11 @@
     "@rushstack/rush-sdk": "5.62.4"
   },
   "devDependencies": {
-    "@rushstack/eslint-config": "2.4.5",
-    "@rushstack/heft": "0.43.2",
-    "@rushstack/heft-node-rig": "1.2.31",
+    "@rushstack/eslint-config": "3.3.4",
+    "@rushstack/heft": "0.61.0",
+    "@rushstack/heft-node-rig": "2.2.25",
     "@types/heft-jest": "1.0.1",
-    "@types/node": "12.20.24",
-    "eslint": "7.32.0",
+    "@types/node": "18.17.15",
     "typescript": "4.4.2"
   }
 }

@@ -1,45 +1,40 @@
 #!/usr/bin/env node
 
-import path from "path";
-import fs from "fs";
-import readline from "readline";
+import path from 'path';
+import fs from 'fs';
+import readline from 'readline';
 
-import { loadRushConfiguration } from "./helpers/loadRushConfiguration";
-import { terminal } from "./helpers/terminal";
+import { loadRushConfiguration } from './helpers/loadRushConfiguration';
+import { terminal } from './helpers/terminal';
 
-import type { RushConfiguration } from "@rushstack/rush-sdk";
-import type { PackageNameParser } from "@rushstack/node-core-library";
-import type { ReadStream } from "fs";
+import type { RushConfiguration } from '@rushstack/rush-sdk';
+import type { PackageNameParser } from '@rushstack/node-core-library';
+import type { ReadStream } from 'fs';
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-main();
+process.exitCode = 1;
+main()
+  .then(() => {
+    process.exitCode = 0;
+  })
+  .catch(console.error);
 
 async function main(): Promise<void> {
   try {
     const rushConfig: RushConfiguration = loadRushConfiguration();
 
-    const packageNameParser: PackageNameParser =
-      rushConfig.packageNameParser as unknown as PackageNameParser;
+    const packageNameParser: PackageNameParser = rushConfig.packageNameParser as unknown as PackageNameParser;
     let hasPrint: boolean = false;
     for (const project of rushConfig.projects) {
       const folder: string = project.projectFolder;
-      const unscopedProjectName: string = packageNameParser.getUnscopedName(
-        project.packageName
-      );
-      const buildLogPath: string = path.resolve(
-        folder,
-        `${unscopedProjectName}.build.log`
-      );
-      const buildErrorLogPath: string = path.resolve(
-        folder,
-        `${unscopedProjectName}.build.error.log`
-      );
+      const unscopedProjectName: string = packageNameParser.getUnscopedName(project.packageName);
+      const buildLogPath: string = path.resolve(folder, `${unscopedProjectName}.build.log`);
+      const buildErrorLogPath: string = path.resolve(folder, `${unscopedProjectName}.build.error.log`);
       if (fs.existsSync(buildErrorLogPath) && fs.existsSync(buildLogPath)) {
         const readStream: ReadStream = fs.createReadStream(buildLogPath);
         console.log(`========== ${project.packageName} BEGIN ==========`);
         const rl: readline.Interface = readline.createInterface({
           input: readStream,
-          output: process.stdout,
+          output: process.stdout
         });
         let resolve: () => void = null as unknown as () => void;
         // eslint-disable-next-line promise/param-names, @typescript-eslint/naming-convention
@@ -53,7 +48,7 @@ async function main(): Promise<void> {
             _resolve();
           };
         });
-        rl.on("close", () => {
+        rl.on('close', () => {
           resolve();
           console.log(`========== ${project.packageName} END ==========`);
         });
@@ -62,9 +57,7 @@ async function main(): Promise<void> {
       }
     }
     if (!hasPrint) {
-      console.log(
-        `[print-log-if-error] I am not the culprit!!! Please scroll up to check the real error.`
-      );
+      console.log(`[print-log-if-error] I am not the culprit!!! Please scroll up to check the real error.`);
     }
   } catch (error: any) {
     if (error.message) {
@@ -72,6 +65,5 @@ async function main(): Promise<void> {
     } else {
       throw error;
     }
-    process.exit(1);
   }
 }

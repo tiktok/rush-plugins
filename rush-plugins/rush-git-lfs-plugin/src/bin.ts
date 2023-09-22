@@ -35,7 +35,7 @@ async function main(): Promise<void> {
       .option('--verbose', 'Verbosity that can be increased', increaseVerbosity, 0)
       .option('--fix', 'Auto fix Git LFS status')
       .option('--file [file_path...]', 'The path of files')
-      .action(async options => {
+      .action(async (options) => {
         setLogLevel(options.verbose);
         await runCheck(options);
       })
@@ -50,5 +50,9 @@ async function main(): Promise<void> {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-main();
+process.exitCode = 1;
+main()
+  .then(() => {
+    process.exitCode = 0;
+  })
+  .catch(console.error);

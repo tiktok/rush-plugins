@@ -15,8 +15,12 @@ try {
   // no-catch
 }
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-main();
+process.exitCode = 1;
+main()
+  .then(() => {
+    process.exitCode = 0;
+  })
+  .catch(console.error);
 
 async function main(): Promise<void> {
   try {

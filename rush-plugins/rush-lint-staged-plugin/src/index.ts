@@ -4,13 +4,17 @@ import lintStaged from 'lint-staged';
 
 // import { terminal } from "./helpers/terminal.mjs";
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-main();
+process.exitCode = 1;
+main()
+  .then(() => {
+    process.exitCode = 0;
+  })
+  .catch(console.error);
 
 async function main(): Promise<void> {
   try {
     // https://github.com/okonet/lint-staged/pull/1080
-    const success = await lintStaged();
+    const success: boolean = await lintStaged();
     if (!success) process.exit(1);
   } catch (error: any) {
     if (error.message) {
@@ -18,6 +22,5 @@ async function main(): Promise<void> {
     } else {
       throw error;
     }
-    process.exit(1);
   }
 }

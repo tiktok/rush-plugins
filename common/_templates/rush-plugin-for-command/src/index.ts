@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
-import { terminal } from "./helpers/terminal";
+import { terminal } from './helpers/terminal';
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-main();
+process.exitCode = 1;
+main()
+  .then(() => {
+    process.exitCode = 0;
+  })
+  .catch(console.error);
 
 async function main(): Promise<void> {
   try {
@@ -14,6 +18,5 @@ async function main(): Promise<void> {
     } else {
       throw error;
     }
-    process.exit(1);
   }
 }

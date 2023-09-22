@@ -1,5 +1,5 @@
-import type { ITerminal } from "@rushstack/node-core-library";
-import type { RushConfigurationProject } from "@rushstack/rush-sdk";
+import type { ITerminal } from '@rushstack/node-core-library';
+import type { RushConfigurationProject } from '@rushstack/rush-sdk';
 
 export interface IBaseTraceExecutorOptions {
   projects: RushConfigurationProject[];
@@ -25,5 +25,5 @@ export abstract class BaseTraceExecutor {
     this._terminal = options.terminal;
   }
 
-  abstract execAsync(): Promise<ITraceResult>;
+  public abstract execAsync(): Promise<ITraceResult>;
 }
