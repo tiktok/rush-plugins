@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "LICENSE Update",
+      "type": "minor",
+      "packageName": "rush-print-log-if-error-plugin"
+    }
+  ],
+  "packageName": "rush-print-log-if-error-plugin",
+  "email": "chengcyber@users.noreply.github.com"
+}
