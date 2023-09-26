@@ -2,6 +2,18 @@
   "name": "rush-upgrade-self-plugin",
   "entries": [
     {
+      "version": "1.1.0",
+      "tag": "rush-upgrade-self-plugin_v1.1.0",
+      "date": "Tue, 26 Sep 2023 07:11:19 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "LICENSE Update"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.7",
       "tag": "rush-upgrade-self-plugin_v1.0.7",
       "date": "Wed, 31 Aug 2022 04:09:13 GMT",

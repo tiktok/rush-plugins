@@ -1,6 +1,6 @@
 {
   "name": "rush-print-log-if-error-plugin",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "Rush plugin for print entire log if error log exists",
   "keywords": [
     "rush",
@@ -20,8 +20,8 @@
   "scripts": {
     "build": "heft build --clean",
     "build:watch": "heft build --watch",
-    "start": "heft build-watch",
     "prepublishOnly": "npm run build",
+    "start": "heft build-watch",
     "test": "heft test"
   },
   "dependencies": {

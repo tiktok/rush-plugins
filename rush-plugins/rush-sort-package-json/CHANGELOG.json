@@ -2,6 +2,18 @@
   "name": "rush-sort-package-json",
   "entries": [
     {
+      "version": "0.1.0",
+      "tag": "rush-sort-package-json_v0.1.0",
+      "date": "Tue, 26 Sep 2023 07:11:19 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "LICENSE Update"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.0.4",
       "tag": "rush-sort-package-json_v0.0.4",
       "date": "Wed, 31 Aug 2022 04:09:13 GMT",
