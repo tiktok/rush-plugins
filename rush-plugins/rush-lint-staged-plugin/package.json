@@ -1,6 +1,6 @@
 {
   "name": "rush-lint-staged-plugin",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "Rush plugin for lint-staged",
   "keywords": [
     "rush",
@@ -21,8 +21,8 @@
   "scripts": {
     "build": "heft build --clean",
     "build:watch": "heft build --clean --watch",
-    "start": "heft build-watch",
     "prepublishOnly": "npm run build",
+    "start": "heft build-watch",
     "test": ""
   },
   "dependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "rush-sort-package-json",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Rush plugin for sort package.json file in the project",
   "keywords": [
     "rush",
@@ -20,8 +20,8 @@
   "scripts": {
     "build": "heft build --clean",
     "build:watch": "heft build --watch",
-    "start": "heft build-watch",
     "prepublishOnly": "npm run build",
+    "start": "heft build-watch",
     "test": "heft test"
   },
   "dependencies": {

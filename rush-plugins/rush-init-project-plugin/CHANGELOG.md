@@ -1,6 +1,13 @@
 # Change Log - rush-init-project-plugin
 
-This log was last generated on Mon, 20 Mar 2023 07:15:13 GMT and should not be manually modified.
+This log was last generated on Tue, 26 Sep 2023 07:30:25 GMT and should not be manually modified.
+
+## 0.10.0
+Tue, 26 Sep 2023 07:30:25 GMT
+
+### Minor changes
+
+- LICENSE Update
 
 ## 0.9.0
 Mon, 20 Mar 2023 07:15:13 GMT
