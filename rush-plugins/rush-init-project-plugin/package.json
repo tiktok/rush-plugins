@@ -1,6 +1,6 @@
 {
   "name": "rush-init-project-plugin",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Rush plugin for initialize project in monorepo",
   "keywords": [
     "rush",
@@ -24,8 +24,8 @@
   "scripts": {
     "build": "heft build --clean",
     "build:watch": "heft build --watch",
-    "start": "heft build-watch",
     "prepublishOnly": "npm run build",
+    "start": "heft build-watch",
     "test": "heft test"
   },
   "dependencies": {

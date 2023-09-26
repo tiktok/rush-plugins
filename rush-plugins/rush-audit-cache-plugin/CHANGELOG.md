@@ -1,6 +1,13 @@
 # Change Log - rush-audit-cache-plugin
 
-This log was last generated on Wed, 23 Aug 2023 05:01:48 GMT and should not be manually modified.
+This log was last generated on Tue, 26 Sep 2023 07:11:19 GMT and should not be manually modified.
+
+## 0.3.0
+Tue, 26 Sep 2023 07:11:19 GMT
+
+### Minor changes
+
+- LICENSE Update
 
 ## 0.2.3
 Wed, 23 Aug 2023 05:01:48 GMT

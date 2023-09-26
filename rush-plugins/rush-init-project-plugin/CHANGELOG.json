@@ -2,6 +2,18 @@
   "name": "rush-init-project-plugin",
   "entries": [
     {
+      "version": "0.10.0",
+      "tag": "rush-init-project-plugin_v0.10.0",
+      "date": "Tue, 26 Sep 2023 07:11:19 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "LICENSE Update"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.9.0",
       "tag": "rush-init-project-plugin_v0.9.0",
       "date": "Mon, 20 Mar 2023 07:15:13 GMT",

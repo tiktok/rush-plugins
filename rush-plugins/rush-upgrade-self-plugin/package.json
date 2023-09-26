@@ -1,6 +1,6 @@
 {
   "name": "rush-upgrade-self-plugin",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "description": "Rush plugin for upgrade rush.js in monorepo",
   "keywords": [
     "rush",
@@ -24,8 +24,8 @@
   "scripts": {
     "build": "heft build --clean",
     "build:watch": "heft build --watch",
-    "start": "heft build-watch",
     "prepublishOnly": "npm run build",
+    "start": "heft build-watch",
     "test": "heft test"
   },
   "dependencies": {

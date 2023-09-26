@@ -2,6 +2,18 @@
   "name": "rush-git-lfs-plugin",
   "entries": [
     {
+      "version": "0.3.0",
+      "tag": "rush-git-lfs-plugin_v0.3.0",
+      "date": "Tue, 26 Sep 2023 07:11:19 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "LICENSE Update"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.2.0",
       "tag": "rush-git-lfs-plugin_v0.2.0",
       "date": "Tue, 14 Feb 2023 03:16:01 GMT",
