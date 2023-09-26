@@ -11,6 +11,7 @@ export interface IGlobalConfig {
   templateNameList: ITemplatePathNameType[];
 }
 
+/* eslint-disable @typescript-eslint/naming-convention */
 const globalPluginLoaders: Record<string, (path: string) => void> = {
   '.js': (path) => require(path),
   '.ts': (path) => {
@@ -31,6 +32,7 @@ const globalPluginLoaders: Record<string, (path: string) => void> = {
     return module;
   }
 };
+/* eslint-enable @typescript-eslint/naming-convention */
 
 // global configuration will load config from `template.json`
 export async function loadGlobalConfiguration(

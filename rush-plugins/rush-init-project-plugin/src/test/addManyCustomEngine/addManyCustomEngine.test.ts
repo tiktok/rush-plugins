@@ -1,9 +1,9 @@
 import path from 'path';
 import fs from 'fs';
 import del from 'del';
-import { preparePlop } from "../utils";
+import { preparePlop } from '../utils';
 
-import type { NodePlopAPI } from "node-plop";
+import type { NodePlopAPI } from 'node-plop';
 
 describe('addManyCustomEngine', () => {
   let plop: NodePlopAPI;
@@ -17,38 +17,38 @@ describe('addManyCustomEngine', () => {
   it('should add many files', async () => {
     const answer = {
       packageName: 'foo'
-    }
-    plop.setGenerator("testAddManyCustomEngine", {
+    };
+    plop.setGenerator('testAddManyCustomEngine', {
       description: '',
       prompts: [],
       actions: [
         {
-          type: "addMany",
+          type: 'addMany',
           force: true,
           destination,
           base: baseFolder,
-          templateFiles: [`**/*`, "!init.config.ts", "!init.config.js"],
+          templateFiles: [`**/*`, '!init.config.ts', '!init.config.js'],
           globOptions: {
             cwd: baseFolder,
             dot: true,
-            absolute: true,
+            absolute: true
           },
-          data: {},
-        },
-      ],
+          data: {}
+        }
+      ]
     });
 
-    await plop.getGenerator("testAddManyCustomEngine").runActions(answer);
+    await plop.getGenerator('testAddManyCustomEngine').runActions(answer);
 
     const packageJsonFile: string = path.resolve(destination, 'pkg.json');
     expect(fs.existsSync(packageJsonFile)).toBe(true);
     let packageJson = {} as any;
     expect(() => {
-      packageJson = JSON.parse(fs.readFileSync(packageJsonFile, 'utf-8'))
+      packageJson = JSON.parse(fs.readFileSync(packageJsonFile, 'utf-8'));
     }).not.toThrow();
     expect(packageJson.name).toBe('foo');
 
-    const indexFile: string = path.resolve(destination, 'index');
+    const indexFile: string = path.resolve(destination, 'index.sample');
     expect(fs.existsSync(indexFile)).toBe(true);
     expect(fs.readFileSync(indexFile, 'utf-8')).toMatchSnapshot();
   });

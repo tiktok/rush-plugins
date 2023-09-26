@@ -16,7 +16,7 @@
    * path segment in the "$schema" field for all your Rush config files.  This will ensure
    * correct error-underlining and tab-completion for editors such as VS Code.
    */
-  "rushVersion": "5.83.2",
+  "rushVersion": "5.107.2",
 
   /**
    * The next field selects which package manager should be installed and determines its version.
@@ -26,7 +26,7 @@
    * Specify one of: "pnpmVersion", "npmVersion", or "yarnVersion".  See the Rush documentation
    * for details about these alternatives.
    */
-  "pnpmVersion": "6.23.1",
+  "pnpmVersion": "8.7.6",
 
   // "npmVersion": "6.14.15",
   // "yarnVersion": "1.9.4",
@@ -241,7 +241,7 @@
      */
     "allowedEmailRegExps": [
       "[^@]+@users\\.noreply\\.github\\.com"
-    //   "travis@example\\.org"
+      //   "travis@example\\.org"
     ],
     /**
      * When Rush reports that the address is malformed, the notice can include an example
@@ -310,9 +310,7 @@
     /**
      * The list of shell commands to run after the Rush installation finishes
      */
-    "postRushInstall": [
-      "node common/scripts/install-run-rush.js sort-package-json"
-    ],
+    "postRushInstall": ["node common/scripts/install-run-rush.js sort-package-json"],
 
     /**
      * The list of shell commands to run before the Rush build command starts

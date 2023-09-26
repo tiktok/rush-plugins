@@ -5,5 +5,5 @@ export interface IGitLFSModuleContext {
   option: NestedRequired<IRushGitLFSPluginOption>;
 }
 export abstract class GitLFSBaseModule {
-  abstract run(ctx: IGitLFSModuleContext): Promise<unknown>;
+  public abstract run(ctx: IGitLFSModuleContext): Promise<unknown>;
 }
