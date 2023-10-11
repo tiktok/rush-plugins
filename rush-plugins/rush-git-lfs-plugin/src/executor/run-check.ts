@@ -6,12 +6,10 @@ import { getFilePathsFromChangedFiles, validateFilePaths } from '../helpers/file
 import { terminal, withPrefix } from '../helpers/terminal';
 
 import type { NestedRequired } from '../helpers/type';
-import type { ICommandLineOptions } from '../bin';
+import type { ICommandLineOptions } from '../check';
 import ora from 'ora';
 
-const normalizeCheckContext = (
-  commandLineOption: ICommandLineOptions
-): IGitLFSCheckModuleContext => {
+const normalizeCheckContext = (commandLineOption: ICommandLineOptions): IGitLFSCheckModuleContext => {
   // eslint-disable-next-line prefer-const
   let { file: files, fix } = commandLineOption;
   if (typeof files === 'undefined') {
@@ -36,7 +34,7 @@ const normalizeCheckContext = (
     fix,
     files,
     option,
-    spinner,
+    spinner
   };
 };
 
@@ -44,7 +42,7 @@ export const runCheck = async (commandLineOption: ICommandLineOptions): Promise<
   const checker: GitLFSCheckModule = new GitLFSCheckModule();
   const ctx: IGitLFSCheckModuleContext = normalizeCheckContext(commandLineOption);
   await checker.run(ctx);
-  if (ctx.result.filter(e => typeof e.errorType !== 'undefined' && !e.fixed).length > 0) {
+  if (ctx.result.filter((e) => typeof e.errorType !== 'undefined' && !e.fixed).length > 0) {
     if (ctx.option.errorTips) {
       terminal.writeLine(ctx.option.errorTips);
     }
