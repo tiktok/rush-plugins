@@ -5,7 +5,7 @@
       "name": "git-lfs-check",
       "commandKind": "global",
       "summary": "Check Git LFS file in rush project",
-      "shellCommand": "node <packageFolder>/lib/bin.js",
+      "shellCommand": "node <packageFolder>/lib/check.js",
       "safeForSimultaneousRushProcesses": true
     },
     {

@@ -1,6 +1,6 @@
 import { Executable } from '@rushstack/node-core-library';
 import { SpawnSyncReturns } from 'child_process';
-
+import { terminal, withPrefix } from '../helpers/terminal';
 interface IProject {
   path: string;
 }
@@ -19,6 +19,8 @@ const getPackagesByProjectName = (
   if (result.status === 0) {
     return JSON.parse(result.stdout);
   }
+  terminal.writeLine(withPrefix('Logs:\n'), result.stdout);
+  terminal.writeErrorLine(withPrefix('Errors:\n'), result.stderr);
   throw new Error(`rush list error code  ${result.status}`);
 };
 
