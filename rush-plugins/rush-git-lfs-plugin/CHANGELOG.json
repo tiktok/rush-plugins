@@ -2,6 +2,18 @@
   "name": "rush-git-lfs-plugin",
   "entries": [
     {
+      "version": "0.3.1",
+      "tag": "rush-git-lfs-plugin_v0.3.1",
+      "date": "Fri, 13 Oct 2023 05:44:35 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Provide better error log in rush git-lfs-pull"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.3.0",
       "tag": "rush-git-lfs-plugin_v0.3.0",
       "date": "Tue, 26 Sep 2023 07:11:19 GMT",
