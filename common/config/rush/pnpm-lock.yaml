@@ -40,7 +40,7 @@ importers:
         version: 0.61.0(@types/node@18.17.15)
       '@rushstack/heft-node-rig':
         specifier: 2.2.25
-        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@10.4.0)
+        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@11.0.0-beta.1)
       '@types/heft-jest':
         specifier: 1.0.1
         version: 1.0.1
@@ -89,7 +89,7 @@ importers:
         version: 0.61.0(@types/node@18.17.15)
       '@rushstack/heft-node-rig':
         specifier: 2.2.25
-        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@10.4.0)
+        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@11.0.0-beta.1)
       '@types/heft-jest':
         specifier: 1.0.1
         version: 1.0.1
@@ -135,7 +135,7 @@ importers:
         version: 0.61.0(@types/node@18.17.15)
       '@rushstack/heft-node-rig':
         specifier: 2.2.25
-        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@10.4.0)
+        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@11.0.0-beta.1)
       '@types/fs-extra':
         specifier: ~9.0.13
         version: 9.0.13
@@ -203,8 +203,8 @@ importers:
         specifier: ~2.2.1
         version: 2.2.1
       ts-node:
-        specifier: ~10.4.0
-        version: 10.4.0(@types/node@18.17.15)(typescript@5.0.4)
+        specifier: 11.0.0-beta.1
+        version: 11.0.0-beta.1(@types/node@18.17.15)(typescript@5.0.4)
       validate-npm-package-name:
         specifier: ~3.0.0
         version: 3.0.0
@@ -217,7 +217,7 @@ importers:
         version: 0.61.0(@types/node@18.17.15)
       '@rushstack/heft-node-rig':
         specifier: 2.2.25
-        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@10.4.0)
+        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@11.0.0-beta.1)
       '@types/blessed':
         specifier: ~0.1.19
         version: 0.1.23
@@ -263,7 +263,7 @@ importers:
         version: 0.61.0(@types/node@18.17.15)
       '@rushstack/heft-node-rig':
         specifier: 2.2.25
-        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@10.4.0)
+        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@11.0.0-beta.1)
       '@types/heft-jest':
         specifier: 1.0.1
         version: 1.0.1
@@ -291,7 +291,7 @@ importers:
         version: 0.61.0(@types/node@18.17.15)
       '@rushstack/heft-node-rig':
         specifier: 2.2.25
-        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@10.4.0)
+        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@11.0.0-beta.1)
       '@types/heft-jest':
         specifier: 1.0.1
         version: 1.0.1
@@ -322,7 +322,7 @@ importers:
         version: 0.61.0(@types/node@18.17.15)
       '@rushstack/heft-node-rig':
         specifier: 2.2.25
-        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@10.4.0)
+        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@11.0.0-beta.1)
       '@types/heft-jest':
         specifier: 1.0.1
         version: 1.0.1
@@ -365,7 +365,7 @@ importers:
         version: 0.61.0(@types/node@18.17.15)
       '@rushstack/heft-node-rig':
         specifier: 2.2.25
-        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@10.4.0)
+        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@11.0.0-beta.1)
       '@types/heft-jest':
         specifier: 1.0.1
         version: 1.0.1
@@ -739,15 +739,11 @@ packages:
     dev: false
     optional: true
 
-  /@cspotcode/source-map-consumer@0.8.0:
-    resolution: {integrity: sha512-41qniHzTU8yAGbCp04ohlmSrZf8bkf/iJsl3V0dRGsQN/5GFfx+LbCSsCpp2gqrqjTVg/K6O8ycoV35JIwAzAg==}
-    engines: {node: '>= 12'}
-
-  /@cspotcode/source-map-support@0.7.0:
-    resolution: {integrity: sha512-X4xqRHqN8ACt2aHVe51OxeA2HjbcL4MqFqXkrmQszJ1NOUuUu5u6Vqx/0lZSVNku7velL5FC/s5uEAj1lsBMhA==}
+  /@cspotcode/source-map-support@0.8.1:
+    resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
     dependencies:
-      '@cspotcode/source-map-consumer': 0.8.0
+      '@jridgewell/trace-mapping': 0.3.9
 
   /@eslint-community/eslint-utils@4.4.0(eslint@8.7.0):
     resolution: {integrity: sha512-1/sA4dwrzBAyeUoQ6oxahHKmrZvsnLCg4RfxW3ZFGGmQkSNQPFNLV9CUEFQP1x9EYXHTo5p6xdhZM1Ne9p/AfA==}
@@ -828,7 +824,7 @@ packages:
       slash: 3.0.0
     dev: true
 
-  /@jest/core@29.5.0(ts-node@10.4.0):
+  /@jest/core@29.5.0(ts-node@11.0.0-beta.1):
     resolution: {integrity: sha512-28UzQc7ulUrOQw1IsN/kv1QES3q2kkbl/wGslyhAclqZ/8cMdB5M68BffkIdSJgKBUt50d3hbwJ92XESlE7LiQ==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     peerDependencies:
@@ -849,7 +845,7 @@ packages:
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.5.0(@types/node@18.17.15)(ts-node@10.4.0)
+      jest-config: 29.5.0(@types/node@18.17.15)(ts-node@11.0.0-beta.1)
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -1065,7 +1061,6 @@ packages:
   /@jridgewell/resolve-uri@3.1.1:
     resolution: {integrity: sha512-dSYZh7HhCDtCKm4QakX0xFpsRDqjjtZf/kjI/v3T3Nwt5r8/qz/M19F9ySyOqU94SXBmeG9ttTul+YnR4LOxFA==}
     engines: {node: '>=6.0.0'}
-    dev: true
 
   /@jridgewell/set-array@1.1.2:
     resolution: {integrity: sha512-xnkseuNADM0gt2bs+BvhO0p78Mk762YnZdsuzFV018NoG1Sj1SCQvpSqa7XUaTam5vAGasABV9qXASMKnFMwMw==}
@@ -1074,7 +1069,6 @@ packages:
 
   /@jridgewell/sourcemap-codec@1.4.15:
     resolution: {integrity: sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==}
-    dev: true
 
   /@jridgewell/trace-mapping@0.3.19:
     resolution: {integrity: sha512-kf37QtfW+Hwx/buWGMPcR60iF9ziHa6r/CZJIHbmcm4+0qrXiVdxegAH0F6yddEVQ7zdkjcGCgCzUu+BcbhQxw==}
@@ -1082,6 +1076,12 @@ packages:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
+
+  /@jridgewell/trace-mapping@0.3.9:
+    resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
+    dependencies:
+      '@jridgewell/resolve-uri': 3.1.1
+      '@jridgewell/sourcemap-codec': 1.4.15
 
   /@microsoft/api-extractor-model@7.28.0(@types/node@18.17.15):
     resolution: {integrity: sha512-QIMtUVm1tqiKG+M6ciFgRShcDoovyltaeg+CbyOnyr7SMrp6gg0ojK5/nToMqR9kAvsTS4QVgW4Twl50EoAjcw==}
@@ -1310,7 +1310,7 @@ packages:
       - '@types/node'
     dev: true
 
-  /@rushstack/heft-jest-plugin@0.9.2(@rushstack/heft@0.61.0)(@types/node@18.17.15)(jest-environment-node@29.5.0)(ts-node@10.4.0):
+  /@rushstack/heft-jest-plugin@0.9.2(@rushstack/heft@0.61.0)(@types/node@18.17.15)(jest-environment-node@29.5.0)(ts-node@11.0.0-beta.1):
     resolution: {integrity: sha512-yGClFFkeEZQjMs9dvd2yqrQnp1fwUjWF7IQEYp9hGJMI2ip3VhMKWgFlsVqbMzIY7Y2BRAUEBlzht36CUBkrbA==}
     peerDependencies:
       '@rushstack/heft': ^0.61.0
@@ -1322,13 +1322,13 @@ packages:
       jest-environment-node:
         optional: true
     dependencies:
-      '@jest/core': 29.5.0(ts-node@10.4.0)
+      '@jest/core': 29.5.0(ts-node@11.0.0-beta.1)
       '@jest/reporters': 29.5.0
       '@jest/transform': 29.5.0
       '@rushstack/heft': 0.61.0(@types/node@18.17.15)
       '@rushstack/heft-config-file': 0.14.0(@types/node@18.17.15)
       '@rushstack/node-core-library': 3.60.0(@types/node@18.17.15)
-      jest-config: 29.5.0(@types/node@18.17.15)(ts-node@10.4.0)
+      jest-config: 29.5.0(@types/node@18.17.15)(ts-node@11.0.0-beta.1)
       jest-environment-node: 29.5.0
       jest-resolve: 29.5.0
       jest-snapshot: 29.5.0
@@ -1353,7 +1353,7 @@ packages:
       - '@types/node'
     dev: true
 
-  /@rushstack/heft-node-rig@2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@10.4.0):
+  /@rushstack/heft-node-rig@2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@11.0.0-beta.1):
     resolution: {integrity: sha512-MDQXfaYZ/BYjFhWe8dSwqmYWI33EhfqVPSssn8vUZL1AZ0/86d82rT2tsIZfz2Frk1BjqPcbK3QOXA2JGL32aw==}
     peerDependencies:
       '@rushstack/heft': ^0.61.0
@@ -1361,7 +1361,7 @@ packages:
       '@microsoft/api-extractor': 7.37.0(@types/node@18.17.15)
       '@rushstack/heft': 0.61.0(@types/node@18.17.15)
       '@rushstack/heft-api-extractor-plugin': 0.2.2(@rushstack/heft@0.61.0)(@types/node@18.17.15)
-      '@rushstack/heft-jest-plugin': 0.9.2(@rushstack/heft@0.61.0)(@types/node@18.17.15)(jest-environment-node@29.5.0)(ts-node@10.4.0)
+      '@rushstack/heft-jest-plugin': 0.9.2(@rushstack/heft@0.61.0)(@types/node@18.17.15)(jest-environment-node@29.5.0)(ts-node@11.0.0-beta.1)
       '@rushstack/heft-lint-plugin': 0.2.2(@rushstack/heft@0.61.0)(@types/node@18.17.15)
       '@rushstack/heft-typescript-plugin': 0.2.2(@rushstack/heft@0.61.0)(@types/node@18.17.15)
       '@types/heft-jest': 1.0.1
@@ -1527,17 +1527,17 @@ packages:
     engines: {node: '>= 10'}
     dev: false
 
-  /@tsconfig/node10@1.0.9:
-    resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
-
-  /@tsconfig/node12@1.0.11:
-    resolution: {integrity: sha512-cqefuRsh12pWyGsIoBKJA9luFu3mRxCA+ORZvA4ktLSzIuCUtWVxGIuXigEwO5/ywWFMZ2QEGKWvkZG1zDMTag==}
-
   /@tsconfig/node14@1.0.3:
     resolution: {integrity: sha512-ysT8mhdixWK6Hw3i1V2AeRqZ5WfXg1G43mqoYlM2nc6388Fq5jcXyr5mRsqViLx/GJYdoL0bfXD8nmF+Zn/Iow==}
 
   /@tsconfig/node16@1.0.4:
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
+
+  /@tsconfig/node18@18.2.2:
+    resolution: {integrity: sha512-d6McJeGsuoRlwWZmVIeE8CUA27lu6jLjvv1JzqmpsytOYYbVi1tHZEnwCNVOXnj4pyLvneZlFlpXUK+X9wBWyw==}
+
+  /@tsconfig/node20@20.1.2:
+    resolution: {integrity: sha512-madaWq2k+LYMEhmcp0fs+OGaLFk0OenpHa4gmI4VEmCKX4PJntQ6fnnGADVFrVkBj0wIdAlQnK/MrlYTHsa1gQ==}
 
   /@types/argparse@1.0.38:
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
@@ -2977,9 +2977,6 @@ packages:
       isobject: 3.0.1
       lazy-cache: 2.0.2
     dev: false
-
-  /create-require@1.1.1:
-    resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
 
   /cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -4825,7 +4822,7 @@ packages:
       - supports-color
     dev: true
 
-  /jest-config@29.5.0(@types/node@18.17.15)(ts-node@10.4.0):
+  /jest-config@29.5.0(@types/node@18.17.15)(ts-node@11.0.0-beta.1):
     resolution: {integrity: sha512-kvDUKBnNJPNBmFFOhDbm59iu1Fii1Q6SxyhXfvylq3UTHbg6o7j/g8k2dZyXWLvfdKB1vAPxNZnMgtKJcmu3kA==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     peerDependencies:
@@ -4860,7 +4857,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.4.0(@types/node@18.17.15)(typescript@5.0.4)
+      ts-node: 11.0.0-beta.1(@types/node@18.17.15)(typescript@5.0.4)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
@@ -7212,34 +7209,33 @@ packages:
     resolution: {integrity: sha512-0z3j8R7MCjy10kc/g+qg7Ln3alJTodw9aDuVWZa3uiWqfuBMKeAeP2ocWcxoyM3D73yz3Jt/Pu4qPr4wHSdB/Q==}
     dev: true
 
-  /ts-node@10.4.0(@types/node@18.17.15)(typescript@5.0.4):
-    resolution: {integrity: sha512-g0FlPvvCXSIO1JDF6S232P5jPYqBkRL9qly81ZgAOSU7rwI0stphCgd2kLiCrU9DjQCrJMWEqcNSjQL02s6d8A==}
+  /ts-node@11.0.0-beta.1(@types/node@18.17.15)(typescript@5.0.4):
+    resolution: {integrity: sha512-WMSROP+1pU22Q/Tm40mjfRg130yD8i0g6ROST04ZpocfH8sl1zD75ON4XQMcBEVViXMVemJBH0alflE7xePdRA==}
     hasBin: true
     peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
+      '@swc/core': '>=1.3.85'
+      '@swc/wasm': '>=1.3.85'
       '@types/node': '*'
-      typescript: '>=2.7'
+      typescript: '>=4.4'
     peerDependenciesMeta:
       '@swc/core':
         optional: true
       '@swc/wasm':
         optional: true
     dependencies:
-      '@cspotcode/source-map-support': 0.7.0
-      '@tsconfig/node10': 1.0.9
-      '@tsconfig/node12': 1.0.11
+      '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
+      '@tsconfig/node18': 18.2.2
+      '@tsconfig/node20': 20.1.2
       '@types/node': 18.17.15
       acorn: 8.10.0
       acorn-walk: 8.2.0
       arg: 4.1.3
-      create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
       typescript: 5.0.4
-      yn: 3.1.1
+      v8-compile-cache-lib: 3.0.1
 
   /tslib@1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
@@ -7444,6 +7440,9 @@ packages:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: false
 
+  /v8-compile-cache-lib@3.0.1:
+    resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
+
   /v8-compile-cache@2.4.0:
     resolution: {integrity: sha512-ocyWc3bAHBB/guyqJQVI5o4BZkPhznPYUG2ea80Gond/BgNWpap8TOmLSeeQG7bnh2KMISxskdADG59j7zruhw==}
     dev: true
@@ -7631,10 +7630,6 @@ packages:
     resolution: {integrity: sha512-9GnJUZ0QM4OgXuOzsKNzTJ5EOkums1Xc+3YQXp+Q+UxFjf7zLucp9dQ8QMIft0Szs1E1hUiXFim1OYfEKFq97w==}
     engines: {node: '>=0.8'}
     dev: false
-
-  /yn@3.1.1:
-    resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
-    engines: {node: '>=6'}
 
   /yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
