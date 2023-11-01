@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "rush-init-project-plugin",
+      "comment": "Upgrde ts-node@11",
+      "type": "minor"
+    }
+  ],
+  "packageName": "rush-init-project-plugin"
+}
