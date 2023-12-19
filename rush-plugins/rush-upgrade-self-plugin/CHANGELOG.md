@@ -1,6 +1,13 @@
 # Change Log - rush-upgrade-self-plugin
 
-This log was last generated on Tue, 26 Sep 2023 07:11:19 GMT and should not be manually modified.
+This log was last generated on Tue, 19 Dec 2023 06:06:52 GMT and should not be manually modified.
+
+## 1.1.1
+Tue, 19 Dec 2023 06:06:52 GMT
+
+### Patches
+
+- Upgrade @rushstack/node-core-library to 3.62.0
 
 ## 1.1.0
 Tue, 26 Sep 2023 07:11:19 GMT

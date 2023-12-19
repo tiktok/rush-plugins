@@ -1,6 +1,13 @@
 # Change Log - rush-git-lfs-plugin
 
-This log was last generated on Fri, 13 Oct 2023 05:44:35 GMT and should not be manually modified.
+This log was last generated on Tue, 19 Dec 2023 06:06:52 GMT and should not be manually modified.
+
+## 0.3.2
+Tue, 19 Dec 2023 06:06:52 GMT
+
+### Patches
+
+- Upgrade @rushstack/node-core-library to 3.62.0
 
 ## 0.3.1
 Fri, 13 Oct 2023 05:44:35 GMT

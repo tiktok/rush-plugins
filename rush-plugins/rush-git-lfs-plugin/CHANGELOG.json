@@ -2,6 +2,18 @@
   "name": "rush-git-lfs-plugin",
   "entries": [
     {
+      "version": "0.3.2",
+      "tag": "rush-git-lfs-plugin_v0.3.2",
+      "date": "Tue, 19 Dec 2023 06:06:52 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Upgrade @rushstack/node-core-library to 3.62.0"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.3.1",
       "tag": "rush-git-lfs-plugin_v0.3.1",
       "date": "Fri, 13 Oct 2023 05:44:35 GMT",
