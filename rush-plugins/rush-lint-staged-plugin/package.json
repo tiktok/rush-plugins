@@ -26,7 +26,7 @@
     "test": ""
   },
   "dependencies": {
-    "@rushstack/node-core-library": "3.44.1",
+    "@rushstack/node-core-library": "3.62.0",
     "lint-staged": "12.3.4"
   },
   "devDependencies": {

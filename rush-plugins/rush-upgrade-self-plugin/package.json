@@ -29,7 +29,7 @@
     "test": "heft test"
   },
   "dependencies": {
-    "@rushstack/node-core-library": "3.44.1",
+    "@rushstack/node-core-library": "3.62.0",
     "@rushstack/rush-sdk": "5.62.4",
     "fast-glob": "~3.2.7",
     "find-up": "5.0.0",
