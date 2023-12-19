@@ -45,7 +45,7 @@
     "ora": "5.4.1",
     "sort-package-json": "1.54.0",
     "tapable": "~2.2.1",
-    "ts-node": "~10.4.0",
+    "ts-node": "11.0.0-beta.1",
     "validate-npm-package-name": "~3.0.0"
   },
   "devDependencies": {
