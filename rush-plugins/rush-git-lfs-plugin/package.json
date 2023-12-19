@@ -23,7 +23,7 @@
     "test": "heft test"
   },
   "dependencies": {
-    "@rushstack/node-core-library": "3.44.1",
+    "@rushstack/node-core-library": "3.62.0",
     "@rushstack/rush-sdk": "5.62.4",
     "chalk": "4.1.2",
     "commander": "~9.4.0",
