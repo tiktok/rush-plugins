@@ -2,6 +2,18 @@
   "name": "rush-init-project-plugin",
   "entries": [
     {
+      "version": "0.10.2",
+      "tag": "rush-init-project-plugin_v0.10.2",
+      "date": "Tue, 19 Dec 2023 07:29:53 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Upgrade ts-node to 11.0.0-beta.1"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.10.1",
       "tag": "rush-init-project-plugin_v0.10.1",
       "date": "Tue, 19 Dec 2023 06:06:52 GMT",

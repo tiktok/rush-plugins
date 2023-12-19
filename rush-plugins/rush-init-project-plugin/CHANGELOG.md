@@ -1,6 +1,13 @@
 # Change Log - rush-init-project-plugin
 
-This log was last generated on Tue, 19 Dec 2023 06:06:52 GMT and should not be manually modified.
+This log was last generated on Tue, 19 Dec 2023 07:29:53 GMT and should not be manually modified.
+
+## 0.10.2
+Tue, 19 Dec 2023 07:29:53 GMT
+
+### Patches
+
+- Upgrade ts-node to 11.0.0-beta.1
 
 ## 0.10.1
 Tue, 19 Dec 2023 06:06:52 GMT
