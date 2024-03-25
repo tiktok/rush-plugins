@@ -2,6 +2,18 @@
   "name": "rush-init-project-plugin",
   "entries": [
     {
+      "version": "0.11.0",
+      "tag": "rush-init-project-plugin_v0.11.0",
+      "date": "Mon, 25 Mar 2024 22:46:02 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Remove \"-d\" ambiguous parameter"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.10.2",
       "tag": "rush-init-project-plugin_v0.10.2",
       "date": "Tue, 19 Dec 2023 07:29:53 GMT",
