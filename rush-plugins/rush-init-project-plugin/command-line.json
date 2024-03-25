@@ -22,7 +22,6 @@
     {
       "parameterKind": "flag",
       "description": "Provide the option isDryRun in plugin context",
-      "shortName": "-d",
       "longName": "--dry-run",
       "associatedCommands": ["init-project"],
       "required": false
