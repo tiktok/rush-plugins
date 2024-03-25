@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "rush-init-project-plugin",
+      "comment": "Remove \"-d\" ambiguous parameter",
+      "type": "minor"
+    }
+  ],
+  "packageName": "rush-init-project-plugin"
+}
