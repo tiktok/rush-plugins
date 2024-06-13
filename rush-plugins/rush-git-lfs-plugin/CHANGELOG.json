@@ -2,6 +2,18 @@
   "name": "rush-git-lfs-plugin",
   "entries": [
     {
+      "version": "0.3.3",
+      "tag": "rush-git-lfs-plugin_v0.3.3",
+      "date": "Thu, 13 Jun 2024 19:45:29 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix pattern match for paths that contains dot."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.3.2",
       "tag": "rush-git-lfs-plugin_v0.3.2",
       "date": "Tue, 19 Dec 2023 06:06:52 GMT",

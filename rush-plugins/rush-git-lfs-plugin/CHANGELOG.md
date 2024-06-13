@@ -1,6 +1,13 @@
 # Change Log - rush-git-lfs-plugin
 
-This log was last generated on Tue, 19 Dec 2023 06:06:52 GMT and should not be manually modified.
+This log was last generated on Thu, 13 Jun 2024 19:45:29 GMT and should not be manually modified.
+
+## 0.3.3
+Thu, 13 Jun 2024 19:45:29 GMT
+
+### Patches
+
+- fix pattern match for paths that contains dot.
 
 ## 0.3.2
 Tue, 19 Dec 2023 06:06:52 GMT
