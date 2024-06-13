@@ -13,7 +13,7 @@ import {
   toRelativePath,
   toAbsolutePath,
   RushRootFolder,
-  findFileBelongProject,
+  findFileBelongProject
 } from '../../helpers/file-path-analyser';
 
 export interface IGitLFSCheckModuleContext extends IGitLFSModuleContext {
@@ -32,7 +32,7 @@ export interface IGitLFSCheckModuleFileError {
 export const enum GitLFSCheckModuleErrorType {
   FileNeedToBeTrackedByLFS,
   FixFileLFSStatusFail,
-  GitAddFail,
+  GitAddFail
 }
 
 export class GitLFSCheckModule extends GitLFSBaseModule {
@@ -40,7 +40,7 @@ export class GitLFSCheckModule extends GitLFSBaseModule {
     const entries: [string, number][] = Object.entries(pattern);
 
     for (const [ptn, size] of entries) {
-      if (minimatch(toRelativePath(p), ptn)) {
+      if (minimatch(toRelativePath(p), ptn, { dot: true })) {
         const stat: fse.Stats = fse.statSync(toAbsolutePath(p));
         return stat.size > size;
       }
@@ -51,12 +51,9 @@ export class GitLFSCheckModule extends GitLFSBaseModule {
   public isTrackedByLFS = (p: string): boolean => {
     /* use git check-attr to test if a file was managed by git-lfs */
     try {
-      const { exitCode, stdout } = execa.commandSync(
-        `git check-attr --all -- ${toRelativePath(p)}`,
-        {
-          cwd: RushRootFolder,
-        }
-      );
+      const { exitCode, stdout } = execa.commandSync(`git check-attr --all -- ${toRelativePath(p)}`, {
+        cwd: RushRootFolder
+      });
       return exitCode === 0 && stdout.includes('filter: lfs');
     } catch (e) {
       return false;
@@ -70,7 +67,7 @@ export class GitLFSCheckModule extends GitLFSBaseModule {
     const runCWD: string = typeof project === 'undefined' ? RushRootFolder : project.projectFolder;
     const relativePath: string = path.relative(runCWD, toRelativePath(p));
     const { exitCode } = execa.commandSync(`git lfs track ${relativePath}`, {
-      cwd: toAbsolutePath(runCWD),
+      cwd: toAbsolutePath(runCWD)
     });
     if (exitCode !== 0) {
       throw GitLFSCheckModuleErrorType.FixFileLFSStatusFail;
@@ -84,7 +81,7 @@ export class GitLFSCheckModule extends GitLFSBaseModule {
   public addFileToGit = (p: string): void => {
     terminal.writeVerboseLine(withPrefix(`Trying git add on ${toRelativePath(p)}`));
     const { exitCode } = execa.commandSync(`git add ${toRelativePath(p)}`, {
-      cwd: toAbsolutePath(RushRootFolder),
+      cwd: toAbsolutePath(RushRootFolder)
     });
     if (exitCode !== 0) {
       throw GitLFSCheckModuleErrorType.GitAddFail;
@@ -97,7 +94,7 @@ export class GitLFSCheckModule extends GitLFSBaseModule {
       result,
       fix,
       option: { checkPattern },
-      spinner,
+      spinner
     } = ctx;
 
     spinner.start('Start Git LFS check...');
@@ -116,21 +113,17 @@ export class GitLFSCheckModule extends GitLFSBaseModule {
             isFixed = true;
             terminal.writeVerboseLine(withPrefix(`Fixed ${toRelativePath(f)}`));
           } catch (e) {
-            terminal.writeVerboseLine(
-              withPrefix(`Error occurs while fixing ${toRelativePath(f)} ${e}`)
-            );
+            terminal.writeVerboseLine(withPrefix(`Error occurs while fixing ${toRelativePath(f)} ${e}`));
           }
         }
         if (isFixed) {
           spinner.warn(
-            `Git LFS check failed for ${chalk.red(
-              toRelativePath(f)
-            )}, but was automatically fixed`
+            `Git LFS check failed for ${chalk.red(toRelativePath(f))}, but was automatically fixed`
           );
         } else {
           result.push({
             file: toRelativePath(f),
-            errorType: GitLFSCheckModuleErrorType.FileNeedToBeTrackedByLFS,
+            errorType: GitLFSCheckModuleErrorType.FileNeedToBeTrackedByLFS
           });
           spinner.fail(
             `Git LFS check failed for ${chalk.red(toRelativePath(f))}${
@@ -140,14 +133,12 @@ export class GitLFSCheckModule extends GitLFSBaseModule {
         }
       } else {
         result.push({
-          file: toRelativePath(f),
+          file: toRelativePath(f)
         });
       }
     }
 
-    const errors: IGitLFSCheckModuleFileError[] = result.filter(
-      e => typeof e.errorType !== 'undefined'
-    );
+    const errors: IGitLFSCheckModuleFileError[] = result.filter((e) => typeof e.errorType !== 'undefined');
     if (errors.length > 0) {
       spinner.fail('Git LFS check failed');
     } else {
