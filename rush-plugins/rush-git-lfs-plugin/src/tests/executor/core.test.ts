@@ -8,9 +8,7 @@ describe('lfs file detect', () => {
     const tFile = factory.createTextFile('test-t');
     const checker = new GitLFSCheckModule();
     expect(checker.isFileNeedToTrack(bFile, { '**/*.png': 0, '**/*': 5 * 1024 * 1024 })).toBe(true);
-    expect(checker.isFileNeedToTrack(tFile, { '**/*.png': 0, '**/*': 5 * 1024 * 1024 })).toBe(
-      false
-    );
+    expect(checker.isFileNeedToTrack(tFile, { '**/*.png': 0, '**/*': 5 * 1024 * 1024 })).toBe(false);
   });
 
   it('should detect large file correctly', () => {
@@ -29,10 +27,14 @@ describe('lfs file detect', () => {
 
     const tsFile = factory.createSizedFile('tsFile.ts', 6 * 1024 * 1024);
     const jsFile = factory.createSizedFile('jsFile.js', 2 * 1024 * 1024);
+    //
+    const dotFile = factory.createSizedFile('.temp/a.js', 2 * 1024 * 1024);
+
     const checker = new GitLFSCheckModule();
 
     expect(checker.isFileNeedToTrack(tsFile, { '**/*.ts': 7 * 1024 * 1024 })).toBe(false);
     expect(checker.isFileNeedToTrack(jsFile, { '**/*.js': 1 * 1024 * 1024 })).toBe(true);
+    expect(checker.isFileNeedToTrack(dotFile, { '**/*.js': 1 * 1024 * 1024 })).toBe(true);
   });
 
   it('should detect LFS status correctly', () => {
