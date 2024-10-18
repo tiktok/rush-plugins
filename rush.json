@@ -480,6 +480,13 @@
       "cyclicDependencyProjects": []
     },
     {
+      "packageName": "rush-migrate-subspace-plugin",
+      "projectFolder": "rush-plugins/rush-migrate-subspace-plugin",
+      "reviewCategory": "rush-plugins",
+      "shouldPublish": true,
+      "cyclicDependencyProjects": []
+    },
+    {
       "packageName": "rush-lint-staged-plugin",
       "projectFolder": "rush-plugins/rush-lint-staged-plugin",
       "shouldPublish": true,

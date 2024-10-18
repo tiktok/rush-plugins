@@ -73,3 +73,12 @@ Use of rush build cache is a great way to speed up your build. But, how to know 
 Git LFS was commonly used to managed large files/binary files in your git repository. This plugin can help you to check if newly added files are correctly managed by Git LFS and prevent users from wrongly commit their local large files.
 
 [More](./rush-plugins/rush-git-lfs-plugin/README.md)
+
+# rush-migrate-subspace-plugin
+
+[![npm](https://img.shields.io/npm/dt/rush-migrate-subspace-plugin.svg?style=flat-square)](https://www.npmjs.com/package/rush-migrate-subspace-plugin)
+[![npm](https://img.shields.io/npm/dw/rush-migrate-subspace-plugin.svg?style=flat-square)](https://www.npmjs.com/package/rush-migrate-subspace-plugin)
+
+The rush subspace is a new feature that intends to move common projects into 1 workspace. Teams that want to take advantage of this feature need to manually migrate these projects. This script automates most of these required steps to speed up the migration process.
+
+[More](./rush-plugins/rush-migrate-subspace-plugin/README.md)

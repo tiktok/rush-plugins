@@ -1,0 +1,28 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/command-line.schema.json",
+  "commands": [
+    {
+      "name": "migrate-subspace",
+      "commandKind": "global",
+      "summary": "Migrate an existing project into a subspace",
+      "shellCommand": "rush-migrate-subspace",
+      "safeForSimultaneousRushProcesses": true
+    }
+  ],
+  "parameters": [
+    {
+      "description": "Sync versions after migration",
+      "parameterKind": "flag",
+      "longName": "--sync",
+      "associatedCommands": ["migrate-subspace"],
+      "required": false
+    },
+    {
+      "parameterKind": "flag",
+      "longName": "--report",
+      "shortName": "-r",
+      "description": "Generate a report of a proposed subspace migration",
+      "associatedCommands": ["migrate-subspace"]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/rush-plugin-manifest.schema.json",
+  "plugins": [
+    {
+      "pluginName": "rush-migrate-subspace-plugin",
+      "description": "Migrate an existing project into a subspace",
+      "commandLineJsonFilePath": "command-line.json",
+      "optionsSchema": "lib/schemas/plugin-options.schema.json"
+    }
+  ]
+}
