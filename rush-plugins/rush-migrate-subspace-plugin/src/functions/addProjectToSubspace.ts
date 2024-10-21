@@ -3,11 +3,12 @@ import inquirer from 'inquirer';
 import chalk from 'chalk';
 import fs from 'fs';
 import { JsonFile, FileSystem } from '@rushstack/node-core-library';
-import { RootPath } from './getRootPath';
+import { getRootPath } from '..//utilities/getRootPath';
 import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
 import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/SubspacesConfiguration';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { CommonVersionsConfiguration } from '@rushstack/rush-sdk/lib';
+import { updateEdenProject } from './updateEdenProject';
 
 export const addProjectToSubspace = async (
   projectToUpdate: IRushConfigurationProjectJson,
@@ -28,7 +29,7 @@ export const addProjectToSubspace = async (
   let newProjectRelativeFolder: string;
   if (moveProject) {
     // Create the subspace folder
-    const subspaceFolder: string = `${RootPath}/subspaces/${subspaceName}`;
+    const subspaceFolder: string = `${getRootPath()}/subspaces/${subspaceName}`;
     FileSystem.ensureFolder(subspaceFolder);
 
     const { folder } = await inquirer.prompt([
@@ -44,23 +45,23 @@ export const addProjectToSubspace = async (
     newProjectFolder = `${subspaceFolder}/${folder}`;
     newProjectRelativeFolder = `subspaces/${subspaceName}/${folder}`;
     FileSystem.move({
-      sourcePath: `${RootPath}/${projectToUpdate.projectFolder}`,
+      sourcePath: `${getRootPath()}/${projectToUpdate.projectFolder}`,
       destinationPath: newProjectFolder
     });
   } else {
-    newProjectFolder = `${RootPath}/${projectToUpdate.projectFolder}`;
+    newProjectFolder = `${getRootPath()}/${projectToUpdate.projectFolder}`;
     newProjectRelativeFolder = projectToUpdate.projectFolder;
   }
 
   // Create the subspace config folder
-  const subspaceConfigFolder: string = `${RootPath}/common/config/subspaces/${subspaceName}`;
+  const subspaceConfigFolder: string = `${getRootPath()}/common/config/subspaces/${subspaceName}`;
   FileSystem.ensureFolder(subspaceConfigFolder);
 
-  // Check if the project is already in a subspace that isn't a "split_*" workspace
-  if (!projectToUpdate.subspaceName || !projectToUpdate.subspaceName.startsWith('split_')) {
+  // Check if the project is already in a subspace
+  if (!projectToUpdate.subspaceName) {
     // Project already exists in a subspace
 
-    // Create the necessary files if they dont exist
+    // Create the necessary files if they don't exist
     const files: string[] = ['.npmrc', 'common-versions.json', 'repo-state.json'];
     for (const file of files) {
       if (!FileSystem.exists(`${subspaceConfigFolder}/${file}`)) {
@@ -76,18 +77,11 @@ export const addProjectToSubspace = async (
           projectToUpdate.subspaceName || 'default'
         } subspace to the ${subspaceName} subspace. Please consider the following files and merge them if necessary: \n${files.join(
           '\n'
-        )}`
+        )}\nAlso run "rush update --subspace ${
+          projectToUpdate.subspaceName || 'default'
+        }" to update the subspace that this project is migrating from.`
       )
     );
-    if (!projectToUpdate.subspaceName?.startsWith('split_')) {
-      console.log(
-        chalk.green(
-          `Please run "rush update --subspace ${
-            projectToUpdate.subspaceName || 'default'
-          }" to update the subspace that this project is migrating from.`
-        )
-      );
-    }
   } else {
     // Project is in a individual subspace
     const projectSubspaceConfigFolder: string = `${newProjectFolder}/subspace/${projectToUpdate.subspaceName}`;
@@ -181,31 +175,29 @@ export const addProjectToSubspace = async (
       }
     }
 
-    // Delete the project's subspace/split_* folder
     FileSystem.deleteFolder(`${newProjectFolder}/subspace`);
   }
 
-  const previousSubspaceName: string = projectToUpdate.subspaceName || 'default';
   // Find the project in rushJson
   const rushProjectToUpdate: IRushConfigurationProjectJson = rushJson.projects.filter(
-    (pkg: any) => pkg.packageName === projectToUpdate.packageName
+    (pkg) => pkg.packageName === projectToUpdate.packageName
   )[0];
   rushProjectToUpdate.projectFolder = newProjectRelativeFolder;
   rushProjectToUpdate.subspaceName = subspaceName;
-  JsonFile.save(rushJson, `${RootPath}/rush.json`, {
+  JsonFile.save(rushJson, `${getRootPath()}/rush.json`, {
     updateExistingFile: true
   });
 
-  // Update the subspace json
-  if (previousSubspaceName.startsWith('split_')) {
-    subspaceJson.subspaceNames = subspaceJson.subspaceNames.filter(
-      (subspaceName: string) => subspaceName !== previousSubspaceName
-    );
-  }
   if (isNewSubspace && !subspaceJson.subspaceNames.includes(subspaceName)) {
     subspaceJson.subspaceNames.push(subspaceName);
   }
-  JsonFile.save(subspaceJson, `${RootPath}/common/config/rush/subspaces.json`, {
+
+  JsonFile.save(subspaceJson, `${getRootPath()}/common/config/rush/subspaces.json`, {
     updateExistingFile: true
   });
+
+  if (FileSystem.exists(`${getRootPath()}/eden.monorepo.json`)) {
+    // Update the project's entry in eden
+    await updateEdenProject(projectToUpdate, subspaceName, rushJson, newProjectRelativeFolder);
+  }
 };

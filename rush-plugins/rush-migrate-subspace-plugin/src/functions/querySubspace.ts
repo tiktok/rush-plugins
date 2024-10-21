@@ -1,6 +1,6 @@
 import inquirer from 'inquirer';
 import { JsonFile } from '@rushstack/node-core-library';
-import { RootPath } from './getRootPath';
+import { getRootPath } from '../utilities/getRootPath';
 import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/SubspacesConfiguration';
 
 /**
@@ -9,12 +9,7 @@ import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/Subspac
  */
 export const querySubspace = async (): Promise<string> => {
   const subspaceJson: ISubspacesConfigurationJson = JsonFile.load(
-    `${RootPath}/common/config/rush/subspaces.json`
-  );
-
-  const subspaceNames: string[] = subspaceJson.subspaceNames.filter(
-    // TODO fix tiktok_web_monorepo
-    (name: string) => !name.startsWith('split_') && name !== 'tiktok_web_monorepo'
+    `${getRootPath()}/common/config/rush/subspaces.json`
   );
 
   const { subspaceNameInput } = await inquirer.prompt([
@@ -22,7 +17,7 @@ export const querySubspace = async (): Promise<string> => {
       message: 'Please select the subspace name you wish to add to (Type to filter).',
       type: 'search-list',
       name: 'subspaceNameInput',
-      choices: subspaceNames.map((name: string) => ({ name, value: name }))
+      choices: subspaceJson.subspaceNames.map((name: string) => ({ name, value: name }))
     }
   ]);
 

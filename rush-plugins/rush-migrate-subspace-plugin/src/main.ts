@@ -3,7 +3,7 @@ import inquirerSearchList from 'inquirer-search-list';
 import chalk from 'chalk';
 import { JsonFile } from '@rushstack/node-core-library';
 import { querySubspace } from './functions/querySubspace';
-import { RootPath } from './functions/getRootPath';
+import { getRootPath } from './utilities/getRootPath';
 import { addProjectToSubspace } from './functions/addProjectToSubspace';
 import { getProject } from './utilities/getProject';
 import { generateProjectReport } from './functions/generateProjectReport';
@@ -45,11 +45,11 @@ export async function main(options: IRunOptions): Promise<void> {
   ]);
 
   const subspaceJson: ISubspacesConfigurationJson = JsonFile.load(
-    `${RootPath}/common/config/rush/subspaces.json`
+    `${getRootPath()}/common/config/rush/subspaces.json`
   );
-  const rushJson: IRushConfigurationJson = JsonFile.load(`${RootPath}/rush.json`);
+  const rushJson: IRushConfigurationJson = JsonFile.load(`${getRootPath()}/rush.json`);
   let startSubspace: () => Promise<string>;
-  if (subspaceSelection !== 'existing') {
+  if (subspaceSelection === 'new') {
     startSubspace = async (): Promise<string> => {
       let targetSubspaceName: string = '';
       while (!targetSubspaceName) {

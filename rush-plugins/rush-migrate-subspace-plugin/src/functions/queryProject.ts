@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { RootPath } from './getRootPath';
+import { getRootPath } from '../utilities/getRootPath';
 import { JsonFile } from '@rushstack/node-core-library';
 import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
 
@@ -7,7 +7,7 @@ export const queryProject = async (
   message: string,
   filterFn: (project: any) => boolean = () => true
 ): Promise<string> => {
-  const rushJson: IRushConfigurationJson = JsonFile.load(`${RootPath}/rush.json`);
+  const rushJson: IRushConfigurationJson = JsonFile.load(`${getRootPath()}/rush.json`);
   const { projectToAdd } = await inquirer.prompt([
     {
       message,

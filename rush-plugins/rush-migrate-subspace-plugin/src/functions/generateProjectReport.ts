@@ -5,13 +5,13 @@
 
 import { INodePackageJson, JsonFile } from '@rushstack/node-core-library';
 import inquirer from 'inquirer';
-import { RootPath } from '../getRootPath';
+import { getRootPath } from '../utilities/getRootPath';
 import chalk from 'chalk';
 import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 
 export const generateProjectReport = async (projectName: string, subspaceName: string): Promise<void> => {
-  const rushJson: IRushConfigurationJson = JsonFile.load(`${RootPath}/rush.json`);
+  const rushJson: IRushConfigurationJson = JsonFile.load(`${getRootPath()}/rush.json`);
 
   // Get all the projects for this subspace
   let currProject: IRushConfigurationProjectJson | undefined;
@@ -113,7 +113,7 @@ export const generateProjectReport = async (projectName: string, subspaceName: s
         message: `Please enter the file path to save this file. Please do not commit it to git.`,
         type: 'input',
         name: 'filePath',
-        default: `${RootPath}/analysis.json`
+        default: `${getRootPath()}/analysis.json`
       }
     ]);
     jsonFilePath = filePath;
