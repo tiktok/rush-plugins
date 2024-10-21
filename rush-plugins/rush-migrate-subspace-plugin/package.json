@@ -25,7 +25,6 @@
   },
   "scripts": {
     "build": "heft build --clean",
-    "build:watch": "heft build --watch",
     "prepublishOnly": "npm run build",
     "start": "heft build-watch",
     "test": "heft test"

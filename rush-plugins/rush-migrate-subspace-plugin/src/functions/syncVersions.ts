@@ -5,12 +5,10 @@ import inquirer from 'inquirer';
 import fs from 'fs';
 import { IPackageJson, JsonFile } from '@rushstack/node-core-library';
 import { VersionMismatchFinder } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinder';
-import {
-  CommonVersionsConfiguration,
-  RushConfiguration,
-  RushConfigurationProject,
-  Subspace
-} from '@rushstack/rush-sdk/lib';
+import { CommonVersionsConfiguration } from '@rushstack/rush-sdk/lib/api/CommonVersionsConfiguration';
+import { Subspace } from '@rushstack/rush-sdk/lib/api/Subspace';
+import { RushConfiguration } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
+import { RushConfigurationProject } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { VersionMismatchFinderEntity } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinderEntity';
 
 export async function syncVersions(): Promise<void> {
