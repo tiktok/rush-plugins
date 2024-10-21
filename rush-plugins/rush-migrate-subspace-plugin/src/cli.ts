@@ -2,9 +2,7 @@ import { Command } from 'commander';
 import { main } from './main';
 import { syncVersions } from './functions/syncVersions';
 
-export type CommandOption = {};
-
-const program = new Command();
+const program: Command = new Command();
 
 program
   .option('-r|--report', 'to generate only custom pipelines')

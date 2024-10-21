@@ -8,18 +8,21 @@ import { addProjectToSubspace } from './functions/addProjectToSubspace';
 import { getProject } from './utilities/getProject';
 import { generateProjectReport } from './functions/generateProjectReport';
 import { queryProject } from './functions/queryProject';
+import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
+import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
+import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/SubspacesConfiguration';
 
 inquirer.registerPrompt('search-list', inquirerSearchList);
 
-type RunOptions = {
+interface IRunOptions {
   report?: boolean;
-};
+}
 
-export async function main(options: RunOptions) {
+export async function main(options: IRunOptions): Promise<void> {
   if (options.report) {
-    const subspaceName = await querySubspace();
-    const project = await queryProject('Please select a project to create a report for.');
-    await generateProjectReport(project, subspaceName);
+    const subspaceName: string = await querySubspace();
+    const projectName: string = await queryProject('Please select a project to create a report for.');
+    await generateProjectReport(projectName, subspaceName);
   }
 
   const { subspaceSelection } = await inquirer.prompt([
@@ -41,42 +44,51 @@ export async function main(options: RunOptions) {
     }
   ]);
 
-  const subspaceJson = JsonFile.load(`${RootPath}/common/config/rush/subspaces.json`);
-  const rushJson = JsonFile.load(`${RootPath}/rush.json`);
-  let subspaceName: string | undefined;
-  if (subspaceSelection === 'existing') {
-    subspaceName = await querySubspace();
-  } else {
-    while (!subspaceName) {
-      const { subspaceNameInput } = await inquirer.prompt([
-        {
-          message: 'Please enter a subspace name (lowercase letters with underscores (_) are allowed).',
-          name: 'subspaceNameInput',
-          type: 'input'
+  const subspaceJson: ISubspacesConfigurationJson = JsonFile.load(
+    `${RootPath}/common/config/rush/subspaces.json`
+  );
+  const rushJson: IRushConfigurationJson = JsonFile.load(`${RootPath}/rush.json`);
+  let startSubspace: () => Promise<string>;
+  if (subspaceSelection !== 'existing') {
+    startSubspace = async (): Promise<string> => {
+      let targetSubspaceName: string = '';
+      while (!targetSubspaceName) {
+        const { subspaceNameInput } = await inquirer.prompt([
+          {
+            message: 'Please enter a subspace name (lowercase letters with underscores (_) are allowed).',
+            name: 'subspaceNameInput',
+            type: 'input'
+          }
+        ]);
+
+        if (subspaceJson.subspaceNames.includes(subspaceNameInput)) {
+          console.log(
+            chalk.red(`The subspace ${subspaceNameInput} already exists. Please enter a new subspace name.`)
+          );
+        } else {
+          targetSubspaceName = subspaceNameInput;
         }
-      ]);
-      if (subspaceJson.subspaceNames.includes(subspaceNameInput)) {
-        console.log(
-          chalk.red(`The subspace ${subspaceNameInput} already exists. Please enter a new subspace name.`)
-        );
-      } else {
-        subspaceName = subspaceNameInput;
       }
-    }
+
+      return targetSubspaceName;
+    };
+  } else {
+    startSubspace = querySubspace;
   }
 
+  const subspaceName: string = await startSubspace();
   console.log('Adding to subspace: ', subspaceName);
 
   // Loop until user asks to quit
-  let continueToAdd = true;
+  let continueToAdd: boolean = true;
   do {
-    const projectToAdd = await queryProject(
+    const projectToAdd: string = await queryProject(
       `Please select a project to add to the ${subspaceName} subspace.`,
       (project: any) => project.subspaceName !== subspaceName
     );
 
     // Update rushJson for this project
-    const projectToUpdate = getProject(projectToAdd);
+    const projectToUpdate: IRushConfigurationProjectJson = getProject(projectToAdd);
 
     await addProjectToSubspace(
       projectToUpdate,

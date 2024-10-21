@@ -1,34 +1,30 @@
 import { querySubspace } from './querySubspace';
 
-const chalk = require('chalk');
-const inquirer = require('inquirer');
-const fs = require('fs');
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+import fs from 'fs';
+import { IPackageJson, JsonFile } from '@rushstack/node-core-library';
+import { VersionMismatchFinder } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinder';
+import {
+  CommonVersionsConfiguration,
+  RushConfiguration,
+  RushConfigurationProject,
+  Subspace
+} from '@rushstack/rush-sdk/lib';
+import { VersionMismatchFinderEntity } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinderEntity';
 
-// Important: Since we're calling an internal API, we need to use the unbundled .d.ts files
-// instead of the normal .d.ts rollup
-const { RushConfiguration } = require('@rushstack/rush-sdk');
-const { JsonFile } = require('@rushstack/node-core-library');
+export async function syncVersions(): Promise<void> {
+  const config: RushConfiguration = RushConfiguration.loadFromDefaultLocation();
 
-// Use a path-based import to access an internal API (do so at your own risk!)
-const {
-  VersionMismatchFinder
-} = require('@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinder');
-
-export async function syncVersions() {
-  const config = RushConfiguration.loadFromDefaultLocation();
-
-  const subspaceName = await querySubspace();
-  const selectedSubspace = config.subspaces.filter(
+  const subspaceName: string = await querySubspace();
+  const selectedSubspace: Subspace = config.subspaces.filter(
     (subspace: any) => subspace.subspaceName === subspaceName
   )[0];
 
-  const { _projects: projects, _mismatches: mismatches } = VersionMismatchFinder.getMismatches(config, {
+  const { mismatches } = VersionMismatchFinder.getMismatches(config, {
+    variant: undefined,
     subspace: selectedSubspace
   });
-  const projectMap = new Map();
-  for (const proj of projects) {
-    projectMap.set(proj.packageName, proj._project);
-  }
 
   if (mismatches.size === 0) {
     console.log(chalk.green('No mismatches found!'));
@@ -37,15 +33,16 @@ export async function syncVersions() {
 
   console.clear();
 
-  let count = 0;
-  const subspaceCommonVersionsPath = `${selectedSubspace.getSubspaceConfigFolder()}/common-versions.json`;
-  const subspaceCommonVersionsJson = JsonFile.load(subspaceCommonVersionsPath);
-  const allowedAlternativeVersions = subspaceCommonVersionsJson.allowedAlternativeVersions;
+  let count: number = 0;
+  const subspaceCommonVersionsPath: string = `${selectedSubspace.getSubspaceConfigFolderPath()}/common-versions.json`;
+  const subspaceCommonVersionsJson: CommonVersionsConfiguration = JsonFile.load(subspaceCommonVersionsPath);
+  const allowedAlternativeVersions: Map<string, readonly string[]> =
+    subspaceCommonVersionsJson.allowedAlternativeVersions;
   for (const [dependencyName, mismatchVersionMap] of mismatches.entries()) {
     count++;
 
-    const availableVersions = Array.from(mismatchVersionMap.keys());
-    let selectedVersion;
+    const availableVersions: string[] = Array.from(mismatchVersionMap.keys());
+    let selectedVersion: string | undefined;
     console.log(`Syncing package ${count} of ${mismatches.size + 1} version mismatches. \n`);
     console.log(chalk.green(`Syncing dependency: ${dependencyName}`));
     console.log(
@@ -57,10 +54,14 @@ export async function syncVersions() {
         name: 'versionToSync',
         message: 'Which version would you like to sync all the packages to?',
         choices: [
-          ...availableVersions.map((ver) => ({
-            value: ver,
-            name: `${ver} - used by ${mismatchVersionMap.get(ver).length} packages.`
-          })),
+          ...availableVersions.map((ver) => {
+            const packagesWithVersion: readonly VersionMismatchFinderEntity[] =
+              mismatchVersionMap.get(ver) || [];
+            return {
+              value: ver,
+              name: `${ver} - used by ${packagesWithVersion.length} packages.`
+            };
+          }),
           { name: 'Manual Entry', value: 'manual' },
           { name: 'Skip this package', value: 'skip' },
           { name: 'Add versions to allowedAlternativeVersions', value: 'alternative' }
@@ -80,32 +81,40 @@ export async function syncVersions() {
       ]);
       selectedVersion = newVersion.trim();
     } else if (versionToSync === 'alternative') {
-      if (!allowedAlternativeVersions[dependencyName]) {
-        allowedAlternativeVersions[dependencyName] = [];
-      }
-      allowedAlternativeVersions[dependencyName].push(...availableVersions);
+      allowedAlternativeVersions.set(dependencyName, availableVersions);
     } else {
       selectedVersion = versionToSync;
     }
 
     if (selectedVersion) {
-      // Only update package.jsons if we don't use alternative
-      const allPackagesToUpdate = [];
-      for (const key of availableVersions) {
-        if (key !== selectedVersion) {
-          allPackagesToUpdate.push(...mismatchVersionMap.get(key));
+      // Only update package.json if we don't use alternative
+      const allPackageNamesToUpdate: string[] = [];
+      for (const version of availableVersions) {
+        if (version !== selectedVersion) {
+          const packagesWithVersion: readonly VersionMismatchFinderEntity[] =
+            mismatchVersionMap.get(version) || [];
+          allPackageNamesToUpdate.push(...packagesWithVersion.map(({ friendlyName }) => friendlyName));
         }
       }
-      for (const pkgToUpdate of allPackagesToUpdate) {
-        const _project = config.getProjectByName(pkgToUpdate.packageName);
-        const { projectFolder, packageName } = _project;
-        const pkgJsonPath = `${projectFolder}/package.json`;
-        if (!fs.existsSync(pkgJsonPath)) {
-          console.log(chalk.red(`Could not load package.json file for package: ${packageName}, skipping...`));
+      for (const packageNameToUpdate of allPackageNamesToUpdate) {
+        const projectConfig: RushConfigurationProject | undefined =
+          config.getProjectByName(packageNameToUpdate);
+        if (!projectConfig) {
+          console.log(chalk.red(`Could not load find the package: ${packageNameToUpdate}, skipping...`));
           continue;
         }
 
-        const packageJson = JsonFile.load(pkgJsonPath);
+        const pkgJsonPath: string = `${projectConfig.projectFolder}/package.json`;
+        if (!fs.existsSync(pkgJsonPath)) {
+          console.log(
+            chalk.red(
+              `Could not load package.json file for package: ${projectConfig.packageName}, skipping...`
+            )
+          );
+          continue;
+        }
+
+        const packageJson: IPackageJson = JsonFile.load(pkgJsonPath);
         if (packageJson?.dependencies && packageJson.dependencies[dependencyName]) {
           packageJson.dependencies[dependencyName] = selectedVersion;
         } else if (packageJson?.devDependencies && packageJson.devDependencies[dependencyName]) {

@@ -4,14 +4,18 @@ import chalk from 'chalk';
 import fs from 'fs';
 import { JsonFile, FileSystem } from '@rushstack/node-core-library';
 import { RootPath } from './getRootPath';
+import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
+import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/SubspacesConfiguration';
+import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
+import { CommonVersionsConfiguration } from '@rushstack/rush-sdk/lib';
 
 export const addProjectToSubspace = async (
-  projectToUpdate: any,
+  projectToUpdate: IRushConfigurationProjectJson,
   subspaceName: string,
-  rushJson: any,
-  subspaceJson: any,
+  rushJson: IRushConfigurationJson,
+  subspaceJson: ISubspacesConfigurationJson,
   isNewSubspace: boolean
-) => {
+): Promise<void> => {
   const { moveProject } = await inquirer.prompt([
     {
       message: `Do you want to move this project's location?`,
@@ -20,11 +24,11 @@ export const addProjectToSubspace = async (
     }
   ]);
 
-  let newProjectFolder;
-  let newProjectRelativeFolder;
+  let newProjectFolder: string;
+  let newProjectRelativeFolder: string;
   if (moveProject) {
     // Create the subspace folder
-    const subspaceFolder = `${RootPath}/subspaces/${subspaceName}`;
+    const subspaceFolder: string = `${RootPath}/subspaces/${subspaceName}`;
     FileSystem.ensureFolder(subspaceFolder);
 
     const { folder } = await inquirer.prompt([
@@ -49,7 +53,7 @@ export const addProjectToSubspace = async (
   }
 
   // Create the subspace config folder
-  const subspaceConfigFolder = `${RootPath}/common/config/subspaces/${subspaceName}`;
+  const subspaceConfigFolder: string = `${RootPath}/common/config/subspaces/${subspaceName}`;
   FileSystem.ensureFolder(subspaceConfigFolder);
 
   // Check if the project is already in a subspace that isn't a "split_*" workspace
@@ -57,11 +61,11 @@ export const addProjectToSubspace = async (
     // Project already exists in a subspace
 
     // Create the necessary files if they dont exist
-    const files = ['.npmrc', 'common-versions.json', 'repo-state.json'];
+    const files: string[] = ['.npmrc', 'common-versions.json', 'repo-state.json'];
     for (const file of files) {
       if (!FileSystem.exists(`${subspaceConfigFolder}/${file}`)) {
         FileSystem.copyFile({
-          sourcePath: `${RootPath}/common/autoinstallers/migrate-subspace/src/templates/${file}`,
+          sourcePath: FileSystem.getRealPath(`${__dirname}/../templates/${file}`),
           destinationPath: `${subspaceConfigFolder}/${file}`
         });
       }
@@ -86,10 +90,10 @@ export const addProjectToSubspace = async (
     }
   } else {
     // Project is in a individual subspace
-    const projectSubspaceConfigFolder = `${newProjectFolder}/subspace/${projectToUpdate.subspaceName}`;
+    const projectSubspaceConfigFolder: string = `${newProjectFolder}/subspace/${projectToUpdate.subspaceName}`;
     // Update the subspace's npmrc file
     console.log(chalk.green('Migrating the .npmrc file...'));
-    const npmrcLines = [];
+    const npmrcLines: string[] = [];
     if (FileSystem.exists(`${subspaceConfigFolder}/.npmrc`)) {
       npmrcLines.push(...fs.readFileSync(`${subspaceConfigFolder}/.npmrc`).toString().split('\n'));
     }
@@ -102,27 +106,38 @@ export const addProjectToSubspace = async (
     if (FileSystem.exists(`${subspaceConfigFolder}/common-versions.json`)) {
       console.log(chalk.green('Merging the common-versions.file...'));
       // Merge the two common versions
-      const subspaceCommonVersions = JsonFile.load(`${subspaceConfigFolder}/common-versions.json`);
-      const projectCommonVersions = JsonFile.load(`${projectSubspaceConfigFolder}/common-versions.json`);
+      const subspaceCommonVersions: CommonVersionsConfiguration = JsonFile.load(
+        `${subspaceConfigFolder}/common-versions.json`
+      );
+      const projectCommonVersions: CommonVersionsConfiguration = JsonFile.load(
+        `${projectSubspaceConfigFolder}/common-versions.json`
+      );
       for (const [key, value] of Object.entries(projectCommonVersions.preferredVersions)) {
-        if (subspaceCommonVersions.preferredVersions[key]) {
+        const subspacePreferredVersion: string | undefined =
+          subspaceCommonVersions.preferredVersions.get(key);
+        if (subspacePreferredVersion) {
           console.log(
             chalk.red(
-              `There are conflicting values for ${key} in the common-versions.json file's prefferedVersions: ${value} and ${subspaceCommonVersions.preferredVersions[key]}`
+              `There are conflicting values for ${key} in the common-versions.json file's preferredVersions: ${value} and ${subspacePreferredVersion}`
             )
           );
         } else {
-          subspaceCommonVersions.preferredVersions[key] = value;
+          subspaceCommonVersions.preferredVersions.set(key, value);
         }
       }
       for (const [key, value] of Object.entries(projectCommonVersions.allowedAlternativeVersions)) {
-        if (subspaceCommonVersions.allowedAlternativeVersions[key]) {
-          // @ts-ignore
-          subspaceCommonVersions.allowedAlternativeVersions[key].push(...value);
+        const subspaceAllowedAlternativeVersions: readonly string[] =
+          subspaceCommonVersions.allowedAlternativeVersions.get(key) || [];
+        if (subspaceAllowedAlternativeVersions.length > 0) {
+          subspaceCommonVersions.allowedAlternativeVersions.set(key, [
+            ...subspaceAllowedAlternativeVersions,
+            value
+          ]);
         } else {
-          subspaceCommonVersions.allowedAlternativeVersions[key] = value;
+          subspaceCommonVersions.allowedAlternativeVersions.set(key, value);
         }
       }
+
       JsonFile.save(subspaceCommonVersions, `${subspaceConfigFolder}/common-versions.json`, {
         updateExistingFile: true
       });
@@ -170,30 +185,9 @@ export const addProjectToSubspace = async (
     FileSystem.deleteFolder(`${newProjectFolder}/subspace`);
   }
 
-  // Try to update the entry in eden.mono.pipeline.json as well
-  const edenPipelineJson = JsonFile.load(`${RootPath}/eden.mono.pipeline.json`);
-  let pipelineEntry: any;
-  for (const entry of Object.values(edenPipelineJson.scene.scm)) {
-    // @ts-ignore
-    if (entry.entries[0] === projectToUpdate.packageName) {
-      pipelineEntry = entry;
-    }
-  }
-  // Update the pipelinePath if it exit
-  if (pipelineEntry && pipelineEntry.pipelinePath) {
-    // replace the pipeline path
-    pipelineEntry.pipelinePath = pipelineEntry.pipelinePath.replace(
-      projectToUpdate.projectFolder,
-      newProjectRelativeFolder
-    );
-    JsonFile.save(edenPipelineJson, `${RootPath}/eden.mono.pipeline.json`, {
-      updateExistingFile: true
-    });
-  }
-
-  const previousSubspaceName = projectToUpdate.subspaceName || 'default';
+  const previousSubspaceName: string = projectToUpdate.subspaceName || 'default';
   // Find the project in rushJson
-  const rushProjectToUpdate = rushJson.projects.filter(
+  const rushProjectToUpdate: IRushConfigurationProjectJson = rushJson.projects.filter(
     (pkg: any) => pkg.packageName === projectToUpdate.packageName
   )[0];
   rushProjectToUpdate.projectFolder = newProjectRelativeFolder;
@@ -201,18 +195,6 @@ export const addProjectToSubspace = async (
   JsonFile.save(rushJson, `${RootPath}/rush.json`, {
     updateExistingFile: true
   });
-
-  // Update the project's entry in eden.monorepo.json
-  const edenMonorepoJson = JsonFile.load(`${RootPath}/eden.monorepo.json`);
-  const edenProject = edenMonorepoJson.packages.filter(
-    (pkg: any) => pkg.name === projectToUpdate.packageName
-  )[0];
-  if (edenProject) {
-    edenProject.path = newProjectRelativeFolder;
-    JsonFile.save(edenMonorepoJson, `${RootPath}/eden.monorepo.json`, {
-      updateExistingFile: true
-    });
-  }
 
   // Update the subspace json
   if (previousSubspaceName.startsWith('split_')) {

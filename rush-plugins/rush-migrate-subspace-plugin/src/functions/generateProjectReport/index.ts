@@ -3,18 +3,19 @@
  * this project into the subspace.
  */
 
-import { JsonFile } from '@rushstack/node-core-library';
+import { INodePackageJson, JsonFile } from '@rushstack/node-core-library';
 import inquirer from 'inquirer';
 import { RootPath } from '../getRootPath';
-import { RushConfigurationProject } from '@rushstack/rush-sdk';
 import chalk from 'chalk';
+import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
+import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 
 export const generateProjectReport = async (projectName: string, subspaceName: string): Promise<void> => {
-  const rushJson = JsonFile.load(`${RootPath}/rush.json`);
+  const rushJson: IRushConfigurationJson = JsonFile.load(`${RootPath}/rush.json`);
 
   // Get all the projects for this subspace
-  let currProject: RushConfigurationProject | null = null;
-  const subspaceProjects: RushConfigurationProject[] = [];
+  let currProject: IRushConfigurationProjectJson | undefined;
+  const subspaceProjects: IRushConfigurationProjectJson[] = [];
   for (const project of rushJson.projects) {
     if (project.packageName === projectName) {
       currProject = project;
@@ -29,13 +30,13 @@ export const generateProjectReport = async (projectName: string, subspaceName: s
   );
 
   // Create a map of dependencies
-  const subspaceDependencies = new Map();
+  const subspaceDependencies: Map<string, Set<string>> = new Map();
   for (const subspaceProject of subspaceProjects) {
-    const packageJson = JsonFile.load(`${subspaceProject.projectFolder}/package.json`);
+    const packageJson: INodePackageJson = JsonFile.load(`${subspaceProject.projectFolder}/package.json`);
     if (packageJson.dependencies) {
       for (const [dep, version] of Object.entries(packageJson.dependencies)) {
         if (subspaceDependencies.has(dep)) {
-          subspaceDependencies.get(dep).add(version);
+          subspaceDependencies.get(dep)?.add(version);
         } else {
           subspaceDependencies.set(dep, new Set([version]));
         }
@@ -44,7 +45,7 @@ export const generateProjectReport = async (projectName: string, subspaceName: s
     if (packageJson.devDependencies) {
       for (const [dep, version] of Object.entries(packageJson.devDependencies)) {
         if (subspaceDependencies.has(dep)) {
-          subspaceDependencies.get(dep).add(version);
+          subspaceDependencies.get(dep)?.add(version);
         } else {
           subspaceDependencies.set(dep, new Set([version]));
         }
@@ -53,13 +54,13 @@ export const generateProjectReport = async (projectName: string, subspaceName: s
   }
 
   // Check the package dependencies against the subspace dependencies to look for collisions
-  const migratePackageConflicts: { [key in string]: Set<string> } = {};
-  const migratePackageJSON = JsonFile.load(`${currProject?.projectFolder}/package.json`);
+  const migratePackageConflicts: Record<string, Set<string>> = {};
+  const migratePackageJSON: INodePackageJson = JsonFile.load(`${currProject?.projectFolder}/package.json`);
   if (migratePackageJSON.dependencies) {
     for (const [dep, version] of Object.entries(migratePackageJSON.dependencies)) {
       if (subspaceDependencies.has(dep)) {
-        const subspaceDepVersions = subspaceDependencies.get(dep);
-        if (!subspaceDepVersions.has(version)) {
+        const subspaceDepVersions: Set<string> | undefined = subspaceDependencies.get(dep);
+        if (!subspaceDepVersions?.has(version)) {
           // Collison version
           if (migratePackageConflicts[dep]) {
             migratePackageConflicts[dep].add(version as string);
@@ -68,14 +69,14 @@ export const generateProjectReport = async (projectName: string, subspaceName: s
           }
           subspaceDependencies
             .get(dep)
-            .forEach(migratePackageConflicts[dep].add, migratePackageConflicts[dep]);
+            ?.forEach(migratePackageConflicts[dep].add, migratePackageConflicts[dep]);
         }
       }
     }
-    for (const [dep, version] of Object.entries(migratePackageJSON.devDependencies)) {
+    for (const [dep, version] of Object.entries(migratePackageJSON.devDependencies || {})) {
       if (subspaceDependencies.has(dep)) {
-        const subspaceDepVersions = subspaceDependencies.get(dep);
-        if (!subspaceDepVersions.has(version)) {
+        const subspaceDepVersions: Set<string> | undefined = subspaceDependencies.get(dep);
+        if (!subspaceDepVersions?.has(version)) {
           // Collison version
           if (migratePackageConflicts[dep]) {
             migratePackageConflicts[dep].add(version as string);
@@ -84,7 +85,7 @@ export const generateProjectReport = async (projectName: string, subspaceName: s
           }
           subspaceDependencies
             .get(dep)
-            .forEach(migratePackageConflicts[dep].add, migratePackageConflicts[dep]);
+            ?.forEach(migratePackageConflicts[dep].add, migratePackageConflicts[dep]);
         }
       }
     }
@@ -106,7 +107,7 @@ export const generateProjectReport = async (projectName: string, subspaceName: s
   ]);
 
   if (saveToFile) {
-    let jsonFilePath = '';
+    let jsonFilePath: string = '';
     const { filePath } = await inquirer.prompt([
       {
         message: `Please enter the file path to save this file. Please do not commit it to git.`,
