@@ -16,11 +16,25 @@
     "**/lib-amd": true,
     "**/test/**/temp": false,
     "**/temp": true,
-    "**/coverage": true
+    "**/coverage": true,
   },
   "files.associations": {
     "**/package.json": "json",
-    "**/*.json": "jsonc"
+    "**/*.json": "jsonc",
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "eslint.useFlatConfig": false,
+  "eslint.workingDirectories": [
+    "./rush-plugins/rush-migrate-subspace-plugin",
+    "./rush-plugins/rush-archive-project-plugin",
+    "./rush-plugins/rush-audit-cache-plugin",
+    "./rush-plugins/rush-git-lfs-plugin",
+    "./rush-plugins/rush-init-project-plugin",
+    "./rush-plugins/rush-lint-staged-plugin",
+    "./rush-plugins/rush-print-log-if-error-plugin",
+    "./rush-plugins/rush-sort-package-json",
+    "./rush-plugins/rush-upgrade-self-plugin",
+  ],
 }
