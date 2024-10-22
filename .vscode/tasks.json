@@ -1,0 +1,11 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "rush: build rush-migrate-subspace-plugin",
+			"detail": "rush build -t rush-migrate-subspace-plugin",
+			"command": "rush build -t rush-migrate-subspace-plugin"
+		}
+	]
+}
