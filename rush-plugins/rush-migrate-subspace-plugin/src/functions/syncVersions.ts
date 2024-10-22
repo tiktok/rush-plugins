@@ -1,22 +1,23 @@
-import { querySubspace } from './querySubspace';
+import { chooseSubspace } from '../commands/subspace';
 
 import chalk from 'chalk';
-import inquirer from 'inquirer';
 import fs from 'fs';
 import { IPackageJson, JsonFile } from '@rushstack/node-core-library';
 import { VersionMismatchFinder } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinder';
-import { CommonVersionsConfiguration } from '@rushstack/rush-sdk/lib/api/CommonVersionsConfiguration';
+import { ICommonVersionsJsonVersionsMap } from '@rushstack/rush-sdk/lib/api/CommonVersionsConfiguration';
 import { Subspace } from '@rushstack/rush-sdk/lib/api/Subspace';
 import { RushConfiguration } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
 import { RushConfigurationProject } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { VersionMismatchFinderEntity } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinderEntity';
+import { enterVersion, requestVersionType } from '../commands/version';
+import { RushPathConstants } from '../constants/paths';
 
 export async function syncVersions(): Promise<void> {
   const config: RushConfiguration = RushConfiguration.loadFromDefaultLocation();
+  const subspaceName: string = await chooseSubspace();
 
-  const subspaceName: string = await querySubspace();
   const selectedSubspace: Subspace = config.subspaces.filter(
-    (subspace: any) => subspace.subspaceName === subspaceName
+    (subspace) => subspace.subspaceName === subspaceName
   )[0];
 
   const { mismatches } = VersionMismatchFinder.getMismatches(config, {
@@ -32,10 +33,9 @@ export async function syncVersions(): Promise<void> {
   console.clear();
 
   let count: number = 0;
-  const subspaceCommonVersionsPath: string = `${selectedSubspace.getSubspaceConfigFolderPath()}/common-versions.json`;
-  const subspaceCommonVersionsJson: CommonVersionsConfiguration = JsonFile.load(subspaceCommonVersionsPath);
-  const allowedAlternativeVersions: Map<string, readonly string[]> =
-    subspaceCommonVersionsJson.allowedAlternativeVersions;
+  const subspaceCommonVersionsPath: string = `${RushPathConstants.SubspacesConfigurationFolder}/${subspaceName}/common-versions.json`;
+  const subspaceCommonVersionsJson: ICommonVersionsJsonVersionsMap =
+    JsonFile.load(subspaceCommonVersionsPath);
   for (const [dependencyName, mismatchVersionMap] of mismatches.entries()) {
     count++;
 
@@ -46,40 +46,17 @@ export async function syncVersions(): Promise<void> {
     console.log(
       `There are ${mismatchVersionMap.size} different versions of the ${dependencyName} dependency: \n`
     );
-    const { versionToSync } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'versionToSync',
-        message: 'Which version would you like to sync all the packages to?',
-        choices: [
-          ...availableVersions.map((ver) => {
-            const packagesWithVersion: readonly VersionMismatchFinderEntity[] =
-              mismatchVersionMap.get(ver) || [];
-            return {
-              value: ver,
-              name: `${ver} - used by ${packagesWithVersion.length} packages.`
-            };
-          }),
-          { name: 'Manual Entry', value: 'manual' },
-          { name: 'Skip this package', value: 'skip' },
-          { name: 'Add versions to allowedAlternativeVersions', value: 'alternative' }
-        ]
-      }
-    ]);
-
+    const versionToSync: string = await requestVersionType(availableVersions, mismatchVersionMap);
     if (versionToSync === 'skip') {
       continue;
     } else if (versionToSync === 'manual') {
-      const { newVersion } = await inquirer.prompt([
-        {
-          type: 'input',
-          name: 'newVersion',
-          message: `Please enter the version you wish to set for the ${dependencyName} package.`
-        }
-      ]);
+      const newVersion: string = await enterVersion(dependencyName);
       selectedVersion = newVersion.trim();
     } else if (versionToSync === 'alternative') {
-      allowedAlternativeVersions.set(dependencyName, availableVersions);
+      subspaceCommonVersionsJson.allowedAlternativeVersions = {
+        ...subspaceCommonVersionsJson.allowedAlternativeVersions,
+        [dependencyName]: availableVersions
+      };
     } else {
       selectedVersion = versionToSync;
     }
@@ -122,7 +99,10 @@ export async function syncVersions(): Promise<void> {
       }
     }
 
-    JsonFile.save(subspaceCommonVersionsJson, subspaceCommonVersionsPath, { updateExistingFile: true });
+    JsonFile.save(subspaceCommonVersionsJson, subspaceCommonVersionsPath, {
+      updateExistingFile: true,
+      prettyFormatting: true
+    });
     console.clear();
   }
 

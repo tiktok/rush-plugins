@@ -6,9 +6,14 @@ import { RushPathConstants } from '../constants/paths';
 
 export const getProject = (projectName: string): IRushConfigurationProjectJson => {
   const rushJson: IRushConfigurationJson = JsonFile.load(RushPathConstants.RushConfigurationJson);
-  // Update rushJson for this project
   const projectToUpdate: IRushConfigurationProjectJson = rushJson.projects.filter(
     (project) => project.packageName === projectName
   )[0];
+
   return projectToUpdate;
+};
+
+export const queryProjects = (): IRushConfigurationProjectJson[] => {
+  const rushJson: IRushConfigurationJson = JsonFile.load(RushPathConstants.RushConfigurationJson);
+  return rushJson.projects;
 };

@@ -1,5 +1,3 @@
-import path from 'path';
-import inquirer from 'inquirer';
 import chalk from 'chalk';
 import fs from 'fs';
 import { JsonFile, FileSystem } from '@rushstack/node-core-library';
@@ -11,6 +9,7 @@ import { CommonVersionsConfiguration } from '@rushstack/rush-sdk/lib/api/CommonV
 import { updateEdenProject } from './updateEdenProject';
 import { RushPathConstants } from '../constants/paths';
 import { startSubspace } from './startSubspace';
+import { enterNewProjectLocation, moveProject } from '../commands/project';
 
 export const addProjectToSubspace = async (
   projectToUpdate: IRushConfigurationProjectJson,
@@ -19,33 +18,20 @@ export const addProjectToSubspace = async (
   subspaceJson: ISubspacesConfigurationJson,
   isNewSubspace: boolean
 ): Promise<void> => {
-  const { moveProject } = await inquirer.prompt([
-    {
-      message: `Do you want to move this project's location?`,
-      type: 'confirm',
-      name: 'moveProject'
-    }
-  ]);
+  const canMoveProject: boolean = await moveProject();
 
   let newProjectFolder: string;
   let newProjectRelativeFolder: string;
-  if (moveProject) {
+  if (canMoveProject) {
     // Create the subspace folder
     const subspaceFolder: string = `${RushPathConstants.SubspacesFolder}/${subspaceName}`;
     FileSystem.ensureFolder(subspaceFolder);
 
-    const { folder } = await inquirer.prompt([
-      {
-        message: `Please enter the folder (or subfolder) you want to move this project to. \n${subspaceFolder}/<your_project_folder>`,
-        type: 'input',
-        name: 'folder',
-        default: path.basename(projectToUpdate.projectFolder)
-      }
-    ]);
+    const newProjectFolderPath: string = await enterNewProjectLocation(projectToUpdate, subspaceName);
 
     // Move the project over
-    newProjectFolder = `${subspaceFolder}/${folder}`;
-    newProjectRelativeFolder = `subspaces/${subspaceName}/${folder}`;
+    newProjectFolder = `${subspaceFolder}/${newProjectFolderPath}`;
+    newProjectRelativeFolder = `subspaces/${subspaceName}/${newProjectFolderPath}`;
     FileSystem.move({
       sourcePath: `${getRootPath()}/${projectToUpdate.projectFolder}`,
       destinationPath: newProjectFolder
