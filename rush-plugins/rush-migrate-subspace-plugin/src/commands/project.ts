@@ -31,20 +31,17 @@ export const enterNewProjectLocation = async (
   return folder;
 };
 
-export const chooseProject = async (
-  projects: IRushConfigurationProjectJson[],
-  subspaceName: string
-): Promise<string> => {
-  const { projectToAdd } = await inquirer.prompt([
+export const chooseProject = async (projects: IRushConfigurationProjectJson[]): Promise<string> => {
+  const { projectNameInput } = await inquirer.prompt([
     {
-      message: `Please select a project to add to the ${subspaceName} subspace.`,
+      message: `Please select the project name (Type to filter).`,
       type: 'search-list',
-      name: 'projectToAdd',
+      name: 'projectNameInput',
       choices: projects.map((project) => ({ name: project.packageName, value: project.packageName }))
     }
   ]);
 
-  return projectToAdd;
+  return projectNameInput;
 };
 
 export const confirmChooseProject = async (subspaceName: string): Promise<boolean> => {

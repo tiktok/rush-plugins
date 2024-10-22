@@ -5,7 +5,6 @@ import { JsonFile } from '@rushstack/node-core-library';
 import { chooseSubspace, createSubspace, enterSubspaceSelection } from './commands/subspace';
 import { addProjectToSubspace } from './functions/addProjectToSubspace';
 import { getProject, queryProjects } from './utilities/project';
-import { generateReport } from './functions/generateReport';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
 import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/SubspacesConfiguration';
@@ -16,11 +15,7 @@ import { chooseProject, confirmChooseProject } from './commands/project';
 
 inquirer.registerPrompt('search-list', inquirerSearchList);
 
-interface IRunOptions {
-  report?: boolean;
-}
-
-export async function main(options: IRunOptions): Promise<void> {
+export async function main(): Promise<void> {
   if (!isSubspaceSupported()) {
     // Start subspaces
     console.log(chalk.yellow(`The monorepo doesn't contain subspaces. Starting subspaces...`));
@@ -30,6 +25,7 @@ export async function main(options: IRunOptions): Promise<void> {
   const availableProjects: IRushConfigurationProjectJson[] = queryProjects().filter(
     ({ subspaceName }) => !subspaceName
   );
+
   if (availableProjects.length === 0) {
     console.log(chalk.green('Congratulations! All projects are already assigned to a subspace!'));
     return;
@@ -68,7 +64,7 @@ export async function main(options: IRunOptions): Promise<void> {
   // Loop until user asks to quit
   let continueToAdd: boolean = true;
   do {
-    const projectNameToAdd: string = await chooseProject(availableProjects, subspaceName);
+    const projectNameToAdd: string = await chooseProject(availableProjects);
 
     // Update rushJson for this project
     const projectToUpdate: IRushConfigurationProjectJson = getProject(projectNameToAdd);
@@ -90,9 +86,4 @@ export async function main(options: IRunOptions): Promise<void> {
       `Make sure to test thoroughly after updating the lockfile, there may be changes in the dependency versions.`
     )
   );
-
-  if (options.report) {
-    const subspaceName: string = await chooseSubspace();
-    await generateReport(subspaceName);
-  }
 }
