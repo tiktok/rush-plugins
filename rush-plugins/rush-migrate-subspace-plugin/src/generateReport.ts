@@ -1,32 +1,40 @@
 import { INodePackageJson, JsonFile } from '@rushstack/node-core-library';
-import chalk from 'chalk';
+import { enterReportFileLocationPrompt, confirmSaveReportPrompt } from './prompts/report';
+import { chooseSubspacePrompt } from './prompts/subspace';
+import { chooseProjectPrompt } from './prompts/project';
+import Console from './providers/console';
+import { loadRushConfiguration, loadRushSubspacesConfiguration } from './utilities/repository';
+import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
+import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/SubspacesConfiguration';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
-import { enterReportFileLocation, confirmSaveReport } from '../commands/report';
-import { chooseSubspace } from '../commands/subspace';
-import { chooseProject } from '../commands/project';
-import { queryProjects } from '../utilities/project';
 
 export const generateReport = async (): Promise<void> => {
-  const subspaceName: string = await chooseSubspace();
+  Console.debug('Executing project reporting command...');
 
-  const subspaceProjects: IRushConfigurationProjectJson[] = queryProjects().filter(
-    (project) => project.subspaceName === subspaceName
+  const rushConfig: IRushConfigurationJson = loadRushConfiguration();
+  const subspacesConfig: ISubspacesConfigurationJson = loadRushSubspacesConfiguration();
+  const selectedSubspaceName: string = await chooseSubspacePrompt(subspacesConfig.subspaceNames);
+
+  const subspaceProjects: IRushConfigurationProjectJson[] = rushConfig.projects.filter(
+    ({ subspaceName }) => subspaceName === selectedSubspaceName
   );
 
-  const projectName: string = await chooseProject(subspaceProjects);
-  const projectIndex: number = subspaceProjects.findIndex((p) => p.packageName === projectName);
+  const projectToReport: IRushConfigurationProjectJson = await chooseProjectPrompt(subspaceProjects);
+  const projectToReportIndex: number = subspaceProjects.findIndex(
+    ({ packageName }) => packageName === projectToReport.packageName
+  );
 
-  if (projectIndex < 0) {
-    console.log(chalk.red(`We couldn't find "${projectName}". Please try again.`));
+  if (projectToReportIndex < 0) {
+    Console.error(`We couldn't find "${projectToReport.packageName}". Please try again.`);
     return;
   }
 
-  const [project] = subspaceProjects.splice(projectIndex, 1);
+  const [subspaceProject] = subspaceProjects.splice(projectToReportIndex, 1);
 
-  console.log(
+  Console.info(
     `Generating report for all the version mismatches between [${subspaceProjects.map(
-      (project) => `"${chalk.green(project.packageName)}"`
-    )}] and the project "${chalk.green(projectName)}"...`
+      ({ packageName }) => `"${packageName}"`
+    )}] and the project "${projectToReport.packageName}"...`
   );
 
   // Create a map of dependencies
@@ -57,7 +65,7 @@ export const generateReport = async (): Promise<void> => {
   // Check the package dependencies against the subspace dependencies to look for collisions
   const migratePackageConflicts: Record<string, Set<string>> = {};
 
-  const packageJson: INodePackageJson = JsonFile.load(`${project.projectFolder}/package.json`);
+  const packageJson: INodePackageJson = JsonFile.load(`${subspaceProject.projectFolder}/package.json`);
   if (packageJson.dependencies) {
     for (const [dep, version] of Object.entries(packageJson.dependencies)) {
       if (subspaceDependencies.has(dep)) {
@@ -100,18 +108,18 @@ export const generateReport = async (): Promise<void> => {
 
   for (const [conflictPackage, conflictVersions] of Object.entries(migratePackageConflicts)) {
     const conflictVersionsArray: string[] = Array.from(conflictVersions);
-    console.log(chalk.red(`${conflictPackage} has conflicting versions: ${conflictVersionsArray}`));
+    Console.warn(`${conflictPackage} has conflicting versions: ${conflictVersionsArray}`);
     outputJSONFile.conflictingVersions[conflictPackage] = conflictVersionsArray;
   }
 
-  const saveToFile: boolean = await confirmSaveReport();
+  const saveToFile: boolean = await confirmSaveReportPrompt();
   if (saveToFile) {
     let jsonFilePath: string = '';
-    const filePath: string = await enterReportFileLocation();
+    const filePath: string = await enterReportFileLocationPrompt();
     jsonFilePath = filePath;
 
     // Get the file path, save the file
-    JsonFile.save(outputJSONFile, jsonFilePath);
-    console.log(chalk.green(`Saved analysis file to ${jsonFilePath}.`));
+    JsonFile.save(outputJSONFile, jsonFilePath, { prettyFormatting: true });
+    Console.success(`Saved analysis file to ${jsonFilePath}.`);
   }
 };

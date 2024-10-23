@@ -1,6 +1,6 @@
 import { spawnSync, SpawnSyncReturns } from 'child_process';
 
-const _getMonorepoRootPath = (): string => {
+const getMonorepoRootPath = (): string => {
   const result: SpawnSyncReturns<string> = spawnSync('git', ['rev-parse', '--show-toplevel'], {
     encoding: 'utf-8'
   });
@@ -18,7 +18,7 @@ export const getRootPath = (): string => {
       return rootPath;
     }
 
-    rootPath = _getMonorepoRootPath();
+    rootPath = getMonorepoRootPath();
     return rootPath;
   })();
 };

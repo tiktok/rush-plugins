@@ -1,7 +1,7 @@
 import { VersionMismatchFinderEntity } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinderEntity';
 import inquirer from 'inquirer';
 
-export const requestVersionType = async (
+export const requestVersionTypePrompt = async (
   availableVersions: string[],
   mismatchVersionMap: ReadonlyMap<string, readonly VersionMismatchFinderEntity[]>
 ): Promise<string> => {
@@ -29,7 +29,7 @@ export const requestVersionType = async (
   return versionToSync;
 };
 
-export const enterVersion = async (dependencyName: string): Promise<string> => {
+export const enterVersionPrompt = async (dependencyName: string): Promise<string> => {
   const { newVersion } = await inquirer.prompt([
     {
       type: 'input',

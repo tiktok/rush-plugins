@@ -1,42 +1,58 @@
+import { JsonFile, JsonObject } from '@rushstack/node-core-library';
+import { RushNameConstants } from '../constants/paths';
+import Console from '../providers/console';
 import chalk from 'chalk';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
-import { JsonFile, JsonObject } from '@rushstack/node-core-library';
-import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
-import { RushPathConstants } from '../constants/paths';
+import { getRootPath } from '../utilities/path';
 
 export async function updateEdenProject(
-  projectToUpdate: IRushConfigurationProjectJson,
-  subspaceName: string,
-  rushJson: IRushConfigurationJson,
-  newProjectFolder: string
+  sourceProject: IRushConfigurationProjectJson,
+  targetProject: IRushConfigurationProjectJson
 ): Promise<void> {
-  const edenPipelineJson: JsonObject = JsonFile.load(RushPathConstants.EdenPipelineJson);
+  Console.debug(`Update monorepo eden configuration...`);
 
+  const edenPipelineFilePath: string = `${getRootPath()}/${RushNameConstants.EdenPipelineFileName}`;
+  const edenPipelineJson: JsonObject = JsonFile.load(edenPipelineFilePath);
   for (const entry of Object.values<JsonObject>(edenPipelineJson.scene.scm)) {
-    if (entry.entries[0] === projectToUpdate.packageName && entry.pipelinePath) {
+    if (entry.entries[0] === targetProject.packageName && entry.pipelinePath) {
       // Update the pipelinePath
-      entry.pipelinePath = entry.pipelinePath.replace(projectToUpdate.projectFolder, newProjectFolder);
+      entry.pipelinePath = entry.pipelinePath.replace(
+        sourceProject.projectFolder,
+        targetProject.projectFolder
+      );
 
-      JsonFile.save(edenPipelineJson, RushPathConstants.EdenPipelineJson, {
-        updateExistingFile: true
+      Console.debug(
+        `Updating eden.mono.pipeline.json, by adding ${chalk.bold(
+          targetProject.packageName
+        )} into pipeline path...`
+      );
+      JsonFile.save(edenPipelineJson, edenPipelineFilePath, {
+        updateExistingFile: true,
+        prettyFormatting: true
       });
 
-      console.log(chalk.green('Eden monorepo pipelines have been successfully updated.'));
+      Console.success('Eden monorepo pipelines have been successfully updated.');
     }
   }
 
-  const edenMonorepoJson: JsonObject = JsonFile.load(RushPathConstants.EdenMonorepoJson);
+  const edenMonorepoFilePath: string = `${getRootPath()}/${RushNameConstants.EdenMonorepoFileName}`;
+  const edenMonorepoJson: JsonObject = JsonFile.load(edenMonorepoFilePath);
   const edenProject: JsonObject = edenMonorepoJson.packages.filter(
-    (pkg: JsonObject) => pkg.name === projectToUpdate.packageName
+    ({ name }: JsonObject) => name === targetProject.packageName
   )[0];
 
   if (edenProject) {
-    // Update the project's entry in eden.monorepo.json
-    edenProject.path = newProjectFolder;
-    JsonFile.save(edenMonorepoJson, RushPathConstants.EdenMonorepoJson, {
-      updateExistingFile: true
+    edenProject.path = targetProject.projectFolder;
+
+    Console.debug(
+      `Updating eden.monorepo.json, by adding ${chalk.bold(targetProject.packageName)} into package path...`
+    );
+
+    JsonFile.save(edenMonorepoJson, edenMonorepoFilePath, {
+      updateExistingFile: true,
+      prettyFormatting: true
     });
 
-    console.log(chalk.green('Eden monorepo configuration has been successfully updated.'));
+    Console.success('Eden monorepo configuration has been successfully updated.');
   }
 }

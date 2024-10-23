@@ -1,21 +1,29 @@
 import { Command } from 'commander';
-import { main } from './main';
-import { syncVersions } from './functions/syncVersions';
-import { generateReport } from './functions/generateReport';
+import inquirer from 'inquirer';
+import inquirerSearchList from 'inquirer-search-list';
+import { syncVersions } from './syncVersions';
+import { generateReport } from './generateReport';
+import { migrateProject } from './migrateProject';
+import Console from './providers/console';
+
+inquirer.registerPrompt('search-list', inquirerSearchList);
 
 const program: Command = new Command();
 
 program
-  .option('-r|--report', 'to generate only custom pipelines')
+  .option('--report', 'to generate only custom pipelines')
   .option('--sync', 'to sync the versions in a subspace')
-  .description('Example: rush migrate-subspace [--report] [--sync]')
-  .action(async (option) => {
-    if (option.sync) {
+  .option('--verbose', 'to provide more logs')
+  .description('Example: rush migrate-subspace [--report] [--sync] [--verbose]')
+  .action(async ({ sync, report, verbose }) => {
+    Console.verbose = verbose;
+    Console.title('Welcome to the Rush Migrate Subspace Plugin!');
+    if (sync) {
       await syncVersions();
-    } else if (option.report) {
+    } else if (report) {
       await generateReport();
     } else {
-      await main();
+      await migrateProject();
     }
   });
 

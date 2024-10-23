@@ -1,19 +1,24 @@
-import { JsonFile } from '@rushstack/node-core-library';
-
 import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
-import { RushPathConstants } from '../constants/paths';
+import { getRootPath } from './path';
+import { loadRushConfiguration } from './repository';
 
-export const getProject = (projectName: string): IRushConfigurationProjectJson => {
-  const rushJson: IRushConfigurationJson = JsonFile.load(RushPathConstants.RushConfigurationJson);
-  const projectToUpdate: IRushConfigurationProjectJson = rushJson.projects.filter(
-    (project) => project.packageName === projectName
-  )[0];
-
-  return projectToUpdate;
+export const queryProjects = (rootPath: string = getRootPath()): IRushConfigurationProjectJson[] => {
+  const rushJson: IRushConfigurationJson = loadRushConfiguration(rootPath);
+  return rushJson.projects;
 };
 
-export const queryProjects = (): IRushConfigurationProjectJson[] => {
-  const rushJson: IRushConfigurationJson = JsonFile.load(RushPathConstants.RushConfigurationJson);
-  return rushJson.projects;
+export const queryProjectsWithoutSubspace = (
+  rootPath: string = getRootPath()
+): IRushConfigurationProjectJson[] => {
+  const projects: IRushConfigurationProjectJson[] = queryProjects(rootPath);
+  return projects.filter(({ subspaceName }) => !subspaceName);
+};
+
+export const queryProject = (
+  projectName: string,
+  rootPath: string = getRootPath()
+): IRushConfigurationProjectJson | undefined => {
+  const projects: IRushConfigurationProjectJson[] = queryProjects(rootPath);
+  return projects.find(({ packageName }) => packageName === projectName);
 };
