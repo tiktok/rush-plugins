@@ -70,8 +70,8 @@ export const addProjectToSubspace = async (
     }
   }
 
-  removeProjectToRushConfiguration(sourceProject, sourceMonorepoPath);
   addProjectToRushConfiguration(sourceProject, targetSubspace);
+  removeProjectToRushConfiguration(sourceProject, sourceMonorepoPath);
 
   if (FileSystem.exists(`${getRootPath()}/${RushNameConstants.EdenMonorepoFileName}`)) {
     const targetProject: IRushConfigurationProjectJson = queryProject(

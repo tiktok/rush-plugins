@@ -35,7 +35,13 @@ export async function migrateProject(): Promise<void> {
 
   Console.title('> Finding projects to migrate...');
   const sourceMonorepoPath: string = await chooseRepositoryPrompt();
+
+  Console.info(
+    `The script will migrate from ${chalk.bold(sourceMonorepoPath)} to ${chalk.bold(getRootPath())}`
+  );
+
   const subspaceSelectionType: string = await chooseCreateOrSelectSubspacePrompt(targetSubspaces);
+
   const targetSubspace: string =
     subspaceSelectionType === 'new'
       ? await createSubspacePrompt(targetSubspaces)
