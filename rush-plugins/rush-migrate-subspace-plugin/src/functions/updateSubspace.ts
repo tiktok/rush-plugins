@@ -1,4 +1,4 @@
-import { FileSystem, JsonFile, JsonObject } from '@rushstack/node-core-library';
+import { AlreadyExistsBehavior, FileSystem, JsonFile, JsonObject } from '@rushstack/node-core-library';
 import Console from '../providers/console';
 import chalk from 'chalk';
 import { RushConstants } from '@rushstack/rush-sdk';
@@ -21,7 +21,9 @@ const updateSubspaceCommonVersionsFile = (
         Console.warn(
           `There are conflicting values for ${chalk.bold(dependency)} in the ${chalk.bold(
             RushConstants.commonVersionsFilename
-          )} file's preferredVersions: ${chalk.bold(version)} and ${chalk.bold(targetPreferredVersion)}`
+          )} file's preferredVersions: ${chalk.bold(version)} and ${chalk.bold(
+            targetPreferredVersion
+          )}. Please fix.`
         );
       } else {
         targetCommonVersions.preferredVersions[dependency] = version;
@@ -93,7 +95,8 @@ const updateSubspacePnpmFile = (sourceSubspaceFolderPath: string, targetSubspace
 
   if (FileSystem.exists(sourcePnpmFilePath)) {
     if (FileSystem.exists(targetPnpmFilePath)) {
-      const targetPnpmTempFilePath: string = `${targetSubspaceFolderPath}/${RushNameConstants.PnpmSubspaceTemporaryFileName}`;
+      const tempPnpmSubspaceFileName: string = `.pnpmfile-subspace-temp_${new Date().getTime()}.cjs`;
+      const targetPnpmTempFilePath: string = `${targetSubspaceFolderPath}/${tempPnpmSubspaceFileName}`;
       Console.debug(
         `Duplicating temporary ${chalk.bold(sourcePnpmFilePath)} into ${chalk.bold(targetPnpmFilePath)}...`
       );
@@ -106,9 +109,7 @@ const updateSubspacePnpmFile = (sourceSubspaceFolderPath: string, targetSubspace
       Console.warn(
         `There are now two ${chalk.bold(RushNameConstants.PnpmSubspaceFileName)}. (${chalk.bold(
           RushNameConstants.PnpmSubspaceFileName
-        )} and .${chalk.bold(
-          RushNameConstants.PnpmSubspaceTemporaryFileName
-        )}). Please reconcile them into a singular ${chalk.bold(
+        )} and .${chalk.bold(tempPnpmSubspaceFileName)}). Please reconcile them into a singular ${chalk.bold(
           RushNameConstants.PnpmSubspaceFileName
         )} manually.`
       );
