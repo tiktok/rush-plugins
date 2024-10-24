@@ -15,7 +15,7 @@ import { updateSubspace } from './functions/updateSubspace';
 import { getRushSubspaceConfigurationFolderPath, isSubspaceSupported } from './utilities/subspace';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { queryProjects } from './utilities/project';
-import { querySubspaces } from './utilities/repository';
+import { isExternalMonorepo, querySubspaces } from './utilities/repository';
 
 export async function migrateProject(): Promise<void> {
   Console.debug('Executing project migration command...');
@@ -54,12 +54,18 @@ export async function migrateProject(): Promise<void> {
   // Loop until user asks to quit
   do {
     const sourceProjects: IRushConfigurationProjectJson[] = queryProjects(sourceMonorepoPath);
-    if (sourceProjects.length === 0) {
+    const sourceAvailableProjects: IRushConfigurationProjectJson[] = isExternalMonorepo(sourceMonorepoPath)
+      ? sourceProjects
+      : sourceProjects.filter(({ subspaceName }) => subspaceName !== targetSubspace);
+
+    if (sourceAvailableProjects.length === 0) {
       Console.error(`No projects found in the monorepo ${chalk.bold(sourceMonorepoPath)}! Exiting...`);
       return;
     }
 
-    const sourceProjectToMigrate: IRushConfigurationProjectJson = await chooseProjectPrompt(sourceProjects);
+    const sourceProjectToMigrate: IRushConfigurationProjectJson = await chooseProjectPrompt(
+      sourceAvailableProjects
+    );
     Console.title(
       `> Migrate project ${sourceProjectToMigrate.packageName} to subspace ${chalk.bold(targetSubspace)}...`
     );

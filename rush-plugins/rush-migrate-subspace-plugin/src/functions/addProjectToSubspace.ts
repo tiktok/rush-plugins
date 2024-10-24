@@ -4,15 +4,12 @@ import { RushNameConstants } from '../constants/paths';
 import Console from '../providers/console';
 import chalk from 'chalk';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
-import {
-  confirmDeleteProjectFolderPrompt,
-  enterNewProjectLocationPrompt,
-  moveProjectPrompt
-} from '../prompts/project';
+import { enterNewProjectLocationPrompt, moveProjectPrompt } from '../prompts/project';
 import { queryProject } from '../utilities/project';
 import { getRootPath } from '../utilities/path';
 import { RushConstants } from '@rushstack/rush-sdk';
 import { addProjectToRushConfiguration } from './updateRushConfiguration';
+import { isExternalMonorepo } from '../utilities/repository';
 
 const moveProjectToSubspaceFolder = async (
   sourceProjectFolderPath: string,
@@ -66,9 +63,8 @@ export const addProjectToSubspace = async (
     `Adding project ${chalk.bold(sourceProject.packageName)} to subspace ${chalk.bold(targetSubspace)}...\n`
   );
 
-  const isExternalMonorepo: boolean = sourceMonorepoPath !== getRootPath();
   let targetProjectFolderPath: string | undefined = `${getRootPath()}/${sourceProject.projectFolder}`;
-  if (isExternalMonorepo || (await moveProjectPrompt())) {
+  if (isExternalMonorepo(sourceMonorepoPath) || (await moveProjectPrompt())) {
     const sourceProjectFolderPath: string = `${sourceMonorepoPath}/${sourceProject.projectFolder}`;
     targetProjectFolderPath = await moveProjectToSubspaceFolder(sourceProjectFolderPath, targetSubspace);
     if (!targetProjectFolderPath) {

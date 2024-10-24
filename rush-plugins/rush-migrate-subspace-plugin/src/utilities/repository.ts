@@ -24,3 +24,10 @@ export const querySubspaces = (rootPath: string = getRootPath()): string[] => {
   const subspaceJson: ISubspacesConfigurationJson = loadRushSubspacesConfiguration(rootPath);
   return subspaceJson.subspaceNames;
 };
+
+export const isExternalMonorepo = (
+  sourceRootPath: string,
+  targetRootPath: string = getRootPath()
+): boolean => {
+  return sourceRootPath !== targetRootPath;
+};
