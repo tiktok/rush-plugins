@@ -12,17 +12,17 @@ inquirer.registerPrompt('search-list', inquirerSearchList);
 const program: Command = new Command();
 
 program
-  .option('--report', 'to generate only version mismatches')
+  .option('--analyze', 'to generate all version mismatches for a single project')
   .option('--sync', 'to sync the versions in a subspace')
   .option('--move', 'to move projects to a new subspace')
   .option('--verbose', 'to provide more logs')
-  .description('Example: rush migrate-subspace [--report] [--sync] [--verbose]')
-  .action(async ({ sync, report, verbose, move }) => {
+  .description('Example: rush migrate-subspace [--move] [--report] [--sync] [--verbose]')
+  .action(async ({ sync, analyze, verbose, move }) => {
     Console.verbose = verbose;
     Console.title('🚀 Welcome to the Rush Migrate Subspace Plugin!\n');
     if (sync) {
       await syncVersions();
-    } else if (report) {
+    } else if (analyze) {
       await generateReport();
     } else if (move) {
       await migrateProject();

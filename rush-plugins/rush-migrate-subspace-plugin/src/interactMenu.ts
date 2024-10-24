@@ -13,7 +13,7 @@ export const interactMenu = async (): Promise<void> => {
         exitApplication = true;
         break;
 
-      case 'report':
+      case 'analyze':
         await generateReport();
         break;
 
