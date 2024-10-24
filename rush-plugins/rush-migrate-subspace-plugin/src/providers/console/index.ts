@@ -12,7 +12,7 @@ export default class Console {
   }
 
   public static info(message: string): void {
-    console.log(`ℹ️\s${chalk.blue(message)}`);
+    console.log(`ℹ️ ${chalk.blue(message)}`);
   }
 
   public static warn(message: string): void {
@@ -28,7 +28,7 @@ export default class Console {
       return;
     }
 
-    console.log(`💬 ${chalk.cyan(message)}`);
+    console.log(`💬 ${chalk.grey(message)}`);
   }
 
   public static log(message: string): void {
@@ -36,11 +36,7 @@ export default class Console {
   }
 
   public static title(message: string): void {
-    console.log(`\n${chalk.bold(chalk.black(message))}\n`);
-  }
-
-  public static subTitle(message: string): void {
-    console.log(`\n${chalk.bold(chalk.black(message))}`);
+    console.log(`\n${chalk.bold(message)}`);
   }
 
   public static success(message: string): void {

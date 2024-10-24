@@ -20,7 +20,7 @@ import { isExternalMonorepo, querySubspaces } from './utilities/repository';
 export async function migrateProject(): Promise<void> {
   Console.debug('Executing project migration command...');
 
-  Console.subTitle(`📍 Analyzing if monorepo ${chalk.underline(getRootPath())} supports subspaces...`);
+  Console.title(`🔍 Analyzing if monorepo ${chalk.underline(getRootPath())} supports subspaces...`);
 
   const targetSubspaces: string[] = querySubspaces();
   if (!isSubspaceSupported()) {
@@ -33,7 +33,7 @@ export async function migrateProject(): Promise<void> {
 
   Console.success(`Monorepo ${chalk.bold(getRootPath())} fully supports subspaces!`);
 
-  Console.subTitle('📍 Finding projects to migrate...');
+  Console.title(`🔍 Finding projects to migrate to ${chalk.bold(getRootPath())}...`);
   const sourceMonorepoPath: string = await chooseRepositoryPrompt();
 
   Console.info(
@@ -66,8 +66,8 @@ export async function migrateProject(): Promise<void> {
     const sourceProjectToMigrate: IRushConfigurationProjectJson = await chooseProjectPrompt(
       sourceAvailableProjects
     );
-    Console.subTitle(
-      `📍 Migrating project ${sourceProjectToMigrate.packageName} to subspace ${chalk.bold(
+    Console.title(
+      `🏃 Migrating project ${sourceProjectToMigrate.packageName} to subspace ${chalk.bold(
         targetSubspace
       )}...`
     );

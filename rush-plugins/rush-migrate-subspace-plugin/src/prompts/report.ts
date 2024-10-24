@@ -1,5 +1,4 @@
 import inquirer from 'inquirer';
-import { RushNameConstants } from '../constants/paths';
 
 export const confirmSaveReportPrompt = async (): Promise<boolean> => {
   const { saveToFile } = await inquirer.prompt([
@@ -13,13 +12,13 @@ export const confirmSaveReportPrompt = async (): Promise<boolean> => {
   return saveToFile;
 };
 
-export const enterReportFileLocationPrompt = async (): Promise<string> => {
+export const enterReportFileLocationPrompt = async (defaultFileName: string): Promise<string> => {
   const { filePath } = await inquirer.prompt([
     {
       message: `Please enter the file path to save this file. Please do not commit it to git.`,
       type: 'input',
       name: 'filePath',
-      default: RushNameConstants.AnalysisFileName
+      default: defaultFileName
     }
   ]);
 

@@ -45,12 +45,16 @@ export async function syncVersions(): Promise<void> {
 
     const availableVersions: string[] = Array.from(mismatchVersionMap.keys());
     let selectedVersion: string | undefined;
-    Console.info(`Syncing package ${count} of ${mismatches.size + 1} version mismatches.`);
-    Console.info(`Syncing dependency: ${dependencyName}`);
+    Console.title(
+      `🔄 Syncing package ${chalk.bold(count)} of ${chalk.bold(mismatches.size + 1)} version mismatches...`
+    );
+    Console.info(`Syncing the dependency ${chalk.bold(dependencyName)}`);
 
     if (mismatchVersionMap.size > 0) {
       Console.warn(
-        `There are ${mismatchVersionMap.size} different versions of the ${dependencyName} dependency: \n`
+        `There are ${chalk.bold(mismatchVersionMap.size)} different versions of the ${chalk.bold(
+          dependencyName
+        )}`
       );
     }
 

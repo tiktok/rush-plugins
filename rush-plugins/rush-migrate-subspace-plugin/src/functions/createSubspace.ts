@@ -40,5 +40,5 @@ export const createSubspace = async (subspaceName: string): Promise<void> => {
     `Run "rush update --full --subspace ${subspaceName}" to update the subspace that this project is migrating from.`
   );
 
-  Console.success(`\n${chalk.bold(subspaceName)} subspace created successfully!\n`);
+  Console.success(`${chalk.bold(subspaceName)} subspace created successfully!\n`);
 };

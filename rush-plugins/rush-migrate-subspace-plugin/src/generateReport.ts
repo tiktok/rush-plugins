@@ -1,4 +1,4 @@
-import { INodePackageJson, JsonFile } from '@rushstack/node-core-library';
+import { INodePackageJson, JsonFile, JsonObject } from '@rushstack/node-core-library';
 import { enterReportFileLocationPrompt, confirmSaveReportPrompt } from './prompts/report';
 import { chooseSubspacePrompt } from './prompts/subspace';
 import { chooseProjectPrompt } from './prompts/project';
@@ -9,6 +9,8 @@ import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/Subspac
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import chalk from 'chalk';
 import { getRootPath } from './utilities/path';
+import { RushNameConstants } from './constants/paths';
+import path from 'path';
 
 export const generateReport = async (): Promise<void> => {
   Console.debug('Executing project reporting command...');
@@ -38,7 +40,7 @@ export const generateReport = async (): Promise<void> => {
 
   const [subspaceProject] = subspaceProjects.splice(projectToReportIndex, 1);
 
-  Console.info(
+  Console.debug(
     `Generating report for all the version mismatches between the projects ${subspaceProjects
       .map(({ packageName }) => chalk.bold(packageName))
       .join(',')} and the project ${chalk.bold(projectToReport.packageName)}...`
@@ -109,7 +111,7 @@ export const generateReport = async (): Promise<void> => {
     }
   }
 
-  const outputJSONFile: any = {
+  const outputJSONFile: JsonObject = {
     conflictingVersions: {}
   };
 
@@ -125,12 +127,12 @@ export const generateReport = async (): Promise<void> => {
 
   const saveToFile: boolean = await confirmSaveReportPrompt();
   if (saveToFile) {
-    let jsonFilePath: string = '';
-    const filePath: string = await enterReportFileLocationPrompt();
-    jsonFilePath = filePath;
+    const reportFilePath: string = `${path.basename(projectToReport.projectFolder)}_${
+      RushNameConstants.AnalysisFileName
+    }`;
 
-    // Get the file path, save the file
+    const jsonFilePath: string = await enterReportFileLocationPrompt(reportFilePath);
     JsonFile.save(outputJSONFile, jsonFilePath, { prettyFormatting: true });
-    Console.success(`Saved analysis file to ${chalk.bold(jsonFilePath)}.\n`);
+    Console.success(`Saved report file to ${chalk.bold(jsonFilePath)}.\n`);
   }
 };
