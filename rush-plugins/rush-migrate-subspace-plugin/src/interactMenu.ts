@@ -27,5 +27,5 @@ export const interactMenu = async (): Promise<void> => {
     }
   } while (!exitApplication);
 
-  Console.log('Exiting application... Bye :)');
+  Console.log('👋 Exiting application... Bye!');
 };

@@ -1,6 +1,5 @@
 import inquirer from 'inquirer';
 import { RushNameConstants } from '../constants/paths';
-import { FileSystem } from '@rushstack/node-core-library';
 
 export const confirmSaveReportPrompt = async (): Promise<boolean> => {
   const { saveToFile } = await inquirer.prompt([
@@ -20,9 +19,7 @@ export const enterReportFileLocationPrompt = async (): Promise<string> => {
       message: `Please enter the file path to save this file. Please do not commit it to git.`,
       type: 'input',
       name: 'filePath',
-      default: RushNameConstants.AnalysisFileName,
-      validate: (input) =>
-        FileSystem.exists(input) ? true : 'The path does not exist. Please enter a valid path.'
+      default: RushNameConstants.AnalysisFileName
     }
   ]);
 

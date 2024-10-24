@@ -20,7 +20,7 @@ import { isExternalMonorepo, querySubspaces } from './utilities/repository';
 export async function migrateProject(): Promise<void> {
   Console.debug('Executing project migration command...');
 
-  Console.title('> Analyzing if monorepo supports subspaces...');
+  Console.subTitle(`📍 Analyzing if monorepo ${chalk.underline(getRootPath())} supports subspaces...`);
 
   const targetSubspaces: string[] = querySubspaces();
   if (!isSubspaceSupported()) {
@@ -33,7 +33,7 @@ export async function migrateProject(): Promise<void> {
 
   Console.success(`Monorepo ${chalk.bold(getRootPath())} fully supports subspaces!`);
 
-  Console.title('> Finding projects to migrate...');
+  Console.subTitle('📍 Finding projects to migrate...');
   const sourceMonorepoPath: string = await chooseRepositoryPrompt();
 
   Console.info(
@@ -66,8 +66,10 @@ export async function migrateProject(): Promise<void> {
     const sourceProjectToMigrate: IRushConfigurationProjectJson = await chooseProjectPrompt(
       sourceAvailableProjects
     );
-    Console.title(
-      `> Migrate project ${sourceProjectToMigrate.packageName} to subspace ${chalk.bold(targetSubspace)}...`
+    Console.subTitle(
+      `📍 Migrating project ${sourceProjectToMigrate.packageName} to subspace ${chalk.bold(
+        targetSubspace
+      )}...`
     );
 
     if (sourceProjectToMigrate.subspaceName) {
@@ -87,6 +89,6 @@ export async function migrateProject(): Promise<void> {
   } while (await confirmNextProjectPrompt(targetSubspace));
 
   Console.warn(
-    'Make sure to test thoroughly after updating the lockfile, there may be changes in the dependency versions.'
+    '\nMake sure to test thoroughly after updating the lockfile, there may be changes in the dependency versions.\n'
   );
 }

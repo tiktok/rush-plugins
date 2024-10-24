@@ -9,7 +9,7 @@ export async function updateEdenProject(
   sourceProject: IRushConfigurationProjectJson,
   targetProject: IRushConfigurationProjectJson
 ): Promise<void> {
-  Console.debug(`Update monorepo eden configuration...`);
+  Console.debug(`Update monorepo eden configuration on ${chalk.bold(getRootPath())}...`);
 
   const edenPipelineFilePath: string = `${getRootPath()}/${RushNameConstants.EdenPipelineFileName}`;
   const edenPipelineJson: JsonObject = JsonFile.load(edenPipelineFilePath);

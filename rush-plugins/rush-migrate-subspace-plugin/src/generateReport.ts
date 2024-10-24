@@ -32,16 +32,16 @@ export const generateReport = async (): Promise<void> => {
   );
 
   if (projectToReportIndex < 0) {
-    Console.error(`We couldn't find "${projectToReport.packageName}". Please try again.`);
+    Console.error(`We couldn't find ${chalk.bold(projectToReport.packageName)}! Please try again.`);
     return;
   }
 
   const [subspaceProject] = subspaceProjects.splice(projectToReportIndex, 1);
 
   Console.info(
-    `Generating report for all the version mismatches between [${subspaceProjects.map(
-      ({ packageName }) => `"${packageName}"`
-    )}] and the project "${projectToReport.packageName}"...`
+    `Generating report for all the version mismatches between the projects ${subspaceProjects
+      .map(({ packageName }) => chalk.bold(packageName))
+      .join(',')} and the project ${chalk.bold(projectToReport.packageName)}...`
   );
 
   // Create a map of dependencies
@@ -115,7 +115,11 @@ export const generateReport = async (): Promise<void> => {
 
   for (const [conflictPackage, conflictVersions] of Object.entries(migratePackageConflicts)) {
     const conflictVersionsArray: string[] = Array.from(conflictVersions);
-    Console.warn(`${conflictPackage} has conflicting versions: ${conflictVersionsArray}`);
+    Console.warn(
+      `${chalk.bold(conflictPackage)} has conflicting versions: ${chalk.bold(
+        conflictVersionsArray.join(',')
+      )}`
+    );
     outputJSONFile.conflictingVersions[conflictPackage] = conflictVersionsArray;
   }
 
@@ -127,6 +131,6 @@ export const generateReport = async (): Promise<void> => {
 
     // Get the file path, save the file
     JsonFile.save(outputJSONFile, jsonFilePath, { prettyFormatting: true });
-    Console.success(`Saved analysis file to ${jsonFilePath}.`);
+    Console.success(`Saved analysis file to ${chalk.bold(jsonFilePath)}.\n`);
   }
 };

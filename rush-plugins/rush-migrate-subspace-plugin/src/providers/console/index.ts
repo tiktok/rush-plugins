@@ -12,15 +12,15 @@ export default class Console {
   }
 
   public static info(message: string): void {
-    console.log(chalk.blue('[INFO]'), chalk.blueBright(message));
+    console.log(`ℹ️\s${chalk.blue(message)}`);
   }
 
   public static warn(message: string): void {
-    console.log(chalk.bgYellowBright('[WARNING]'), chalk.yellow(message));
+    console.log(`🚧 ${chalk.yellow(message)}`);
   }
 
   public static error(message: string): void {
-    console.log(chalk.bgRedBright('[ERROR]'), chalk.red(message));
+    console.log(`🚫 ${chalk.red(message)}`);
   }
 
   public static debug(message: string): void {
@@ -28,7 +28,7 @@ export default class Console {
       return;
     }
 
-    console.log(chalk.cyan('[DEBUG]'), chalk.cyanBright(message));
+    console.log(`💬 ${chalk.cyan(message)}`);
   }
 
   public static log(message: string): void {
@@ -36,11 +36,15 @@ export default class Console {
   }
 
   public static title(message: string): void {
-    console.log(`\n${chalk.underline(chalk.bold(chalk.black(message)))}\n`);
+    console.log(`\n${chalk.bold(chalk.black(message))}\n`);
+  }
+
+  public static subTitle(message: string): void {
+    console.log(`\n${chalk.bold(chalk.black(message))}`);
   }
 
   public static success(message: string): void {
-    console.log(chalk.green('[SUCCESS]'), chalk.greenBright(message));
+    console.log(`✅ ${chalk.green(message)}`);
   }
 
   public static clear(): void {
