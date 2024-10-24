@@ -25,12 +25,19 @@ export const removeProjectFromRushConfiguration = (
     return;
   }
 
-  rushConfig.projects.splice(projectIndex, 1);
   Console.debug(`Updating ${chalk.bold(rushConfigFile)} by removing ${chalk.bold(project.packageName)}...`);
 
+  const newProjects: IRushConfigurationProjectJson[] = [...rushConfig.projects];
+  newProjects.splice(projectIndex, 1);
+
+  rushConfig.projects = [];
   JsonFile.save(rushConfig, rushConfigFile, {
-    updateExistingFile: true,
-    prettyFormatting: true
+    updateExistingFile: true
+  });
+
+  rushConfig.projects = newProjects;
+  JsonFile.save(rushConfig, rushConfigFile, {
+    updateExistingFile: true
   });
 };
 
@@ -56,7 +63,7 @@ export const addProjectToRushConfiguration = (
     newTargetProject = {
       ...rushConfig.projects[projectIndex],
       ...newTargetProject,
-      decoupledLocalDependencies: rushConfig.projects[projectIndex].decoupledLocalDependencies
+      decoupledLocalDependencies: rushConfig.projects[projectIndex].decoupledLocalDependencies || []
     };
 
     rushConfig.projects[projectIndex] = newTargetProject;
@@ -71,7 +78,6 @@ export const addProjectToRushConfiguration = (
   );
 
   JsonFile.save(rushConfig, rushConfigFile, {
-    updateExistingFile: true,
-    prettyFormatting: true
+    updateExistingFile: true
   });
 };

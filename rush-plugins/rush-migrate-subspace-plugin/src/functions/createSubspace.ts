@@ -32,8 +32,7 @@ export const createSubspace = async (subspaceName: string): Promise<void> => {
     };
 
     JsonFile.save(newSubspacesConfigJson, getRushSubspacesConfigurationJsonPath(), {
-      updateExistingFile: true,
-      prettyFormatting: true
+      updateExistingFile: true
     });
   }
 

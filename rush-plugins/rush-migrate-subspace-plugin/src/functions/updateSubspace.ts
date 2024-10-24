@@ -54,8 +54,7 @@ const updateSubspaceCommonVersionsFile = (
       )}...`
     );
     JsonFile.save(targetCommonVersions, targetCommonVersionsFilePath, {
-      updateExistingFile: true,
-      prettyFormatting: true
+      updateExistingFile: true
     });
   } else {
     Console.debug(

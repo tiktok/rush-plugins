@@ -27,8 +27,7 @@ export async function updateEdenProject(
         )} into pipeline path...`
       );
       JsonFile.save(edenPipelineJson, edenPipelineFilePath, {
-        updateExistingFile: true,
-        prettyFormatting: true
+        updateExistingFile: true
       });
 
       Console.success('Eden monorepo pipelines have been successfully updated.');
@@ -49,8 +48,7 @@ export async function updateEdenProject(
     );
 
     JsonFile.save(edenMonorepoJson, edenMonorepoFilePath, {
-      updateExistingFile: true,
-      prettyFormatting: true
+      updateExistingFile: true
     });
 
     Console.success('Eden monorepo configuration has been successfully updated.');

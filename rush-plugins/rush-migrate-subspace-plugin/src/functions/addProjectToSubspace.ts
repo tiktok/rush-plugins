@@ -8,7 +8,7 @@ import { enterNewProjectLocationPrompt, moveProjectPrompt } from '../prompts/pro
 import { queryProject } from '../utilities/project';
 import { getRootPath } from '../utilities/path';
 import { RushConstants } from '@rushstack/rush-sdk';
-import { addProjectToRushConfiguration } from './updateRushConfiguration';
+import { addProjectToRushConfiguration, removeProjectFromRushConfiguration } from './updateRushConfiguration';
 import { isExternalMonorepo } from '../utilities/repository';
 
 const moveProjectToSubspaceFolder = async (
@@ -73,6 +73,7 @@ export const addProjectToSubspace = async (
   }
 
   addProjectToRushConfiguration(sourceProject, targetSubspace, targetProjectFolderPath);
+  removeProjectFromRushConfiguration(sourceProject, sourceMonorepoPath);
 
   if (FileSystem.exists(`${getRootPath()}/${RushNameConstants.EdenMonorepoFileName}`)) {
     const targetProject: IRushConfigurationProjectJson = queryProject(

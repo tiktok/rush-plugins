@@ -104,8 +104,7 @@ export async function syncVersions(): Promise<void> {
     }
 
     JsonFile.save(subspaceCommonVersionsJson, subspaceCommonVersionsPath, {
-      updateExistingFile: true,
-      prettyFormatting: true
+      updateExistingFile: true
     });
   }
 
