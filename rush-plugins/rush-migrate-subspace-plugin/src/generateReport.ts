@@ -7,6 +7,8 @@ import { loadRushConfiguration, loadRushSubspacesConfiguration } from './utiliti
 import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
 import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/SubspacesConfiguration';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
+import chalk from 'chalk';
+import { getRootPath } from './utilities/path';
 
 export const generateReport = async (): Promise<void> => {
   Console.debug('Executing project reporting command...');
@@ -18,6 +20,11 @@ export const generateReport = async (): Promise<void> => {
   const subspaceProjects: IRushConfigurationProjectJson[] = rushConfig.projects.filter(
     ({ subspaceName }) => subspaceName === selectedSubspaceName
   );
+
+  if (subspaceProjects.length === 0) {
+    Console.error(`No projects found in the monorepo ${chalk.bold(getRootPath())}! Exiting...`);
+    return;
+  }
 
   const projectToReport: IRushConfigurationProjectJson = await chooseProjectPrompt(subspaceProjects);
   const projectToReportIndex: number = subspaceProjects.findIndex(
