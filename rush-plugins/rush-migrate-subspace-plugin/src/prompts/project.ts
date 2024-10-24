@@ -47,13 +47,27 @@ export const chooseProjectPrompt = async (
 };
 
 export const confirmNextProjectPrompt = async (subspaceName: string): Promise<boolean> => {
-  const { selectProject } = await inquirer.prompt([
+  const { confirmNext } = await inquirer.prompt([
     {
       message: `Do you want to add another project to the ${subspaceName} subspace?`,
       type: 'confirm',
-      name: 'selectProject'
+      name: 'confirmNext',
+      default: true
     }
   ]);
 
-  return selectProject;
+  return confirmNext;
+};
+
+export const confirmDeleteProjectFolderPrompt = async (projectFolder: string): Promise<boolean> => {
+  const { confirmDelete } = await inquirer.prompt([
+    {
+      message: `Do you want to remove the project folder ${projectFolder}?`,
+      type: 'confirm',
+      name: 'confirmDelete',
+      default: true
+    }
+  ]);
+
+  return confirmDelete;
 };

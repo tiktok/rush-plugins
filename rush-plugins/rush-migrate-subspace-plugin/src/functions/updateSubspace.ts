@@ -1,4 +1,4 @@
-import { AlreadyExistsBehavior, FileSystem, JsonFile, JsonObject } from '@rushstack/node-core-library';
+import { FileSystem, JsonFile, JsonObject } from '@rushstack/node-core-library';
 import Console from '../providers/console';
 import chalk from 'chalk';
 import { RushConstants } from '@rushstack/rush-sdk';

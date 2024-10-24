@@ -4,16 +4,20 @@ import { RushNameConstants } from '../constants/paths';
 import Console from '../providers/console';
 import chalk from 'chalk';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
-import { enterNewProjectLocationPrompt, moveProjectPrompt } from '../prompts/project';
+import {
+  confirmDeleteProjectFolderPrompt,
+  enterNewProjectLocationPrompt,
+  moveProjectPrompt
+} from '../prompts/project';
 import { queryProject } from '../utilities/project';
 import { getRootPath } from '../utilities/path';
 import { RushConstants } from '@rushstack/rush-sdk';
-import { addProjectToRushConfiguration, removeProjectToRushConfiguration } from './updateRushConfiguration';
+import { addProjectToRushConfiguration } from './updateRushConfiguration';
 
 const moveProjectToSubspaceFolder = async (
   sourceProjectFolderPath: string,
   targetSubspace: string
-): Promise<boolean> => {
+): Promise<string | undefined> => {
   const targetSubspaceFolderPath: string = `${getRootPath()}/${
     RushNameConstants.SubspacesFolderName
   }/${targetSubspace}`;
@@ -35,14 +39,21 @@ const moveProjectToSubspaceFolder = async (
         RushConstants.rushJsonFilename
       }. Skipping...`
     );
-    return false;
+    return;
   }
 
   FileSystem.ensureFolder(targetProjectFolderPath);
-  FileSystem.move({
-    sourcePath: sourceProjectFolderPath,
-    destinationPath: targetProjectFolderPath
-  });
+  if (await confirmDeleteProjectFolderPrompt(sourceProjectFolderPath)) {
+    FileSystem.move({
+      sourcePath: sourceProjectFolderPath,
+      destinationPath: targetProjectFolderPath
+    });
+  } else {
+    FileSystem.copyFile({
+      sourcePath: sourceProjectFolderPath,
+      destinationPath: targetProjectFolderPath
+    });
+  }
 
   const targetLegacySubspaceFolderPath: string = `${targetProjectFolderPath}/subspace`;
   if (FileSystem.exists(targetLegacySubspaceFolderPath)) {
@@ -50,7 +61,7 @@ const moveProjectToSubspaceFolder = async (
     FileSystem.deleteFolder(targetLegacySubspaceFolderPath);
   }
 
-  return true;
+  return targetProjectFolderPath;
 };
 
 export const addProjectToSubspace = async (
@@ -63,15 +74,16 @@ export const addProjectToSubspace = async (
   );
 
   const isExternalMonorepo: boolean = sourceMonorepoPath !== getRootPath();
+  let targetProjectFolderPath: string | undefined = `${getRootPath()}/${sourceProject.projectFolder}`;
   if (isExternalMonorepo || (await moveProjectPrompt())) {
     const sourceProjectFolderPath: string = `${sourceMonorepoPath}/${sourceProject.projectFolder}`;
-    if (!(await moveProjectToSubspaceFolder(sourceProjectFolderPath, targetSubspace))) {
+    targetProjectFolderPath = await moveProjectToSubspaceFolder(sourceProjectFolderPath, targetSubspace);
+    if (!targetProjectFolderPath) {
       return;
     }
   }
 
-  addProjectToRushConfiguration(sourceProject, targetSubspace);
-  removeProjectToRushConfiguration(sourceProject, sourceMonorepoPath);
+  addProjectToRushConfiguration(sourceProject, targetSubspace, targetProjectFolderPath);
 
   if (FileSystem.exists(`${getRootPath()}/${RushNameConstants.EdenMonorepoFileName}`)) {
     const targetProject: IRushConfigurationProjectJson = queryProject(

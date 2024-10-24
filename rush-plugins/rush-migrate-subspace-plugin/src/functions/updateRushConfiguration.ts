@@ -6,34 +6,27 @@ import Console from '../providers/console';
 import chalk from 'chalk';
 import { JsonFile } from '@rushstack/node-core-library';
 import { RushConstants } from '@rushstack/rush-sdk';
-import { queryProjects } from '../utilities/project';
+import path from 'path';
 
-export const removeProjectToRushConfiguration = (
-  targetProject: IRushConfigurationProjectJson,
+export const removeProjectFromRushConfiguration = (
+  project: IRushConfigurationProjectJson,
   monoRepoRootPath: string = getRootPath()
 ): void => {
   const rushConfigFile: string = `${monoRepoRootPath}/${RushConstants.rushJsonFilename}`;
   const rushConfig: IRushConfigurationJson = loadRushConfiguration(monoRepoRootPath);
-  const newProjects: IRushConfigurationProjectJson[] = [...queryProjects(monoRepoRootPath)];
-  const targetProjectIndex: number = newProjects.findIndex(
-    ({ packageName }) => packageName === targetProject.packageName
+  const projectIndex: number = rushConfig.projects.findIndex(
+    ({ packageName }) => packageName === project.packageName
   );
 
-  if (targetProjectIndex < 0) {
+  if (projectIndex < 0) {
     Console.error(
-      `The project ${chalk.bold(targetProject.packageName)} wasn't found in ${
-        RushConstants.rushJsonFilename
-      }!`
+      `The project ${chalk.bold(project.packageName)} wasn't found in ${RushConstants.rushJsonFilename}!`
     );
     return;
   }
 
-  newProjects.splice(targetProjectIndex, 1);
-  rushConfig.projects = newProjects;
-
-  Console.debug(
-    `Updating ${chalk.bold(rushConfigFile)} by removing ${chalk.bold(targetProject.packageName)}...`
-  );
+  rushConfig.projects.splice(projectIndex, 1);
+  Console.debug(`Updating ${chalk.bold(rushConfigFile)} by removing ${chalk.bold(project.packageName)}...`);
 
   JsonFile.save(rushConfig, rushConfigFile, {
     updateExistingFile: true,
@@ -42,37 +35,38 @@ export const removeProjectToRushConfiguration = (
 };
 
 export const addProjectToRushConfiguration = (
-  targetProject: IRushConfigurationProjectJson,
+  sourceProject: IRushConfigurationProjectJson,
   targetSubspace: string,
+  targetProjectFolderPath: string,
   monoRepoRootPath: string = getRootPath()
 ): void => {
   const rushConfigFile: string = `${monoRepoRootPath}/${RushConstants.rushJsonFilename}`;
   const rushConfig: IRushConfigurationJson = loadRushConfiguration(monoRepoRootPath);
-  const targetProjectIndex: number = rushConfig.projects.findIndex(
-    ({ packageName }) => packageName === targetProject.packageName
+  const projectIndex: number = rushConfig.projects.findIndex(
+    ({ packageName }) => packageName === sourceProject.packageName
   );
   let newTargetProject: IRushConfigurationProjectJson = {
     subspaceName: targetSubspace,
-    packageName: targetProject.packageName,
-    projectFolder: targetProject.projectFolder,
+    packageName: sourceProject.packageName,
+    projectFolder: path.relative(monoRepoRootPath, targetProjectFolderPath),
     decoupledLocalDependencies: []
   };
 
-  if (targetProjectIndex >= 0) {
+  if (projectIndex >= 0) {
     newTargetProject = {
-      ...rushConfig.projects[targetProjectIndex],
+      ...rushConfig.projects[projectIndex],
       ...newTargetProject,
-      decoupledLocalDependencies: rushConfig.projects[targetProjectIndex].decoupledLocalDependencies
+      decoupledLocalDependencies: rushConfig.projects[projectIndex].decoupledLocalDependencies
     };
 
-    rushConfig.projects[targetProjectIndex] = newTargetProject;
+    rushConfig.projects[projectIndex] = newTargetProject;
   } else {
     rushConfig.projects.push(newTargetProject);
   }
 
   Console.debug(
     `Updating ${chalk.bold(rushConfigFile)} by assigning ${chalk.bold(
-      targetProject.packageName
+      sourceProject.packageName
     )} to ${chalk.bold(targetSubspace)}...`
   );
 
