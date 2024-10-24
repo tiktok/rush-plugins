@@ -43,17 +43,10 @@ const moveProjectToSubspaceFolder = async (
   }
 
   FileSystem.ensureFolder(targetProjectFolderPath);
-  if (await confirmDeleteProjectFolderPrompt(sourceProjectFolderPath)) {
-    FileSystem.move({
-      sourcePath: sourceProjectFolderPath,
-      destinationPath: targetProjectFolderPath
-    });
-  } else {
-    FileSystem.copyFile({
-      sourcePath: sourceProjectFolderPath,
-      destinationPath: targetProjectFolderPath
-    });
-  }
+  FileSystem.move({
+    sourcePath: sourceProjectFolderPath,
+    destinationPath: targetProjectFolderPath
+  });
 
   const targetLegacySubspaceFolderPath: string = `${targetProjectFolderPath}/subspace`;
   if (FileSystem.exists(targetLegacySubspaceFolderPath)) {

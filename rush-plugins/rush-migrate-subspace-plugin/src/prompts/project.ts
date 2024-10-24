@@ -58,16 +58,3 @@ export const confirmNextProjectPrompt = async (subspaceName: string): Promise<bo
 
   return confirmNext;
 };
-
-export const confirmDeleteProjectFolderPrompt = async (projectFolder: string): Promise<boolean> => {
-  const { confirmDelete } = await inquirer.prompt([
-    {
-      message: `Do you want to remove the project folder ${projectFolder}?`,
-      type: 'confirm',
-      name: 'confirmDelete',
-      default: true
-    }
-  ]);
-
-  return confirmDelete;
-};
