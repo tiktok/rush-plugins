@@ -36,7 +36,7 @@ export async function migrateProject(): Promise<void> {
   Console.title(`🔍 Finding projects to migrate to ${chalk.bold(getRootPath())}...`);
   const sourceMonorepoPath: string = await chooseRepositoryPrompt();
 
-  Console.info(
+  Console.warn(
     `The script will migrate from ${chalk.bold(sourceMonorepoPath)} to ${chalk.bold(getRootPath())}`
   );
 
@@ -59,7 +59,9 @@ export async function migrateProject(): Promise<void> {
       : sourceProjects.filter(({ subspaceName }) => subspaceName !== targetSubspace);
 
     if (sourceAvailableProjects.length === 0) {
-      Console.error(`No projects found in the monorepo ${chalk.bold(sourceMonorepoPath)}! Exiting...`);
+      Console.success(
+        `No available projects found in the monorepo ${chalk.bold(sourceMonorepoPath)}! Exiting...`
+      );
       return;
     }
 
@@ -89,6 +91,6 @@ export async function migrateProject(): Promise<void> {
   } while (await confirmNextProjectPrompt(targetSubspace));
 
   Console.warn(
-    '\nMake sure to test thoroughly after updating the lockfile, there may be changes in the dependency versions.\n'
+    'Make sure to test thoroughly after updating the lockfile, there may be changes in the dependency versions.'
   );
 }

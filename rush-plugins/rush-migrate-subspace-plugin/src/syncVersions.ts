@@ -21,6 +21,11 @@ export async function syncVersions(): Promise<void> {
   const rushConfig: RushConfiguration = RushConfiguration.loadFromDefaultLocation();
 
   const sourceSubspaces: string[] = querySubspaces();
+  if (sourceSubspaces.length === 0) {
+    Console.error(`No subspaces found in the monorepo ${chalk.bold(getRootPath())}! Exiting...`);
+    return;
+  }
+
   const selectedSubspaceName: string = await chooseSubspacePrompt(sourceSubspaces);
   const selectedSubspace: Subspace = rushConfig.getSubspace(selectedSubspaceName);
 
@@ -30,7 +35,7 @@ export async function syncVersions(): Promise<void> {
   });
 
   if (mismatches.size === 0) {
-    Console.success(`No mismatches found in the subspace ${chalk.bold(selectedSubspaceName)}!`);
+    Console.success(`No mismatches found in the subspace ${chalk.bold(selectedSubspaceName)}! Exiting...`);
     return;
   }
 
@@ -48,7 +53,7 @@ export async function syncVersions(): Promise<void> {
     Console.title(
       `🔄 Syncing package ${chalk.bold(count)} of ${chalk.bold(mismatches.size + 1)} version mismatches...`
     );
-    Console.info(`Syncing the dependency ${chalk.bold(dependencyName)}`);
+    Console.warn(`Syncing the dependency ${chalk.bold(dependencyName)}`);
 
     if (mismatchVersionMap.size > 0) {
       Console.warn(
@@ -86,13 +91,13 @@ export async function syncVersions(): Promise<void> {
       for (const packageNameToUpdate of allPackageNamesToUpdate) {
         const project: IRushConfigurationProjectJson | undefined = queryProject(packageNameToUpdate);
         if (!project) {
-          Console.error(`Could not load find the package: ${packageNameToUpdate}, skipping...`);
+          Console.error(`Could not load find the package ${chalk.bold(packageNameToUpdate)}. Skipping...`);
           continue;
         }
 
         const pkgJsonPath: string = `${project.projectFolder}/package.json`;
         if (!fs.existsSync(pkgJsonPath)) {
-          Console.error(`Could not load package.json file for package: ${project.packageName}, skipping...`);
+          Console.error(`Could not load ${chalk.bold(pkgJsonPath)}. Skipping...`);
           continue;
         }
 

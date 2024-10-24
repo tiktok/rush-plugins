@@ -25,7 +25,9 @@ export const createSubspace = async (subspaceName: string): Promise<void> => {
 
   const subspacesConfigJson: ISubspacesConfigurationJson = loadRushSubspacesConfiguration();
   if (!subspacesConfigJson.subspaceNames.includes(subspaceName)) {
-    Console.debug(`Updating subspaces.json by adding ${chalk.bold(subspaceName)}...`);
+    Console.debug(
+      `Updating ${getRushSubspacesConfigurationJsonPath()} by adding ${chalk.bold(subspaceName)}...`
+    );
     const newSubspacesConfigJson: ISubspacesConfigurationJson = {
       ...subspacesConfigJson,
       subspaceNames: [...subspacesConfigJson.subspaceNames, subspaceName]
@@ -40,5 +42,5 @@ export const createSubspace = async (subspaceName: string): Promise<void> => {
     `Run "rush update --full --subspace ${subspaceName}" to update the subspace that this project is migrating from.`
   );
 
-  Console.success(`${chalk.bold(subspaceName)} subspace created successfully!\n`);
+  Console.success(`${chalk.bold(subspaceName)} subspace created successfully!`);
 };

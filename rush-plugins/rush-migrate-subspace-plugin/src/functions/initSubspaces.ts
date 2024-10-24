@@ -17,7 +17,7 @@ export const initSubspaces = async (): Promise<void> => {
       destinationPath: subspacesConfigurationJsonPath
     });
 
-    Console.success(`\n${chalk.bold(subspacesConfigurationJsonPath)} file created successfully!\n`);
+    Console.success(`${chalk.bold(subspacesConfigurationJsonPath)} file created successfully!`);
   }
 
   if (!FileSystem.exists(getRushSubspaceConfigurationFolderPath(RushConstants.defaultSubspaceName))) {

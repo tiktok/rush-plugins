@@ -60,7 +60,7 @@ export const addProjectToSubspace = async (
   sourceMonorepoPath: string
 ): Promise<void> => {
   Console.debug(
-    `Adding project ${chalk.bold(sourceProject.packageName)} to subspace ${chalk.bold(targetSubspace)}...\n`
+    `Adding project ${chalk.bold(sourceProject.packageName)} to subspace ${chalk.bold(targetSubspace)}...`
   );
 
   let targetProjectFolderPath: string | undefined = `${getRootPath()}/${sourceProject.projectFolder}`;

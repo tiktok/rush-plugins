@@ -19,7 +19,9 @@ program
   .description('Example: rush migrate-subspace [--move] [--report] [--sync] [--verbose]')
   .action(async ({ sync, analyze, verbose, move }) => {
     Console.verbose = verbose;
-    Console.title('🚀 Welcome to the Rush Migrate Subspace Plugin!\n');
+    Console.title('🚀 Welcome to the Rush Migrate Subspace Plugin!');
+    Console.newLine();
+
     if (sync) {
       await syncVersions();
     } else if (analyze) {

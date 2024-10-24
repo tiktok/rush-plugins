@@ -1,6 +1,7 @@
 import inquirer from 'inquirer';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { basename } from 'path';
+import Console from '../providers/console';
 
 export const moveProjectPrompt = async (): Promise<boolean> => {
   const { moveProject } = await inquirer.prompt([
@@ -21,7 +22,7 @@ export const enterNewProjectLocationPrompt = async (
   const defaultProjectName: string = basename(sourceProjectFolderPath);
   const { projectFolderName } = await inquirer.prompt([
     {
-      message: `Please enter the folder (or subfolder) you want to move this project to. \n${targetSubspaceFolderPath}/<your_project_folder>`,
+      message: `Please enter the folder (or subfolder) you want to move this project to. ${Console.newLine()}${targetSubspaceFolderPath}/<your_project_folder>`,
       type: 'input',
       name: 'projectFolderName',
       default: defaultProjectName

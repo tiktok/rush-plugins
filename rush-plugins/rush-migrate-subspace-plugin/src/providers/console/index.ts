@@ -11,6 +11,10 @@ export default class Console {
     Console._verbose = value;
   }
 
+  public static newLine(): void {
+    console.log('\n');
+  }
+
   public static info(message: string): void {
     console.log(`ℹ️ ${chalk.blue(message)}`);
   }
@@ -36,7 +40,8 @@ export default class Console {
   }
 
   public static title(message: string): void {
-    console.log(`\n${chalk.bold(message)}`);
+    Console.newLine();
+    console.log(chalk.bold(message));
   }
 
   public static success(message: string): void {

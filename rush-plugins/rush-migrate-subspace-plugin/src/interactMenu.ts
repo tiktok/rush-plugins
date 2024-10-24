@@ -15,14 +15,17 @@ export const interactMenu = async (): Promise<void> => {
 
       case 'analyze':
         await generateReport();
+        Console.newLine();
         break;
 
       case 'move':
         await migrateProject();
+        Console.newLine();
         break;
 
       case 'sync':
         await syncVersions();
+        Console.newLine();
         break;
     }
   } while (!exitApplication);
