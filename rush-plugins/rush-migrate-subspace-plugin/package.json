@@ -29,6 +29,9 @@
     "start": "heft build-watch",
     "test": "heft test"
   },
+  "engines": {
+    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+  },
   "dependencies": {
     "@rushstack/node-core-library": "3.62.0",
     "@rushstack/rush-sdk": "^5.139.0",
