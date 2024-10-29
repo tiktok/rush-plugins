@@ -15,10 +15,10 @@ program
   .option('--analyze', 'to generate all version mismatches for a single project')
   .option('--sync', 'to sync the versions in a subspace')
   .option('--move', 'to move projects to a new subspace')
-  .option('--verbose', 'to provide more logs')
-  .description('Example: rush migrate-subspace [--move] [--report] [--sync] [--verbose]')
-  .action(async ({ sync, analyze, verbose, move }) => {
-    Console.verbose = verbose;
+  .option('--debug', 'to provide debug logs')
+  .description('Example: rush migrate-subspace [--move] [--analyze] [--sync] [--debug]')
+  .action(async ({ sync, analyze, debug, move }) => {
+    Console.enableDebug(debug);
     Console.title('🚀 Welcome to the Rush Migrate Subspace Plugin!');
     Console.newLine();
 

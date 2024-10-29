@@ -1,6 +1,6 @@
 import { FileSystem, JsonFile, JsonObject } from '@rushstack/node-core-library';
 import Console from '../providers/console';
-import chalk from 'chalk';
+import { Colorize } from '@rushstack/terminal';
 import { RushConstants } from '@rushstack/rush-sdk';
 import { RushNameConstants } from '../constants/paths';
 
@@ -19,9 +19,9 @@ const updateSubspaceCommonVersionsFile = (
       const targetPreferredVersion: string | undefined = targetCommonVersions.preferredVersions[dependency];
       if (targetPreferredVersion) {
         Console.warn(
-          `There are conflicting values for ${chalk.bold(dependency)} in the ${chalk.bold(
+          `There are conflicting values for ${Colorize.bold(dependency)} in the ${Colorize.bold(
             RushConstants.commonVersionsFilename
-          )} file's preferredVersions: ${chalk.bold(version)} and ${chalk.bold(
+          )} file's preferredVersions: ${Colorize.bold(version)} and ${Colorize.bold(
             targetPreferredVersion
           )}. Please fix.`
         );
@@ -49,7 +49,7 @@ const updateSubspaceCommonVersionsFile = (
     }
 
     Console.debug(
-      `Merging ${chalk.bold(sourceCommonVersionsFilePath)} with ${chalk.bold(
+      `Merging ${Colorize.bold(sourceCommonVersionsFilePath)} with ${Colorize.bold(
         targetCommonVersionsFilePath
       )}...`
     );
@@ -58,7 +58,7 @@ const updateSubspaceCommonVersionsFile = (
     });
   } else {
     Console.debug(
-      `Copying ${chalk.bold(sourceCommonVersionsFilePath)} into ${chalk.bold(
+      `Copying ${Colorize.bold(sourceCommonVersionsFilePath)} into ${Colorize.bold(
         targetCommonVersionsFilePath
       )}...`
     );
@@ -82,7 +82,7 @@ const updateSubspaceRepoStateFile = (
   const targetRepoStateFilePath: string = `${targetSubspaceFolderPath}/${RushConstants.repoStateFilename}`;
   if (!FileSystem.exists(targetRepoStateFilePath)) {
     Console.debug(
-      `Copying ${chalk.bold(sourceRepoStateFilePath)} into ${chalk.bold(targetRepoStateFilePath)}...`
+      `Copying ${Colorize.bold(sourceRepoStateFilePath)} into ${Colorize.bold(targetRepoStateFilePath)}...`
     );
 
     FileSystem.copyFile({
@@ -101,7 +101,9 @@ const updateSubspacePnpmFile = (sourceSubspaceFolderPath: string, targetSubspace
       const tempPnpmSubspaceFileName: string = `.pnpmfile-subspace-temp_${new Date().getTime()}.cjs`;
       const targetPnpmTempFilePath: string = `${targetSubspaceFolderPath}/${tempPnpmSubspaceFileName}`;
       Console.debug(
-        `Duplicating temporary ${chalk.bold(sourcePnpmFilePath)} into ${chalk.bold(targetPnpmFilePath)}...`
+        `Duplicating temporary ${Colorize.bold(sourcePnpmFilePath)} into ${Colorize.bold(
+          targetPnpmFilePath
+        )}...`
       );
 
       FileSystem.copyFile({
@@ -110,14 +112,18 @@ const updateSubspacePnpmFile = (sourceSubspaceFolderPath: string, targetSubspace
       });
 
       Console.warn(
-        `There are now two ${chalk.bold(RushNameConstants.PnpmSubspaceFileName)}. (${chalk.bold(
+        `There are now two ${Colorize.bold(RushNameConstants.PnpmSubspaceFileName)}. (${Colorize.bold(
           RushNameConstants.PnpmSubspaceFileName
-        )} and .${chalk.bold(tempPnpmSubspaceFileName)}). Please reconcile them into a singular ${chalk.bold(
+        )} and .${Colorize.bold(
+          tempPnpmSubspaceFileName
+        )}). Please reconcile them into a singular ${Colorize.bold(
           RushNameConstants.PnpmSubspaceFileName
         )} manually.`
       );
     } else {
-      Console.debug(`Copying ${chalk.bold(sourcePnpmFilePath)} into ${chalk.bold(targetPnpmFilePath)}...`);
+      Console.debug(
+        `Copying ${Colorize.bold(sourcePnpmFilePath)} into ${Colorize.bold(targetPnpmFilePath)}...`
+      );
       FileSystem.copyFile({
         sourcePath: sourcePnpmFilePath,
         destinationPath: targetPnpmFilePath
@@ -134,7 +140,9 @@ const updateSubspaceNpmRcFile = (
   const targetNpmRcFilePath: string = `${targetSubspaceFolderPath}/${RushNameConstants.NpmRcFileName}`;
 
   if (FileSystem.exists(sourceNpmRcFilePath)) {
-    Console.debug(`Copying ${chalk.bold(sourceNpmRcFilePath)} into ${chalk.bold(targetNpmRcFilePath)}...`);
+    Console.debug(
+      `Copying ${Colorize.bold(sourceNpmRcFilePath)} into ${Colorize.bold(targetNpmRcFilePath)}...`
+    );
     FileSystem.copyFile({
       sourcePath: sourceNpmRcFilePath,
       destinationPath: targetNpmRcFilePath

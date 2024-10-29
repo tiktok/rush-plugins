@@ -7,19 +7,19 @@ import { loadRushConfiguration, loadRushSubspacesConfiguration } from './utiliti
 import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
 import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/SubspacesConfiguration';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
-import chalk from 'chalk';
+import { Colorize } from '@rushstack/terminal';
 import { getRootPath } from './utilities/path';
 import { RushNameConstants } from './constants/paths';
 import path from 'path';
 
 export const generateReport = async (): Promise<void> => {
-  Console.debug('Executing project reporting command...');
+  Console.debug('Executing project analyze command...');
 
   const rushConfig: IRushConfigurationJson = loadRushConfiguration();
   const subspacesConfig: ISubspacesConfigurationJson = loadRushSubspacesConfiguration();
 
   if (subspacesConfig.subspaceNames.length === 0) {
-    Console.error(`No subspaces found in the monorepo ${chalk.bold(getRootPath())}! Exiting...`);
+    Console.error(`No subspaces found in the monorepo ${Colorize.bold(getRootPath())}! Exiting...`);
     return;
   }
 
@@ -30,7 +30,7 @@ export const generateReport = async (): Promise<void> => {
   );
 
   if (subspaceProjects.length === 0) {
-    Console.error(`No projects found in the monorepo ${chalk.bold(getRootPath())}! Exiting...`);
+    Console.error(`No projects found in the monorepo ${Colorize.bold(getRootPath())}! Exiting...`);
     return;
   }
 
@@ -40,7 +40,7 @@ export const generateReport = async (): Promise<void> => {
   );
 
   if (selectedProjectIndex < 0) {
-    Console.error(`We couldn't find ${chalk.bold(selectedProject.packageName)}! Please try again.`);
+    Console.error(`We couldn't find ${Colorize.bold(selectedProject.packageName)}! Please try again.`);
     return;
   }
 
@@ -48,8 +48,8 @@ export const generateReport = async (): Promise<void> => {
 
   Console.debug(
     `Generating report for all the version mismatches between the projects ${subspaceProjects
-      .map(({ packageName }) => chalk.bold(packageName))
-      .join(',')} and the project ${chalk.bold(selectedProject.packageName)}...`
+      .map(({ packageName }) => Colorize.bold(packageName))
+      .join(',')} and the project ${Colorize.bold(selectedProject.packageName)}...`
   );
 
   // Create a map of dependencies
@@ -124,9 +124,9 @@ export const generateReport = async (): Promise<void> => {
   const conflictedPackages: string[] = Object.keys(migratePackageConflicts);
   if (conflictedPackages.length === 0) {
     Console.success(
-      `No conflicted packages found in the subspace ${chalk.bold(selectedSubspaceName)} from ${chalk.bold(
-        selectedProject.packageName
-      )}! Exiting...`
+      `No conflicted packages found in the subspace ${Colorize.bold(
+        selectedSubspaceName
+      )} from ${Colorize.bold(selectedProject.packageName)}! Exiting...`
     );
     return;
   }
@@ -134,7 +134,9 @@ export const generateReport = async (): Promise<void> => {
   for (const conflictPackage of conflictedPackages) {
     const conflictVersions: string[] = Array.from(migratePackageConflicts[conflictPackage]);
     Console.warn(
-      `${chalk.bold(conflictPackage)} has conflicting versions: ${chalk.bold(conflictVersions.join(','))}`
+      `${Colorize.bold(conflictPackage)} has conflicting versions: ${Colorize.bold(
+        conflictVersions.join(',')
+      )}`
     );
     outputJSONFile.conflictingVersions[conflictPackage] = conflictVersions;
   }
@@ -147,6 +149,6 @@ export const generateReport = async (): Promise<void> => {
 
     const jsonFilePath: string = await enterReportFileLocationPrompt(reportFilePath);
     JsonFile.save(outputJSONFile, jsonFilePath, { prettyFormatting: true });
-    Console.success(`Saved report file to ${chalk.bold(jsonFilePath)}.`);
+    Console.success(`Saved report file to ${Colorize.bold(jsonFilePath)}.`);
   }
 };

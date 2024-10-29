@@ -2,7 +2,7 @@ import { FileSystem } from '@rushstack/node-core-library';
 import { updateEdenProject } from './updateEdenProject';
 import { RushNameConstants } from '../constants/paths';
 import Console from '../providers/console';
-import chalk from 'chalk';
+import { Colorize } from '@rushstack/terminal';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { enterNewProjectLocationPrompt, moveProjectPrompt } from '../prompts/project';
 import { queryProject } from '../utilities/project';
@@ -25,12 +25,14 @@ const moveProjectToSubspaceFolder = async (
   );
 
   Console.debug(
-    `Moving project from ${chalk.bold(sourceProjectFolderPath)} to ${chalk.bold(targetProjectFolderPath)}...`
+    `Moving project from ${Colorize.bold(sourceProjectFolderPath)} to ${Colorize.bold(
+      targetProjectFolderPath
+    )}...`
   );
 
   if (!FileSystem.exists(sourceProjectFolderPath)) {
     Console.error(
-      `The path ${chalk.bold(
+      `The path ${Colorize.bold(
         sourceProjectFolderPath
       )} doesn't exist! Please check if the "projectFolder" is correct on ${
         RushConstants.rushJsonFilename
@@ -47,7 +49,7 @@ const moveProjectToSubspaceFolder = async (
 
   const targetLegacySubspaceFolderPath: string = `${targetProjectFolderPath}/subspace`;
   if (FileSystem.exists(targetLegacySubspaceFolderPath)) {
-    Console.debug(`Removing legacy subspace folder ${chalk.bold(targetLegacySubspaceFolderPath)}...`);
+    Console.debug(`Removing legacy subspace folder ${Colorize.bold(targetLegacySubspaceFolderPath)}...`);
     FileSystem.deleteFolder(targetLegacySubspaceFolderPath);
   }
 
@@ -60,7 +62,9 @@ export const addProjectToSubspace = async (
   sourceMonorepoPath: string
 ): Promise<void> => {
   Console.debug(
-    `Adding project ${chalk.bold(sourceProject.packageName)} to subspace ${chalk.bold(targetSubspace)}...`
+    `Adding project ${Colorize.bold(sourceProject.packageName)} to subspace ${Colorize.bold(
+      targetSubspace
+    )}...`
   );
 
   let targetProjectFolderPath: string | undefined = `${getRootPath()}/${sourceProject.projectFolder}`;
@@ -87,8 +91,8 @@ export const addProjectToSubspace = async (
   }
 
   Console.success(
-    `Project ${chalk.bold(sourceProject.packageName)} has been successfully added to subspace ${chalk.bold(
-      targetSubspace
-    )}.`
+    `Project ${Colorize.bold(
+      sourceProject.packageName
+    )} has been successfully added to subspace ${Colorize.bold(targetSubspace)}.`
   );
 };

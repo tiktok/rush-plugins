@@ -8,7 +8,7 @@
       "cwd": "${input:enterMonorepoDir}",
       "console": "integratedTerminal",
       "preLaunchTask": "rush: build rush-migrate-subspace-plugin",
-      "args": ["--verbose"]
+      "args": ["--debug"]
     }
   ],
   "inputs": [

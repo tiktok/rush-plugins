@@ -5,7 +5,7 @@ import { VersionMismatchFinder } from '@rushstack/rush-sdk/lib/logic/versionMism
 import { VersionMismatchFinderEntity } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinderEntity';
 import { enterVersionPrompt, requestVersionTypePrompt } from './prompts/version';
 import Console from './providers/console';
-import chalk from 'chalk';
+import { Colorize } from '@rushstack/terminal';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { queryProject } from './utilities/project';
 import { RushConfiguration } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
@@ -22,7 +22,7 @@ export async function syncVersions(): Promise<void> {
 
   const sourceSubspaces: string[] = querySubspaces();
   if (sourceSubspaces.length === 0) {
-    Console.error(`No subspaces found in the monorepo ${chalk.bold(getRootPath())}! Exiting...`);
+    Console.error(`No subspaces found in the monorepo ${Colorize.bold(getRootPath())}! Exiting...`);
     return;
   }
 
@@ -35,7 +35,7 @@ export async function syncVersions(): Promise<void> {
   });
 
   if (mismatches.size === 0) {
-    Console.success(`No mismatches found in the subspace ${chalk.bold(selectedSubspaceName)}! Exiting...`);
+    Console.success(`No mismatches found in the subspace ${Colorize.bold(selectedSubspaceName)}! Exiting...`);
     return;
   }
 
@@ -51,13 +51,15 @@ export async function syncVersions(): Promise<void> {
     const availableVersions: string[] = Array.from(mismatchVersionMap.keys());
     let selectedVersion: string | undefined;
     Console.title(
-      `🔄 Syncing package ${chalk.bold(count)} of ${chalk.bold(mismatches.size + 1)} version mismatches...`
+      `🔄 Syncing package ${Colorize.bold(`${count}`)} of ${Colorize.bold(
+        `${mismatches.size + 1}`
+      )} version mismatches...`
     );
-    Console.warn(`Syncing the dependency ${chalk.bold(dependencyName)}`);
+    Console.warn(`Syncing the dependency ${Colorize.bold(dependencyName)}`);
 
     if (mismatchVersionMap.size > 0) {
       Console.warn(
-        `There are ${chalk.bold(mismatchVersionMap.size)} different versions of the ${chalk.bold(
+        `There are ${Colorize.bold(`${mismatchVersionMap.size}`)} different versions of the ${Colorize.bold(
           dependencyName
         )}`
       );
@@ -91,13 +93,13 @@ export async function syncVersions(): Promise<void> {
       for (const packageNameToUpdate of allPackageNamesToUpdate) {
         const project: IRushConfigurationProjectJson | undefined = queryProject(packageNameToUpdate);
         if (!project) {
-          Console.error(`Could not load find the package ${chalk.bold(packageNameToUpdate)}. Skipping...`);
+          Console.error(`Could not load find the package ${Colorize.bold(packageNameToUpdate)}. Skipping...`);
           continue;
         }
 
         const pkgJsonPath: string = `${project.projectFolder}/package.json`;
         if (!fs.existsSync(pkgJsonPath)) {
-          Console.error(`Could not load ${chalk.bold(pkgJsonPath)}. Skipping...`);
+          Console.error(`Could not load ${Colorize.bold(pkgJsonPath)}. Skipping...`);
           continue;
         }
 

@@ -1,14 +1,10 @@
-import chalk from 'chalk';
+import { Colorize } from '@rushstack/terminal';
 
 export default class Console {
-  private static _verbose: boolean = false;
+  private static _debugEnabled: boolean = false;
 
-  public static get verbose(): boolean {
-    return Console._verbose;
-  }
-
-  public static set verbose(value: boolean) {
-    Console._verbose = value;
+  public static enableDebug(value: boolean): void {
+    Console._debugEnabled = value;
   }
 
   public static newLine(): void {
@@ -16,36 +12,36 @@ export default class Console {
   }
 
   public static info(message: string): void {
-    console.log(`ℹ️ ${chalk.blue(message)}`);
+    console.log(`ℹ️ ${Colorize.blue(message)}`);
   }
 
   public static warn(message: string): void {
-    console.log(`🚧 ${chalk.yellow(message)}`);
+    console.log(`🚧 ${Colorize.yellow(message)}`);
   }
 
   public static error(message: string): void {
-    console.log(`🚫 ${chalk.red(message)}`);
+    console.log(`🚫 ${Colorize.red(message)}`);
   }
 
   public static debug(message: string): void {
-    if (!Console._verbose) {
+    if (!Console._debugEnabled) {
       return;
     }
 
-    console.log(`💬 ${chalk.grey(message)}`);
+    console.log(`💬 ${Colorize.gray(message)}`);
   }
 
   public static log(message: string): void {
-    console.log(chalk.grey(message));
+    console.log(Colorize.black(message));
   }
 
   public static title(message: string): void {
     Console.newLine();
-    console.log(chalk.bold(message));
+    console.log(Colorize.bold(message));
   }
 
   public static success(message: string): void {
-    console.log(`✅ ${chalk.green(message)}`);
+    console.log(`✅ ${Colorize.green(message)}`);
   }
 
   public static clear(): void {

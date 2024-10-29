@@ -3,7 +3,7 @@ import { getRootPath } from '../utilities/path';
 import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
 import { loadRushConfiguration } from '../utilities/repository';
 import Console from '../providers/console';
-import chalk from 'chalk';
+import { Colorize } from '@rushstack/terminal';
 import { JsonFile } from '@rushstack/node-core-library';
 import { RushConstants } from '@rushstack/rush-sdk';
 import path from 'path';
@@ -20,12 +20,14 @@ export const removeProjectFromRushConfiguration = (
 
   if (projectIndex < 0) {
     Console.error(
-      `The project ${chalk.bold(project.packageName)} wasn't found in ${RushConstants.rushJsonFilename}!`
+      `The project ${Colorize.bold(project.packageName)} wasn't found in ${RushConstants.rushJsonFilename}!`
     );
     return;
   }
 
-  Console.debug(`Updating ${chalk.bold(rushConfigFile)} by removing ${chalk.bold(project.packageName)}...`);
+  Console.debug(
+    `Updating ${Colorize.bold(rushConfigFile)} by removing ${Colorize.bold(project.packageName)}...`
+  );
 
   const newProjects: IRushConfigurationProjectJson[] = [...rushConfig.projects];
   newProjects.splice(projectIndex, 1);
@@ -72,9 +74,9 @@ export const addProjectToRushConfiguration = (
   }
 
   Console.debug(
-    `Updating ${chalk.bold(rushConfigFile)} by assigning ${chalk.bold(
+    `Updating ${Colorize.bold(rushConfigFile)} by assigning ${Colorize.bold(
       sourceProject.packageName
-    )} to ${chalk.bold(targetSubspace)}...`
+    )} to ${Colorize.bold(targetSubspace)}...`
   );
 
   JsonFile.save(rushConfig, rushConfigFile, {

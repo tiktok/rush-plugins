@@ -1,6 +1,6 @@
 import { FileSystem, JsonFile } from '@rushstack/node-core-library';
 import Console from '../providers/console';
-import chalk from 'chalk';
+import { Colorize } from '@rushstack/terminal';
 import {
   getRushSubspacesConfigurationJsonPath,
   loadRushSubspacesConfiguration
@@ -9,7 +9,7 @@ import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/Subspac
 import { getRushSubspaceConfigurationFolderPath } from '../utilities/subspace';
 
 export const createSubspace = async (subspaceName: string): Promise<void> => {
-  Console.debug(`Creating subspace ${chalk.bold(subspaceName)}...`);
+  Console.debug(`Creating subspace ${Colorize.bold(subspaceName)}...`);
   const subspaceConfigFolder: string = getRushSubspaceConfigurationFolderPath(subspaceName);
   FileSystem.ensureFolder(subspaceConfigFolder);
 
@@ -26,7 +26,7 @@ export const createSubspace = async (subspaceName: string): Promise<void> => {
   const subspacesConfigJson: ISubspacesConfigurationJson = loadRushSubspacesConfiguration();
   if (!subspacesConfigJson.subspaceNames.includes(subspaceName)) {
     Console.debug(
-      `Updating ${getRushSubspacesConfigurationJsonPath()} by adding ${chalk.bold(subspaceName)}...`
+      `Updating ${getRushSubspacesConfigurationJsonPath()} by adding ${Colorize.bold(subspaceName)}...`
     );
     const newSubspacesConfigJson: ISubspacesConfigurationJson = {
       ...subspacesConfigJson,
@@ -42,5 +42,5 @@ export const createSubspace = async (subspaceName: string): Promise<void> => {
     `Run "rush update --full --subspace ${subspaceName}" to update the subspace that this project is migrating from.`
   );
 
-  Console.success(`${chalk.bold(subspaceName)} subspace created successfully!`);
+  Console.success(`${Colorize.bold(subspaceName)} subspace created successfully!`);
 };

@@ -1,7 +1,7 @@
 import { JsonFile, JsonObject } from '@rushstack/node-core-library';
 import { RushNameConstants } from '../constants/paths';
 import Console from '../providers/console';
-import chalk from 'chalk';
+import { Colorize } from '@rushstack/terminal';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { getRootPath } from '../utilities/path';
 
@@ -9,7 +9,7 @@ export async function updateEdenProject(
   sourceProject: IRushConfigurationProjectJson,
   targetProject: IRushConfigurationProjectJson
 ): Promise<void> {
-  Console.debug(`Update monorepo eden configuration on ${chalk.bold(getRootPath())}...`);
+  Console.debug(`Update monorepo eden configuration on ${Colorize.bold(getRootPath())}...`);
 
   const edenPipelineFilePath: string = `${getRootPath()}/${RushNameConstants.EdenPipelineFileName}`;
   const edenPipelineJson: JsonObject = JsonFile.load(edenPipelineFilePath);
@@ -22,7 +22,7 @@ export async function updateEdenProject(
       );
 
       Console.debug(
-        `Updating eden.mono.pipeline.json, by adding ${chalk.bold(
+        `Updating eden.mono.pipeline.json, by adding ${Colorize.bold(
           targetProject.packageName
         )} into pipeline path...`
       );
@@ -44,7 +44,9 @@ export async function updateEdenProject(
     edenProject.path = targetProject.projectFolder;
 
     Console.debug(
-      `Updating eden.monorepo.json, by adding ${chalk.bold(targetProject.packageName)} into package path...`
+      `Updating eden.monorepo.json, by adding ${Colorize.bold(
+        targetProject.packageName
+      )} into package path...`
     );
 
     JsonFile.save(edenMonorepoJson, edenMonorepoFilePath, {
