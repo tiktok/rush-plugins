@@ -1,0 +1,21 @@
+{
+  "configurations": [
+    {
+      "name": "Debug Plugin (migrate-subspace)",
+      "request": "launch",
+      "type": "node",
+      "program": "${workspaceFolder}/rush-plugins/rush-migrate-subspace-plugin/lib/cli.js",
+      "cwd": "${input:enterMonorepoDir}",
+      "console": "integratedTerminal",
+      "preLaunchTask": "rush: build rush-migrate-subspace-plugin",
+      "args": ["--debug"]
+    }
+  ],
+  "inputs": [
+    {
+      "id": "enterMonorepoDir",
+      "type": "promptString",
+      "description": "Specify the monorepo directory",
+    }
+  ]
+}
