@@ -2,6 +2,18 @@
   "name": "rush-init-project-plugin",
   "entries": [
     {
+      "version": "0.11.1",
+      "tag": "rush-init-project-plugin_v0.11.1",
+      "date": "Tue, 29 Oct 2024 03:43:55 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Include CHANGELOG.md in published releases"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.11.0",
       "tag": "rush-init-project-plugin_v0.11.0",
       "date": "Mon, 25 Mar 2024 22:46:02 GMT",

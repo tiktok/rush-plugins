@@ -1,6 +1,6 @@
 {
   "name": "rush-git-lfs-plugin",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Rush plugin for git-lfs",
   "keywords": [
     "rush",
