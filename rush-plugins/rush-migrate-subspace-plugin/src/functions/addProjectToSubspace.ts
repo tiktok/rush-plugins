@@ -47,12 +47,6 @@ const moveProjectToSubspaceFolder = async (
     destinationPath: targetProjectFolderPath
   });
 
-  const targetLegacySubspaceFolderPath: string = `${targetProjectFolderPath}/subspace`;
-  if (FileSystem.exists(targetLegacySubspaceFolderPath)) {
-    Console.debug(`Removing legacy subspace folder ${Colorize.bold(targetLegacySubspaceFolderPath)}...`);
-    FileSystem.deleteFolder(targetLegacySubspaceFolderPath);
-  }
-
   return targetProjectFolderPath;
 };
 
@@ -74,6 +68,13 @@ export const addProjectToSubspace = async (
     if (!targetProjectFolderPath) {
       return;
     }
+
+    if (FileSystem.exists(`${getRootPath()}/${RushNameConstants.EdenMonorepoFileName}`)) {
+      const targetProject: IRushConfigurationProjectJson = queryProject(
+        sourceProject.packageName
+      ) as IRushConfigurationProjectJson;
+      await updateEdenProject(sourceProject, targetProject);
+    }
   }
 
   /** WARN: Disabling different repositories for now.
@@ -81,14 +82,13 @@ export const addProjectToSubspace = async (
   removeProjectFromRushConfiguration(sourceProject, sourceMonorepoPath);
    */
 
-  addProjectToRushConfiguration(sourceProject, targetSubspace, targetProjectFolderPath);
-
-  if (FileSystem.exists(`${getRootPath()}/${RushNameConstants.EdenMonorepoFileName}`)) {
-    const targetProject: IRushConfigurationProjectJson = queryProject(
-      sourceProject.packageName
-    ) as IRushConfigurationProjectJson;
-    await updateEdenProject(sourceProject, targetProject);
+  const targetLegacySubspaceFolderPath: string = `${targetProjectFolderPath}/subspace`;
+  if (FileSystem.exists(targetLegacySubspaceFolderPath)) {
+    Console.debug(`Removing legacy subspace folder ${Colorize.bold(targetLegacySubspaceFolderPath)}...`);
+    FileSystem.deleteFolder(targetLegacySubspaceFolderPath);
   }
+
+  addProjectToRushConfiguration(sourceProject, targetSubspace, targetProjectFolderPath);
 
   Console.success(
     `Project ${Colorize.bold(

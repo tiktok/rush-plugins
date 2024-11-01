@@ -14,8 +14,9 @@ import {
   querySubspaces
 } from './utilities/repository';
 import { RushConstants } from '@rushstack/rush-sdk';
+import { syncProjectDependencies } from './functions/syncProjectDependencies';
 
-export async function migrateProject(): Promise<void> {
+export const migrateProject = async (): Promise<void> => {
   Console.debug('Executing project migration command...');
 
   Console.title(`🔍 Analyzing if monorepo ${Colorize.underline(getRootPath())} supports subspaces...`);
@@ -109,9 +110,10 @@ export async function migrateProject(): Promise<void> {
     }
 
     await addProjectToSubspace(sourceProjectToMigrate, targetSubspace, sourceMonorepoPath);
+    await syncProjectDependencies(sourceProjectToMigrate.packageName);
   } while (await confirmNextProjectPrompt(targetSubspace));
 
   Console.warn(
     'Make sure to test thoroughly after updating the lockfile, there may be changes in the dependency versions.'
   );
-}
+};

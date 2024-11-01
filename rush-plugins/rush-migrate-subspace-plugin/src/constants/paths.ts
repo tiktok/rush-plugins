@@ -12,6 +12,7 @@ export interface IRushNameConstants {
   PnpmSubspaceFileName: string;
   SubspacesFolderName: string;
   NpmRcFileName: string;
+  PackageName: string;
 }
 
 export const RushNameConstants: IRushNameConstants = {
@@ -20,7 +21,8 @@ export const RushNameConstants: IRushNameConstants = {
   EdenMonorepoFileName: 'eden.monorepo.json',
   EdenPipelineFileName: 'eden.mono.pipeline.json',
   PnpmSubspaceFileName: '.pnpmfile-subspace.cjs',
-  SubspacesFolderName: 'subspaces'
+  SubspacesFolderName: 'subspaces',
+  PackageName: 'package.json'
 };
 
 export const RushPathConstants: IRushPathConstants = {

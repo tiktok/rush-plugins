@@ -12,7 +12,7 @@ Please follow the [official doc](https://rushjs.io/pages/maintainer/using_rush_p
 
 ```
 rush migrate-subspace
-rush migrate-subspace --report # generates full report
+rush migrate-subspace --analyze # generates full report
 ```
 
 If you encounter version inconsistency errors, you can use the migration tool to help you resolve them:
