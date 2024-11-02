@@ -32,19 +32,30 @@ export const enterNewProjectLocationPrompt = async (
   return `${targetSubspaceFolderPath}/${projectFolderName}`;
 };
 
-export const chooseProjectPrompt = async (
-  projects: IRushConfigurationProjectJson[]
-): Promise<IRushConfigurationProjectJson> => {
+export const chooseProjectPrompt = async (projects: string[]): Promise<string> => {
   const { projectName } = await inquirer.prompt([
     {
       message: `Please select the project name (Type to filter).`,
       type: 'search-list',
       name: 'projectName',
-      choices: projects.map(({ packageName }) => ({ name: packageName, value: packageName }))
+      choices: projects.map((name) => ({ name, value: name }))
     }
   ]);
 
-  return projects.find(({ packageName }) => packageName === projectName) as IRushConfigurationProjectJson;
+  return projectName;
+};
+
+export const confirmProjectSyncVersions = async (): Promise<boolean> => {
+  const { confirmSync } = await inquirer.prompt([
+    {
+      message: `Do you want to start the mismatch fix?`,
+      type: 'confirm',
+      name: 'confirmSync',
+      default: true
+    }
+  ]);
+
+  return confirmSync;
 };
 
 export const confirmNextProjectPrompt = async (subspaceName: string): Promise<boolean> => {

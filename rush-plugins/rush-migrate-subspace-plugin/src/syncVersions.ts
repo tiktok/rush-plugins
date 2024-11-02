@@ -2,10 +2,31 @@ import { chooseSubspacePrompt } from './prompts/subspace';
 import { VersionMismatchFinderEntity } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinderEntity';
 import Console from './providers/console';
 import { Colorize } from '@rushstack/terminal';
-import { querySubspaces } from './utilities/repository';
+import { queryProjectsFromSubspace, querySubspaces } from './utilities/repository';
 import { getRootPath } from './utilities/path';
-import { syncDependencies } from './functions/syncDependencies';
 import { getSubspaceMismatches } from './utilities/subspace';
+import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
+import { chooseProjectPrompt } from './prompts/project';
+import { syncProjectMismatchedDependencies } from './functions/syncProjectDependencies';
+
+const syncSubspaceMismatchedDependencies = async (
+  subspaceName: string,
+  mismatchedProjects: string[]
+): Promise<boolean> => {
+  const projects: IRushConfigurationProjectJson[] = queryProjectsFromSubspace(subspaceName);
+
+  do {
+    const selectedProjectName: string = await chooseProjectPrompt(mismatchedProjects);
+    const selectedProjectIndex: number = projects.findIndex(
+      ({ packageName }) => packageName === selectedProjectName
+    );
+
+    await syncProjectMismatchedDependencies(selectedProjectName, true);
+    projects.splice(selectedProjectIndex, 1);
+  } while (projects.length > 0);
+
+  return projects.length === 0;
+};
 
 export const syncVersions = async (): Promise<void> => {
   Console.debug('Executing project version synchronization command...');
@@ -29,8 +50,23 @@ export const syncVersions = async (): Promise<void> => {
     return;
   }
 
-  Console.warn(`There are ${Colorize.bold(`${subspaceMismatches.size}`)} mismatched dependencies...`);
-  if (await syncDependencies(subspaceMismatches, selectedSubspaceName)) {
-    Console.success('Version sync complete! Please test and validate all affected packages.');
+  const mismatchedProjects: string[] = [];
+  for (const [, versions] of subspaceMismatches) {
+    for (const [, entities] of versions) {
+      mismatchedProjects.push(
+        ...entities
+          .filter(({ friendlyName }) => !mismatchedProjects.includes(friendlyName))
+          .map(({ friendlyName }) => friendlyName)
+      );
+    }
+  }
+
+  Console.warn(`There are ${Colorize.bold(`${mismatchedProjects.length}`)} mismatched projects...`);
+  if (await syncSubspaceMismatchedDependencies(selectedSubspaceName, mismatchedProjects)) {
+    Console.success(
+      `All mismatched projects for subspace ${Colorize.bold(
+        selectedSubspaceName
+      )} have been successfully synchronized!`
+    );
   }
 };

@@ -5,12 +5,20 @@ import { loadRushConfiguration } from './repository';
 import { getSubspaceMismatches } from './subspace';
 import { VersionMismatchFinderEntity } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinderEntity';
 import { RushNameConstants } from '../constants/paths';
+import { IPackageJson, IPackageJsonDependencyTable, JsonFile } from '@rushstack/node-core-library';
 
 export const getProjectPackageFilePath = (
   projectFolder: string,
   rootPath: string = getRootPath()
 ): string => {
   return `${rootPath}/${projectFolder}/${RushNameConstants.PackageName}`;
+};
+
+export const loadProjectPackageJson = (
+  projectFolder: string,
+  rootPath: string = getRootPath()
+): IPackageJson => {
+  return JsonFile.load(getProjectPackageFilePath(projectFolder, rootPath));
 };
 
 export const queryProjects = (rootPath: string = getRootPath()): IRushConfigurationProjectJson[] => {
@@ -64,4 +72,20 @@ export const getProjectMismatches = (
   }
 
   return projectMismatches;
+};
+
+export const getProjectDependencies = (
+  projectName: string,
+  rootPath: string = getRootPath()
+): IPackageJsonDependencyTable | undefined => {
+  const project: IRushConfigurationProjectJson | undefined = queryProject(projectName, rootPath);
+  if (!project || !project.subspaceName) {
+    return;
+  }
+
+  const projectPackageJson: IPackageJson = loadProjectPackageJson(project.projectFolder, rootPath);
+  return {
+    ...projectPackageJson.dependencies,
+    ...projectPackageJson.devDependencies
+  };
 };

@@ -14,7 +14,7 @@ import {
   querySubspaces
 } from './utilities/repository';
 import { RushConstants } from '@rushstack/rush-sdk';
-import { syncProjectDependencies } from './functions/syncProjectDependencies';
+import { syncProjectMismatchedDependencies } from './functions/syncProjectDependencies';
 
 export const migrateProject = async (): Promise<void> => {
   Console.debug('Executing project migration command...');
@@ -87,14 +87,17 @@ export const migrateProject = async (): Promise<void> => {
       return;
     }
 
-    const sourceProjectToMigrate: IRushConfigurationProjectJson = await chooseProjectPrompt(
-      sourceAvailableProjects
+    const sourceProjectNameToMigrate: string = await chooseProjectPrompt(
+      sourceAvailableProjects.map(({ packageName }) => packageName)
     );
-    Console.title(
-      `🏃 Migrating project ${sourceProjectToMigrate.packageName} to subspace ${Colorize.bold(
-        targetSubspace
-      )}...`
+    const sourceProjectToMigrate: IRushConfigurationProjectJson | undefined = sourceAvailableProjects.find(
+      ({ packageName }) => packageName === sourceProjectNameToMigrate
     );
+    if (!sourceProjectToMigrate) {
+      return;
+    }
+
+    Console.title(`🏃 Migrating project ${sourceProjectToMigrate} to subspace ${targetSubspace}...`);
 
     if (sourceProjectToMigrate.subspaceName) {
       const sourceSubspaceConfigurationFolderPath: string = getRushSubspaceConfigurationFolderPath(
@@ -110,7 +113,7 @@ export const migrateProject = async (): Promise<void> => {
     }
 
     await addProjectToSubspace(sourceProjectToMigrate, targetSubspace, sourceMonorepoPath);
-    await syncProjectDependencies(sourceProjectToMigrate.packageName);
+    await syncProjectMismatchedDependencies(sourceProjectToMigrate.packageName);
   } while (await confirmNextProjectPrompt(targetSubspace));
 
   Console.warn(

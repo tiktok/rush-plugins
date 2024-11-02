@@ -3,7 +3,8 @@ import Console from '../providers/console';
 import { Colorize } from '@rushstack/terminal';
 import { RushConstants } from '@rushstack/rush-sdk';
 import { RushNameConstants } from '../constants/paths';
-import { satisfies } from 'semver';
+import { intersects } from 'semver';
+import { sortVersions } from '../utilities/dependency';
 
 export const updateSubspaceAlternativeVersions = (
   availableVersions: string[],
@@ -11,9 +12,11 @@ export const updateSubspaceAlternativeVersions = (
 ): string[] => {
   const newVersions: string[] = [...availableVersions, ...versionsToUpdate];
 
-  // Remove duplicates
-  const validVersions: string[] = newVersions.filter((version, index, currValidVersions) => {
-    return currValidVersions.some((validVersion) => satisfies(version, validVersion));
+  // Remove duplicates & unnecessary versions
+  const validVersions: string[] = sortVersions(newVersions).filter((version, index, currValidVersions) => {
+    const compareVersions: string[] = [...currValidVersions];
+    compareVersions.splice(index, 1);
+    return !compareVersions.some((validVersion) => intersects(version, validVersion));
   });
 
   return validVersions;

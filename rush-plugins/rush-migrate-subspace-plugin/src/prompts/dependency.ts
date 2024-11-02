@@ -1,18 +1,39 @@
 import inquirer from 'inquirer';
 
-export const requestVersionTypePrompt = async (
-  availableVersions: { name: string; value: string }[]
+export const chooseVersionPrompt = async (
+  availableVersionsMap: Map<string, string[]>,
+  currentVersion: string,
+  recommendedVersion?: string
 ): Promise<string> => {
+  const availableVersions: string[] = Array.from(availableVersionsMap.keys());
   const { versionToSync } = await inquirer.prompt([
     {
       type: 'list',
       name: 'versionToSync',
-      message: 'Which version would you like to use?',
+      message: `Which version would you like to use?`,
+      suffix: `(Current version: ${currentVersion})`,
       choices: [
-        ...availableVersions,
+        ...(recommendedVersion
+          ? [
+              { type: 'separator', line: '==== Recommended version:' },
+              { name: recommendedVersion, value: recommendedVersion }
+            ]
+          : []),
+        { type: 'separator', line: '==== All versions:' },
+        ...availableVersions.map((version) => {
+          const projects: string[] = availableVersionsMap.get(version) || [];
+
+          return {
+            name: `${version} - used by ${
+              projects.length > 4 ? `${projects.length} projects` : projects.join(',')
+            }`,
+            value: version
+          };
+        }),
+        { type: 'separator', line: '==== Other options:' },
+        { name: 'Add current to allowedAlternativeVersions', value: 'alternative' },
         { name: 'Add manual version', value: 'manual' },
-        { name: 'Skip this dependency', value: 'skip' },
-        { name: 'Create exception (allowedAlternativeVersions)', value: 'alternative' }
+        { name: 'Skip this dependency', value: 'skip' }
       ]
     }
   ]);

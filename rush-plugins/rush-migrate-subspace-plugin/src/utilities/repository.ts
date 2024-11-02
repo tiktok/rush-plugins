@@ -4,6 +4,7 @@ import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfigur
 import { RushPathConstants } from '../constants/paths';
 import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/SubspacesConfiguration';
 import { RushConstants } from '@rushstack/rush-sdk';
+import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 
 export const getRushConfigurationJsonPath = (rootPath: string = getRootPath()): string =>
   `${rootPath}/${RushConstants.rushJsonFilename}`;
@@ -23,6 +24,14 @@ export const loadRushSubspacesConfiguration = (
 export const querySubspaces = (rootPath: string = getRootPath()): string[] => {
   const subspaceJson: ISubspacesConfigurationJson = loadRushSubspacesConfiguration(rootPath);
   return subspaceJson.subspaceNames;
+};
+
+export const queryProjectsFromSubspace = (
+  targetSubspaceName: string,
+  rootPath: string = getRootPath()
+): IRushConfigurationProjectJson[] => {
+  const rushConfig: IRushConfigurationJson = loadRushConfiguration(rootPath);
+  return rushConfig.projects.filter(({ subspaceName }) => subspaceName === targetSubspaceName);
 };
 
 export const isExternalMonorepo = (
