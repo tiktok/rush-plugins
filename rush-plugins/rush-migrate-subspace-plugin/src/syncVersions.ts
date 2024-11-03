@@ -6,7 +6,7 @@ import { queryProjectsFromSubspace, querySubspaces } from './utilities/repositor
 import { getRootPath } from './utilities/path';
 import { getSubspaceMismatches } from './utilities/subspace';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
-import { chooseProjectPrompt } from './prompts/project';
+import { chooseProjectPrompt, confirmNextProjectToSyncPrompt } from './prompts/project';
 import { syncProjectMismatchedDependencies } from './functions/syncProjectDependencies';
 
 const syncSubspaceMismatchedDependencies = async (
@@ -21,15 +21,15 @@ const syncSubspaceMismatchedDependencies = async (
       ({ packageName }) => packageName === selectedProjectName
     );
 
-    await syncProjectMismatchedDependencies(selectedProjectName, true);
+    await syncProjectMismatchedDependencies(selectedProjectName);
     projects.splice(selectedProjectIndex, 1);
-  } while (projects.length > 0);
+  } while (projects.length > 0 && (await confirmNextProjectToSyncPrompt(subspaceName)));
 
   return projects.length === 0;
 };
 
 export const syncVersions = async (): Promise<void> => {
-  Console.debug('Executing project version synchronization command...');
+  Console.debug('Synching project version...');
 
   const sourceSubspaces: string[] = querySubspaces();
   if (sourceSubspaces.length === 0) {

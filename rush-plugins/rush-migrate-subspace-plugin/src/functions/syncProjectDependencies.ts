@@ -3,14 +3,20 @@ import { VersionMismatchFinderEntity } from '@rushstack/rush-sdk/lib/logic/versi
 import Console from '../providers/console';
 import { Colorize } from '@rushstack/terminal';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
-import { chooseDependencyPrompt, chooseVersionPrompt, enterVersionPrompt } from '../prompts/dependency';
+import {
+  chooseDependencyPrompt,
+  chooseVersionPrompt,
+  confirmNextDependencyPrompt,
+  enterVersionPrompt
+} from '../prompts/dependency';
 import { updateProjectDependency } from './updateProjectDependency';
 import { getRecommendedVersion } from '../utilities/dependency';
 import { IPackageJsonDependencyTable, JsonFile, JsonObject } from '@rushstack/node-core-library';
 import { getRushSubspaceConfigurationFolderPath, getSubspaceDependencies } from '../utilities/subspace';
 import { updateSubspaceAlternativeVersions } from './updateSubspace';
 import { RushConstants } from '@rushstack/rush-sdk';
-import { confirmProjectSyncVersions } from '../prompts/project';
+import { chooseSyncCommandPrompt } from '../prompts/project';
+import { generateReport } from './generateReport';
 
 const addVersionToCommonVersionConfiguration = (
   subspaceName: string,
@@ -44,14 +50,6 @@ const syncDependencyVersion = async (dependencyToUpdate: string, projectToUpdate
     return;
   }
 
-  const subspaceDependencies: Map<string, Map<string, string[]>> = getSubspaceDependencies(
-    project.subspaceName
-  );
-  const availableVersionsMap: Map<string, string[]> = subspaceDependencies.get(dependencyToUpdate) as Map<
-    string,
-    string[]
-  >;
-  const availableVersions: string[] = Array.from(availableVersionsMap.keys());
   const projectDependencies: IPackageJsonDependencyTable | undefined =
     getProjectDependencies(projectToUpdate);
   const currentVersion: string | undefined = projectDependencies?.[dependencyToUpdate];
@@ -63,6 +61,31 @@ const syncDependencyVersion = async (dependencyToUpdate: string, projectToUpdate
     );
     return;
   }
+
+  const subspaceDependencies: Map<string, Map<string, string[]>> = getSubspaceDependencies(
+    project.subspaceName
+  );
+
+  const subspaceVersionsMap: Map<string, string[]> = subspaceDependencies.get(dependencyToUpdate) as Map<
+    string,
+    string[]
+  >;
+
+  const availableVersionsMap: Map<string, string[]> = new Map();
+  for (const [version, projects] of subspaceVersionsMap) {
+    const newProjects: string[] = [...projects];
+    const projectIndex: number = newProjects.indexOf(projectToUpdate);
+
+    if (projectIndex > -1) {
+      newProjects.splice(projectIndex, 1);
+    }
+
+    if (newProjects.length > 0) {
+      availableVersionsMap.set(version, projects);
+    }
+  }
+
+  const availableVersions: string[] = Array.from(availableVersionsMap.keys());
 
   const recommendedVersion: string | undefined = currentVersion
     ? getRecommendedVersion(currentVersion, availableVersions)
@@ -96,15 +119,12 @@ export const syncProjectDependencies = async (
     const selectedDependency: string = await chooseDependencyPrompt(dependenciesToSync);
     await syncDependencyVersion(selectedDependency, projectName);
     dependenciesToSync.splice(dependenciesToSync.indexOf(selectedDependency), 1);
-  } while (dependenciesToSync.length > 0);
+  } while (dependenciesToSync.length > 0 && (await confirmNextDependencyPrompt(projectName)));
 
   return dependenciesToSync.length === 0;
 };
 
-export const syncProjectMismatchedDependencies = async (
-  projectName: string,
-  forceSync: boolean = false
-): Promise<boolean> => {
+export const syncProjectMismatchedDependencies = async (projectName: string): Promise<boolean> => {
   Console.title(`🔄 Syncing version mismatches for project ${Colorize.bold(projectName)}...`);
 
   const projectMismatches: ReadonlyMap<
@@ -122,26 +142,39 @@ export const syncProjectMismatchedDependencies = async (
   Console.warn(
     `There are ${Colorize.bold(
       `${mismatchedDependencies.length}`
-    )} mismatched dependencies for the project ${Colorize.bold(projectName)}...`
+    )} mismatched dependencies for the project ${Colorize.bold(projectName)}:\n${mismatchedDependencies
+      .map(
+        (mismatchedDependency) =>
+          `- ${Colorize.bold(mismatchedDependency)}: ${Array.from(
+            projectMismatches.get(mismatchedDependency)?.keys() || []
+          ).join(', ')}`
+      )
+      .join('\n')}\n`
   );
-
-  const confirmSync: boolean = forceSync || (await confirmProjectSyncVersions());
-  if (!confirmSync) {
-    return true;
-  }
 
   const project: IRushConfigurationProjectJson | undefined = queryProject(projectName);
   if (!project || !project.subspaceName) {
     Console.error(`Project ${Colorize.bold(projectName)} is not part of a subspace!`);
-    return false;
-  }
-
-  if (await syncProjectDependencies(mismatchedDependencies, project.packageName)) {
-    Console.success(
-      `All mismatched dependencies for the subspace ${Colorize.bold(projectName)} have been synced!`
-    );
     return true;
   }
 
-  return false;
+  let continueSync: boolean = false;
+  const nextCommand: string = await chooseSyncCommandPrompt(project.packageName);
+  switch (nextCommand) {
+    case 'report':
+      await generateReport(project.packageName);
+      continueSync = true;
+      break;
+
+    case 'fix':
+      await syncProjectDependencies(mismatchedDependencies, project.packageName);
+      continueSync = true;
+      break;
+
+    case 'skip':
+      continueSync = false;
+      break;
+  }
+
+  return continueSync;
 };

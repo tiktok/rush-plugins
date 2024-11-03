@@ -19,12 +19,6 @@
     },
     {
       "parameterKind": "flag",
-      "longName": "--analyze",
-      "description": "Generate a report of a proposed subspace migration",
-      "associatedCommands": ["migrate-subspace"]
-    },
-    {
-      "parameterKind": "flag",
       "longName": "--debug",
       "description": "Provide debug logs",
       "associatedCommands": ["migrate-subspace"]

@@ -31,7 +31,7 @@ export const updateProjectDependency = async (
   JsonFile.save(packageJson, pkgJsonPath, { updateExistingFile: true });
 
   Console.success(
-    `Updated ${Colorize.bold(dependencyName)} : ${Colorize.bold(newVersion)} in project ${Colorize.bold(
+    `Updated ${Colorize.bold(dependencyName)} = ${Colorize.bold(newVersion)} in the project ${Colorize.bold(
       projectName
     )}!`
   );

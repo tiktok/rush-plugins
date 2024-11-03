@@ -1,6 +1,6 @@
 import { chooseSubspacePrompt } from './prompts/subspace';
 import { addProjectToSubspace } from './functions/addProjectToSubspace';
-import { chooseProjectPrompt, confirmNextProjectPrompt } from './prompts/project';
+import { chooseProjectPrompt, confirmNextProjectToAddPrompt } from './prompts/project';
 import Console from './providers/console';
 import { getRootPath } from './utilities/path';
 import { Colorize } from '@rushstack/terminal';
@@ -97,7 +97,9 @@ export const migrateProject = async (): Promise<void> => {
       return;
     }
 
-    Console.title(`🏃 Migrating project ${sourceProjectToMigrate} to subspace ${targetSubspace}...`);
+    Console.title(
+      `🏃 Migrating project ${sourceProjectToMigrate.packageName} to subspace ${targetSubspace}...`
+    );
 
     if (sourceProjectToMigrate.subspaceName) {
       const sourceSubspaceConfigurationFolderPath: string = getRushSubspaceConfigurationFolderPath(
@@ -114,7 +116,7 @@ export const migrateProject = async (): Promise<void> => {
 
     await addProjectToSubspace(sourceProjectToMigrate, targetSubspace, sourceMonorepoPath);
     await syncProjectMismatchedDependencies(sourceProjectToMigrate.packageName);
-  } while (await confirmNextProjectPrompt(targetSubspace));
+  } while (await confirmNextProjectToAddPrompt(targetSubspace));
 
   Console.warn(
     'Make sure to test thoroughly after updating the lockfile, there may be changes in the dependency versions.'

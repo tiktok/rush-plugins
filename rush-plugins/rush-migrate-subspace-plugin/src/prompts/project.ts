@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
-import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { basename } from 'path';
 import Console from '../providers/console';
+import { Colorize } from '@rushstack/terminal';
 
 export const moveProjectPrompt = async (): Promise<boolean> => {
   const { moveProject } = await inquirer.prompt([
@@ -45,23 +45,43 @@ export const chooseProjectPrompt = async (projects: string[]): Promise<string> =
   return projectName;
 };
 
-export const confirmProjectSyncVersions = async (): Promise<boolean> => {
-  const { confirmSync } = await inquirer.prompt([
+export const chooseSyncCommandPrompt = async (projectName: string): Promise<string> => {
+  const { command } = await inquirer.prompt([
     {
-      message: `Do you want to start the mismatch fix?`,
+      type: 'list',
+      name: 'command',
+      message: 'What would you like to do?',
+      suffix: ` (Project: ${Colorize.bold(projectName)})`,
+      choices: [
+        { name: 'Fix version mismatches', value: 'fix' },
+        { name: 'Report version mismatches', value: 'report' },
+        { name: 'Skip', value: 'skip' }
+      ]
+    }
+  ]);
+
+  return command;
+};
+
+export const confirmNextProjectToAddPrompt = async (subspaceName: string): Promise<boolean> => {
+  const { confirmNext } = await inquirer.prompt([
+    {
+      message: `Do you want to add another project to the subspace?`,
+      suffix: ` (Current subspace: ${Colorize.bold(subspaceName)})`,
       type: 'confirm',
-      name: 'confirmSync',
+      name: 'confirmNext',
       default: true
     }
   ]);
 
-  return confirmSync;
+  return confirmNext;
 };
 
-export const confirmNextProjectPrompt = async (subspaceName: string): Promise<boolean> => {
+export const confirmNextProjectToSyncPrompt = async (subspaceName: string): Promise<boolean> => {
   const { confirmNext } = await inquirer.prompt([
     {
-      message: `Do you want to add another project to the ${subspaceName} subspace?`,
+      message: `Do you want to fix another mismatched project?`,
+      suffix: ` (Current subspace: ${Colorize.bold(subspaceName)})`,
       type: 'confirm',
       name: 'confirmNext',
       default: true

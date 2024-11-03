@@ -44,6 +44,6 @@ export const sortVersions = (versions: string[]): string[] => {
   });
 };
 
-export const getRecommendedVersion = (targetVersion: string, versions: string[]): string => {
-  return sortVersions(versions).find((version) => intersects(targetVersion, version)) || versions[0];
+export const getRecommendedVersion = (targetVersion: string, versions: string[]): string | undefined => {
+  return sortVersions(versions).find((version) => intersects(targetVersion, version));
 };

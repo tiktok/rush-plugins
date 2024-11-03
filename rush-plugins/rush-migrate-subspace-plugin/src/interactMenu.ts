@@ -1,4 +1,3 @@
-import { generateReport } from './generateReport';
 import { migrateProject } from './migrateProject';
 import { chooseCommandPrompt } from './prompts/command';
 import Console from './providers/console';
@@ -11,11 +10,6 @@ export const interactMenu = async (): Promise<void> => {
     switch (nextCommand) {
       case 'exit':
         exitApplication = true;
-        break;
-
-      case 'analyze':
-        await generateReport();
-        Console.newLine();
         break;
 
       case 'move':
