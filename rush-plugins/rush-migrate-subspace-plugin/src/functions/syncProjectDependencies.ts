@@ -37,7 +37,7 @@ const addVersionToCommonVersionConfiguration = (
 
   if (subspaceCommonVersionsJson.allowedAlternativeVersions) {
     subspaceCommonVersionsJson.allowedAlternativeVersions[dependencyName] = [
-      ...subspaceCommonVersionsJson.allowedAlternativeVersions[dependencyName],
+      ...(subspaceCommonVersionsJson.allowedAlternativeVersions[dependencyName] || []),
       selectedVersion
     ];
 
@@ -47,33 +47,37 @@ const addVersionToCommonVersionConfiguration = (
   }
 };
 
-const syncDependencyVersion = async (dependencyToUpdate: string, projectToUpdate: string): Promise<void> => {
+const syncDependencyVersion = async (
+  dependencyToUpdate: string,
+  projectToUpdate: string
+): Promise<boolean> => {
+  const dependencyName: string = dependencyToUpdate.replace(' (cyclic)', '');
   const project: IRushConfigurationProjectJson | undefined = queryProject(projectToUpdate);
   if (!project || !project.subspaceName) {
-    return;
+    return false;
   }
 
   const projectDependencies: IPackageJsonDependencyTable | undefined =
     getProjectDependencies(projectToUpdate);
-  const currentVersion: string | undefined = projectDependencies?.[dependencyToUpdate];
+  const currentVersion: string | undefined = projectDependencies?.[dependencyName];
   if (!currentVersion) {
     Console.error(
-      `Dependency ${Colorize.bold(dependencyToUpdate)} doesn't exist in the project ${Colorize.bold(
+      `Dependency ${Colorize.bold(dependencyName)} doesn't exist in the project ${Colorize.bold(
         projectToUpdate
       )}! Skipping...`
     );
-    return;
+    return false;
   }
 
   const subspaceCommonVersionsJson: JsonObject = loadRushSubspaceCommonVersions(project.subspaceName);
   const subspaceAlternativeVersions: string[] =
-    subspaceCommonVersionsJson.allowedAlternativeVersions[dependencyToUpdate];
+    subspaceCommonVersionsJson.allowedAlternativeVersions[dependencyName] || [];
 
   const subspaceDependencies: Map<string, Map<string, string[]>> = getSubspaceDependencies(
     project.subspaceName
   );
 
-  const subspaceVersionsMap: Map<string, string[]> = subspaceDependencies.get(dependencyToUpdate) as Map<
+  const subspaceVersionsMap: Map<string, string[]> = subspaceDependencies.get(dependencyName) as Map<
     string,
     string[]
   >;
@@ -111,45 +115,29 @@ const syncDependencyVersion = async (dependencyToUpdate: string, projectToUpdate
   );
 
   if (versionToSync === 'skip') {
-    return;
+    return false;
   } else if (versionToSync === 'manual') {
-    const newVersion: string = (await enterVersionPrompt(dependencyToUpdate)).trim();
-    addVersionToCommonVersionConfiguration(project.subspaceName, dependencyToUpdate, newVersion);
-    await updateProjectDependency(projectToUpdate, dependencyToUpdate, newVersion);
+    const newVersion: string = (await enterVersionPrompt(dependencyName)).trim();
+    addVersionToCommonVersionConfiguration(project.subspaceName, dependencyName, newVersion);
+    await updateProjectDependency(projectToUpdate, dependencyName, newVersion);
   } else if (versionToSync === 'alternative') {
-    addVersionToCommonVersionConfiguration(project.subspaceName, dependencyToUpdate, currentVersion);
+    addVersionToCommonVersionConfiguration(project.subspaceName, dependencyName, currentVersion);
   } else {
-    await updateProjectDependency(projectToUpdate, dependencyToUpdate, versionToSync);
+    await updateProjectDependency(projectToUpdate, dependencyName, versionToSync);
   }
+
+  return true;
 };
 
-export const syncProjectDependencies = async (
-  dependencies: string[],
-  projectName: string
-): Promise<boolean> => {
-  const dependenciesToSync: string[] = [...dependencies];
-  do {
-    const selectedDependency: string = await chooseDependencyPrompt(dependenciesToSync);
-    await syncDependencyVersion(selectedDependency, projectName);
-    dependenciesToSync.splice(dependenciesToSync.indexOf(selectedDependency), 1);
-  } while (dependenciesToSync.length > 0 && (await confirmNextDependencyPrompt(projectName)));
-
-  return dependenciesToSync.length === 0;
-};
-
-export const syncProjectMismatchedDependencies = async (projectName: string): Promise<boolean> => {
-  Console.title(`🔄 Syncing version mismatches for project ${Colorize.bold(projectName)}...`);
-
+const fetchProjectMismatches = (projectName: string): string[] => {
   const projectMismatches: ReadonlyMap<
     string,
     ReadonlyMap<string, readonly VersionMismatchFinderEntity[]>
   > = getProjectMismatches(projectName);
 
   const mismatchedDependencies: string[] = Array.from(projectMismatches.keys());
-
   if (mismatchedDependencies.length === 0) {
-    Console.success(`No mismatches found in the project ${Colorize.bold(projectName)}!`);
-    return true;
+    return [];
   }
 
   Console.warn(
@@ -166,29 +154,49 @@ export const syncProjectMismatchedDependencies = async (projectName: string): Pr
       .join('\n')}\n`
   );
 
+  return mismatchedDependencies;
+};
+
+export const syncProjectMismatchedDependencies = async (projectName: string): Promise<boolean> => {
+  Console.title(`🔄 Syncing version mismatches for project ${Colorize.bold(projectName)}...`);
+
+  let mismatchedDependencies: string[] = fetchProjectMismatches(projectName);
+  if (mismatchedDependencies.length === 0) {
+    Console.success(`No mismatches found in the project ${Colorize.bold(projectName)}!`);
+    return true;
+  }
+
   const project: IRushConfigurationProjectJson | undefined = queryProject(projectName);
   if (!project || !project.subspaceName) {
     Console.error(`Project ${Colorize.bold(projectName)} is not part of a subspace!`);
     return true;
   }
 
-  let continueSync: boolean = false;
   const nextCommand: string = await chooseSyncCommandPrompt(project.packageName);
   switch (nextCommand) {
     case 'report':
       await generateReport(project.packageName);
-      continueSync = true;
       break;
-
     case 'fix':
-      await syncProjectDependencies(mismatchedDependencies, project.packageName);
-      continueSync = true;
-      break;
+      do {
+        const selectedDependency: string = await chooseDependencyPrompt(mismatchedDependencies);
+        if (await syncDependencyVersion(selectedDependency, projectName)) {
+          mismatchedDependencies = fetchProjectMismatches(projectName);
+        }
+      } while (mismatchedDependencies.length > 0 && (await confirmNextDependencyPrompt(projectName)));
 
-    case 'skip':
-      continueSync = false;
       break;
+    case 'skip':
+      return false;
   }
 
-  return continueSync;
+  if (mismatchedDependencies.length === 0) {
+    Console.success(
+      `All mismatched dependencies for project ${Colorize.bold(
+        projectName
+      )} have been successfully synchronized!`
+    );
+  }
+
+  return true;
 };

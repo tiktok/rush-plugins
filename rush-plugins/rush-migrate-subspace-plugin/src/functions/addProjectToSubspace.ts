@@ -1,4 +1,4 @@
-import { FileSystem } from '@rushstack/node-core-library';
+import { FileSystem, JsonFile } from '@rushstack/node-core-library';
 import { updateEdenProject } from './updateEdenProject';
 import { RushNameConstants } from '../constants/paths';
 import Console from '../providers/console';
@@ -9,7 +9,25 @@ import { queryProject } from '../utilities/project';
 import { getRootPath } from '../utilities/path';
 import { RushConstants } from '@rushstack/rush-sdk';
 import { addProjectToRushConfiguration } from './updateRushConfiguration';
-import { isExternalMonorepo } from '../utilities/repository';
+import {
+  getRushSubspacesConfigurationJsonPath,
+  isExternalMonorepo,
+  loadRushSubspacesConfiguration
+} from '../utilities/repository';
+import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/SubspacesConfiguration';
+import { queryProjectsFromSubspace } from '../utilities/subspace';
+
+const refreshSubspace = (subspaceName: string, rootPath: string): void => {
+  const subspacesConfig: ISubspacesConfigurationJson = loadRushSubspacesConfiguration(rootPath);
+  const newSubspaces: string[] = [...subspacesConfig.subspaceNames];
+  if (queryProjectsFromSubspace(subspaceName).length === 0) {
+    newSubspaces.splice(newSubspaces.indexOf(subspaceName), 1);
+  }
+
+  subspacesConfig.subspaceNames = newSubspaces;
+
+  JsonFile.save(subspacesConfig, getRushSubspacesConfigurationJsonPath(rootPath));
+};
 
 const moveProjectToSubspaceFolder = async (
   sourceProjectFolderPath: string,
@@ -89,6 +107,9 @@ export const addProjectToSubspace = async (
   }
 
   addProjectToRushConfiguration(sourceProject, targetSubspace, targetProjectFolderPath);
+  if (sourceProject.subspaceName) {
+    refreshSubspace(sourceProject.subspaceName, sourceMonorepoPath);
+  }
 
   Console.success(
     `Project ${Colorize.bold(

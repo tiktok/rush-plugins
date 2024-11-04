@@ -89,3 +89,12 @@ export const getProjectDependencies = (
     ...projectPackageJson.devDependencies
   };
 };
+
+export const getProjectMismatchedDependencies = (projectName: string): string[] => {
+  const projectMismatches: ReadonlyMap<
+    string,
+    ReadonlyMap<string, readonly VersionMismatchFinderEntity[]>
+  > = getProjectMismatches(projectName);
+
+  return Array.from(projectMismatches.keys());
+};

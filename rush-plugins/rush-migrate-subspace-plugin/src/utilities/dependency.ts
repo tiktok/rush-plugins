@@ -64,6 +64,15 @@ export const sortVersions = (versions: string[]): string[] => {
   return newVersions;
 };
 
+export const rSortVersions = (versions: string[]): string[] => {
+  return sortVersions(versions).reverse();
+};
+
+export const getClosestVersion = (targetVersion: string, versions: string[]): string | undefined => {
+  const rSortedVersions: string[] = rSortVersions(versions);
+  return rSortedVersions.find((version) => subsetVersion(targetVersion, version));
+};
+
 export const getRecommendedVersion = (targetVersion: string, versions: string[]): string | undefined => {
-  return sortVersions(versions).find((version) => subsetVersion(targetVersion, version));
+  return getClosestVersion(targetVersion, versions);
 };

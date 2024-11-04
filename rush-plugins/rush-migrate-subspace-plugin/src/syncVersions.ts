@@ -2,30 +2,34 @@ import { chooseSubspacePrompt } from './prompts/subspace';
 import { VersionMismatchFinderEntity } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinderEntity';
 import Console from './providers/console';
 import { Colorize } from '@rushstack/terminal';
-import { queryProjectsFromSubspace, querySubspaces } from './utilities/repository';
+import { querySubspaces } from './utilities/repository';
 import { getRootPath } from './utilities/path';
 import { getSubspaceMismatches } from './utilities/subspace';
-import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { chooseProjectPrompt, confirmNextProjectToSyncPrompt } from './prompts/project';
 import { syncProjectMismatchedDependencies } from './functions/syncProjectDependencies';
 
-const syncSubspaceMismatchedDependencies = async (
-  subspaceName: string,
-  mismatchedProjects: string[]
-): Promise<boolean> => {
-  const projects: IRushConfigurationProjectJson[] = queryProjectsFromSubspace(subspaceName);
+const fetchSubspaceMismatchedProjects = (subspaceName: string): string[] => {
+  const mismatchedProjects: string[] = [];
+  const subspaceMismatches: ReadonlyMap<
+    string,
+    ReadonlyMap<string, readonly VersionMismatchFinderEntity[]>
+  > = getSubspaceMismatches(subspaceName);
 
-  do {
-    const selectedProjectName: string = await chooseProjectPrompt(mismatchedProjects);
-    const selectedProjectIndex: number = projects.findIndex(
-      ({ packageName }) => packageName === selectedProjectName
-    );
+  for (const [, versions] of subspaceMismatches) {
+    for (const [, entities] of versions) {
+      mismatchedProjects.push(
+        ...entities
+          .filter(({ friendlyName }) => !mismatchedProjects.includes(friendlyName))
+          .map(({ friendlyName }) => friendlyName)
+      );
+    }
+  }
 
-    await syncProjectMismatchedDependencies(selectedProjectName);
-    projects.splice(selectedProjectIndex, 1);
-  } while (projects.length > 0 && (await confirmNextProjectToSyncPrompt(subspaceName)));
+  if (mismatchedProjects.length > 0) {
+    Console.warn(`There are ${Colorize.bold(`${mismatchedProjects.length}`)} mismatched projects...`);
+  }
 
-  return projects.length === 0;
+  return mismatchedProjects;
 };
 
 export const syncVersions = async (): Promise<void> => {
@@ -38,31 +42,24 @@ export const syncVersions = async (): Promise<void> => {
   }
 
   const selectedSubspaceName: string = await chooseSubspacePrompt(sourceSubspaces);
-  const subspaceMismatches: ReadonlyMap<
-    string,
-    ReadonlyMap<string, readonly VersionMismatchFinderEntity[]>
-  > = getSubspaceMismatches(selectedSubspaceName);
-
   Console.title(`🔄 Syncing version mismatches for subspace ${Colorize.bold(selectedSubspaceName)}...`);
 
-  if (subspaceMismatches.size === 0) {
+  let mismatchedProjects: string[] = fetchSubspaceMismatchedProjects(selectedSubspaceName);
+  if (mismatchedProjects.length === 0) {
     Console.success(`No mismatches found in the subspace ${Colorize.bold(selectedSubspaceName)}! Exiting...`);
     return;
   }
 
-  const mismatchedProjects: string[] = [];
-  for (const [, versions] of subspaceMismatches) {
-    for (const [, entities] of versions) {
-      mismatchedProjects.push(
-        ...entities
-          .filter(({ friendlyName }) => !mismatchedProjects.includes(friendlyName))
-          .map(({ friendlyName }) => friendlyName)
-      );
+  do {
+    const selectedProjectName: string = await chooseProjectPrompt(mismatchedProjects);
+    if (!(await syncProjectMismatchedDependencies(selectedProjectName))) {
+      return;
     }
-  }
 
-  Console.warn(`There are ${Colorize.bold(`${mismatchedProjects.length}`)} mismatched projects...`);
-  if (await syncSubspaceMismatchedDependencies(selectedSubspaceName, mismatchedProjects)) {
+    mismatchedProjects = fetchSubspaceMismatchedProjects(selectedSubspaceName);
+  } while (mismatchedProjects.length > 0 && (await confirmNextProjectToSyncPrompt(selectedSubspaceName)));
+
+  if (mismatchedProjects.length === 0) {
     Console.success(
       `All mismatched projects for subspace ${Colorize.bold(
         selectedSubspaceName

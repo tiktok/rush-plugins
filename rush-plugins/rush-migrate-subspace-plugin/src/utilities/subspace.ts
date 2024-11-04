@@ -5,17 +5,25 @@ import { getRootPath } from './path';
 import {
   getRushConfigurationJsonPath,
   getRushSubspacesConfigurationJsonPath,
+  loadRushConfiguration,
   loadRushSubspacesConfiguration,
-  queryProjectsFromSubspace,
   querySubspaces
 } from './repository';
 import { RushConstants } from '@rushstack/rush-sdk';
-import { RushConfiguration } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
+import { IRushConfigurationJson, RushConfiguration } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
 import { VersionMismatchFinder } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinder';
 import { VersionMismatchFinderEntity } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinderEntity';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { getProjectDependencies } from './project';
 import { sortVersions, subsetVersion } from './dependency';
+
+export const queryProjectsFromSubspace = (
+  targetSubspaceName: string,
+  rootPath: string = getRootPath()
+): IRushConfigurationProjectJson[] => {
+  const rushConfig: IRushConfigurationJson = loadRushConfiguration(rootPath);
+  return rushConfig.projects.filter(({ subspaceName }) => subspaceName === targetSubspaceName);
+};
 
 const getRushLegacySubspaceConfigurationFolderPath = (
   subspaceName: string,
