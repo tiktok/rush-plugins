@@ -1,14 +1,32 @@
-import { compare, eq, intersects, minVersion, satisfies, subset, validRange } from 'semver';
+import { compare, eq, minVersion, satisfies, subset, valid, validRange } from 'semver';
+
+export const subsetVersion = (version1: string, version2: string): boolean => {
+  if (version1 === version2) {
+    return true;
+  } else if (['latest', 'workspace:*'].includes(version2)) {
+    return true;
+  } else if ((!valid(version1) && !validRange(version1)) || (!valid(version2) && !validRange(version2))) {
+    return false;
+  }
+
+  return subset(version1, version2);
+};
 
 export const sortVersions = (versions: string[]): string[] => {
-  return versions.sort((v1, v2) => {
+  const newVersions: string[] = [...versions];
+  newVersions.sort((v1, v2) => {
     if (v1 === v2) {
       // e.g. 1.0.0 , 1.0.0
       return 0;
-    }
-
-    if (v1 === 'workspace:*' || v2 === 'workspace:*') {
-      // e.g. workspace:*
+    } else if (['latest', 'workspace:*'].includes(v1)) {
+      // e.g. workspace:*, 1.0.0
+      return 1;
+    } else if (['latest', 'workspace:*'].includes(v2)) {
+      // e.g. 1.0.0, workspace:*
+      return -1;
+    } else if (!valid(v1) && !validRange(v1)) {
+      return -1;
+    } else if (!valid(v2) && !validRange(v2)) {
       return 1;
     }
 
@@ -25,10 +43,10 @@ export const sortVersions = (versions: string[]): string[] => {
       if (v1Range && v2Range) {
         if (subset(v1Range, v2Range)) {
           // e.g. ~1.0.0 , ^1.0.0
-          return -1;
+          return 1;
         } else if (subset(v2Range, v1Range)) {
           // e.g. ^1.0.0 , ~1.0.0
-          return 1;
+          return -1;
         }
       } else if (v1Range) {
         // e.g. ~1.0.0 , 1.0.0
@@ -42,8 +60,10 @@ export const sortVersions = (versions: string[]): string[] => {
     // e.g. 1.0.0 , 1.0.1
     return compare(v1Fixed, v2Fixed);
   });
+
+  return newVersions;
 };
 
 export const getRecommendedVersion = (targetVersion: string, versions: string[]): string | undefined => {
-  return sortVersions(versions).find((version) => intersects(targetVersion, version));
+  return sortVersions(versions).find((version) => subsetVersion(targetVersion, version));
 };

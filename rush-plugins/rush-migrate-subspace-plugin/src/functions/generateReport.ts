@@ -6,6 +6,7 @@ import { RushNameConstants } from '../constants/paths';
 import { getProjectMismatches } from '../utilities/project';
 import { VersionMismatchFinderEntity } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinderEntity';
 import { getRootPath } from '../utilities/path';
+import { sortVersions } from '../utilities/dependency';
 
 export const generateReport = async (projectName: string): Promise<void> => {
   Console.debug(`Generating mismatches report for the project ${Colorize.bold(projectName)}...`);
@@ -20,13 +21,20 @@ export const generateReport = async (projectName: string): Promise<void> => {
   }
 
   const output: JsonObject = {};
-  for (const [mismatchedDependency, mismatchedVersions] of projectMismatches) {
+  const mismatchedDependencies: string[] = Array.from(projectMismatches.keys()).sort();
+  for (const mismatchedDependency of mismatchedDependencies) {
     output[mismatchedDependency] = [];
 
-    for (const [mismatchedVersion, mismatchedProjects] of mismatchedVersions) {
+    const mismatchedDependencyMap: ReadonlyMap<string, readonly VersionMismatchFinderEntity[]> | undefined =
+      projectMismatches.get(mismatchedDependency);
+    const mismatchedVersions: string[] = sortVersions(Array.from(mismatchedDependencyMap?.keys() || []));
+    for (const mismatchedVersion of mismatchedVersions) {
+      const mismatchedProjects: string[] = (
+        mismatchedDependencyMap?.get(mismatchedVersion)?.map(({ friendlyName }) => friendlyName) || []
+      ).sort();
       output[mismatchedDependency] = {
         ...output[mismatchedDependency],
-        [mismatchedVersion]: mismatchedProjects.map((project) => project.friendlyName)
+        [mismatchedVersion]: mismatchedProjects
       };
     }
   }

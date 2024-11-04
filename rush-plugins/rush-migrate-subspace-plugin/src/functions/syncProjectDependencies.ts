@@ -10,11 +10,13 @@ import {
   enterVersionPrompt
 } from '../prompts/dependency';
 import { updateProjectDependency } from './updateProjectDependency';
-import { getRecommendedVersion } from '../utilities/dependency';
+import { getRecommendedVersion, sortVersions } from '../utilities/dependency';
 import { IPackageJsonDependencyTable, JsonFile, JsonObject } from '@rushstack/node-core-library';
-import { getRushSubspaceConfigurationFolderPath, getSubspaceDependencies } from '../utilities/subspace';
-import { updateSubspaceAlternativeVersions } from './updateSubspace';
-import { RushConstants } from '@rushstack/rush-sdk';
+import {
+  getRushSubspaceCommonVersionsFilePath,
+  getSubspaceDependencies,
+  loadRushSubspaceCommonVersions
+} from '../utilities/subspace';
 import { chooseSyncCommandPrompt } from '../prompts/project';
 import { generateReport } from './generateReport';
 
@@ -23,10 +25,9 @@ const addVersionToCommonVersionConfiguration = (
   dependencyName: string,
   selectedVersion: string
 ): void => {
-  const subspaceCommonVersionsPath: string = `${getRushSubspaceConfigurationFolderPath(subspaceName)}/${
-    RushConstants.commonVersionsFilename
-  }`;
-  const subspaceCommonVersionsJson: JsonObject = JsonFile.load(subspaceCommonVersionsPath);
+  const subspaceCommonVersionsPath: string = getRushSubspaceCommonVersionsFilePath(subspaceName);
+  const subspaceCommonVersionsJson: RushSubspaceCommonVersionsJson =
+    loadRushSubspaceCommonVersions(subspaceName);
 
   Console.debug(
     `Adding ${Colorize.bold(selectedVersion)} to allowedAlternativeVersions of ${Colorize.bold(
@@ -34,14 +35,16 @@ const addVersionToCommonVersionConfiguration = (
     )}`
   );
 
-  subspaceCommonVersionsJson.allowedAlternativeVersions[dependencyName] = updateSubspaceAlternativeVersions(
-    subspaceCommonVersionsJson.allowedAlternativeVersions[dependencyName],
-    [selectedVersion]
-  );
+  if (subspaceCommonVersionsJson.allowedAlternativeVersions) {
+    subspaceCommonVersionsJson.allowedAlternativeVersions[dependencyName] = [
+      ...subspaceCommonVersionsJson.allowedAlternativeVersions[dependencyName],
+      selectedVersion
+    ];
 
-  JsonFile.save(subspaceCommonVersionsJson, subspaceCommonVersionsPath, {
-    updateExistingFile: true
-  });
+    JsonFile.save(subspaceCommonVersionsJson, subspaceCommonVersionsPath, {
+      updateExistingFile: true
+    });
+  }
 };
 
 const syncDependencyVersion = async (dependencyToUpdate: string, projectToUpdate: string): Promise<void> => {
@@ -62,6 +65,10 @@ const syncDependencyVersion = async (dependencyToUpdate: string, projectToUpdate
     return;
   }
 
+  const subspaceCommonVersionsJson: JsonObject = loadRushSubspaceCommonVersions(project.subspaceName);
+  const subspaceAlternativeVersions: string[] =
+    subspaceCommonVersionsJson.allowedAlternativeVersions[dependencyToUpdate];
+
   const subspaceDependencies: Map<string, Map<string, string[]>> = getSubspaceDependencies(
     project.subspaceName
   );
@@ -72,6 +79,12 @@ const syncDependencyVersion = async (dependencyToUpdate: string, projectToUpdate
   >;
 
   const availableVersionsMap: Map<string, string[]> = new Map();
+
+  // Add alternative versions
+  for (const alternativeVersion of subspaceAlternativeVersions) {
+    availableVersionsMap.set(alternativeVersion, []);
+  }
+
   for (const [version, projects] of subspaceVersionsMap) {
     const newProjects: string[] = [...projects];
     const projectIndex: number = newProjects.indexOf(projectToUpdate);
@@ -81,7 +94,7 @@ const syncDependencyVersion = async (dependencyToUpdate: string, projectToUpdate
     }
 
     if (newProjects.length > 0) {
-      availableVersionsMap.set(version, projects);
+      availableVersionsMap.set(version, newProjects);
     }
   }
 
@@ -143,10 +156,11 @@ export const syncProjectMismatchedDependencies = async (projectName: string): Pr
     `There are ${Colorize.bold(
       `${mismatchedDependencies.length}`
     )} mismatched dependencies for the project ${Colorize.bold(projectName)}:\n${mismatchedDependencies
+      .sort()
       .map(
         (mismatchedDependency) =>
-          `- ${Colorize.bold(mismatchedDependency)}: ${Array.from(
-            projectMismatches.get(mismatchedDependency)?.keys() || []
+          `- ${Colorize.bold(mismatchedDependency)}: ${sortVersions(
+            Array.from(projectMismatches.get(mismatchedDependency)?.keys() || [])
           ).join(', ')}`
       )
       .join('\n')}\n`

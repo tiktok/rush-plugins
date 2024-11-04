@@ -1,5 +1,6 @@
 import { Colorize } from '@rushstack/terminal';
 import inquirer from 'inquirer';
+import { sortVersions } from '../utilities/dependency';
 
 export const confirmNextDependencyPrompt = async (projectName: string): Promise<boolean> => {
   const { confirmNext } = await inquirer.prompt([
@@ -20,7 +21,12 @@ export const chooseVersionPrompt = async (
   currentVersion: string,
   recommendedVersion?: string
 ): Promise<string> => {
-  const availableVersions: string[] = Array.from(availableVersionsMap.keys());
+  const availableVersions: string[] = sortVersions(Array.from(availableVersionsMap.keys()));
+  const actionAlternative: { name: string; value: string } = {
+    name: 'Add current to allowedAlternativeVersions',
+    value: 'alternative'
+  };
+
   const { versionToSync } = await inquirer.prompt([
     {
       type: 'list',
@@ -33,20 +39,25 @@ export const chooseVersionPrompt = async (
               { type: 'separator', line: '==== Recommended version:' },
               { name: recommendedVersion, value: recommendedVersion }
             ]
-          : []),
+          : [{ type: 'separator', line: '==== Recommended action:' }, actionAlternative]),
         { type: 'separator', line: '==== All versions:' },
         ...availableVersions.map((version) => {
           const projects: string[] = availableVersionsMap.get(version) || [];
 
+          let name: string = `${version} - used by ${projects.join(', ')}`;
+          if (projects.length > 4) {
+            name = `${version} - used by ${projects.length} projects`;
+          } else if (projects.length === 0) {
+            name = version;
+          }
+
           return {
-            name: `${version} - used by ${
-              projects.length > 4 ? `${projects.length} projects` : projects.join(', ')
-            }`,
+            name,
             value: version
           };
         }),
         { type: 'separator', line: '==== Other options:' },
-        { name: 'Add current to allowedAlternativeVersions', value: 'alternative' },
+        actionAlternative,
         { name: 'Add manual version', value: 'manual' },
         { name: 'Skip this dependency', value: 'skip' }
       ]
@@ -76,7 +87,7 @@ export const chooseDependencyPrompt = async (dependencies: string[]): Promise<st
       message: `Please enter the dependency you wish to fix the mismatch.`,
       suffix: ` (${Colorize.bold(`${dependencies.length}`)} mismatched dependencies)`,
 
-      choices: dependencies.map((name) => ({ name, value: name }))
+      choices: dependencies.sort().map((name) => ({ name, value: name }))
     }
   ]);
 

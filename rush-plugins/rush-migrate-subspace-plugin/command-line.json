@@ -18,15 +18,22 @@
       "required": false
     },
     {
+      "description": "Clean subspace common versions",
       "parameterKind": "flag",
-      "longName": "--debug",
-      "description": "Provide debug logs",
-      "associatedCommands": ["migrate-subspace"]
+      "longName": "--clean",
+      "associatedCommands": ["migrate-subspace"],
+      "required": false
     },
     {
       "parameterKind": "flag",
       "longName": "--move",
       "description": "Move projects to a new subspace",
+      "associatedCommands": ["migrate-subspace"]
+    },
+    {
+      "parameterKind": "flag",
+      "longName": "--debug",
+      "description": "Provide debug logs",
       "associatedCommands": ["migrate-subspace"]
     }
   ]

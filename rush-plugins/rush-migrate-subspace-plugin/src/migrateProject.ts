@@ -108,10 +108,7 @@ export const migrateProject = async (): Promise<void> => {
         sourceProjectToMigrate.projectFolder
       );
 
-      const targetSubspaceConfigurationFolderPath: string =
-        getRushSubspaceConfigurationFolderPath(targetSubspace);
-
-      await updateSubspace(sourceSubspaceConfigurationFolderPath, targetSubspaceConfigurationFolderPath);
+      await updateSubspace(targetSubspace, sourceSubspaceConfigurationFolderPath);
     }
 
     await addProjectToSubspace(sourceProjectToMigrate, targetSubspace, sourceMonorepoPath);

@@ -38,7 +38,7 @@ export const chooseProjectPrompt = async (projects: string[]): Promise<string> =
       message: `Please select the project name (Type to filter).`,
       type: 'search-list',
       name: 'projectName',
-      choices: projects.map((name) => ({ name, value: name }))
+      choices: projects.sort().map((name) => ({ name, value: name }))
     }
   ]);
 

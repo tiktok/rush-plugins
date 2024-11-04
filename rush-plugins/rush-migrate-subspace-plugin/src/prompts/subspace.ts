@@ -6,7 +6,7 @@ export const chooseSubspacePrompt = async (subspaces: string[]): Promise<string>
       message: 'Please select the subspace name (Type to filter).',
       type: 'search-list',
       name: 'subspaceNameInput',
-      choices: subspaces.map((name) => ({ name, value: name }))
+      choices: subspaces.sort().map((name) => ({ name, value: name }))
     }
   ]);
 
