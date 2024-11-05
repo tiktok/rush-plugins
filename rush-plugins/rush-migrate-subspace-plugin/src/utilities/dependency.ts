@@ -1,4 +1,4 @@
-import { compare, eq, minVersion, satisfies, subset, valid, validRange } from 'semver';
+import { compare, eq, intersects, minVersion, satisfies, subset, valid, validRange } from 'semver';
 
 export const subsetVersion = (version1: string, version2: string): boolean => {
   if (version1 === version2) {
@@ -10,6 +10,14 @@ export const subsetVersion = (version1: string, version2: string): boolean => {
   }
 
   return subset(version1, version2);
+};
+
+export const intersectsVersion = (version1: string, version2: string): boolean => {
+  if ((!valid(version1) && !validRange(version1)) || (!valid(version2) && !validRange(version2))) {
+    return false;
+  }
+
+  return intersects(version1, version2);
 };
 
 export const sortVersions = (versions: string[]): string[] => {
@@ -70,7 +78,7 @@ export const rSortVersions = (versions: string[]): string[] => {
 
 export const getClosestVersion = (targetVersion: string, versions: string[]): string | undefined => {
   const rSortedVersions: string[] = rSortVersions(versions);
-  return rSortedVersions.find((version) => subsetVersion(targetVersion, version));
+  return rSortedVersions.find((version) => intersectsVersion(targetVersion, version));
 };
 
 export const getRecommendedVersion = (targetVersion: string, versions: string[]): string | undefined => {
