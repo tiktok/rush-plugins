@@ -21,12 +21,6 @@ If you encounter version inconsistency errors, you can use the migration tool to
 rush migrate-subspace --sync
 ```
 
-If you want to clean the subspace common versions, you can use the following command:
-
-```
-rush migrate-subspace --clean
-```
-
 # What is the plugin for?
 
 The rush subspace is a new feature that intends to move common projects into 1 workspace. Teams that want to take advantage of this feature need to manually migrate these projects. This script automates most of these required steps to speed up the migration process.

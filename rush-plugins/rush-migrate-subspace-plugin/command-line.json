@@ -18,13 +18,6 @@
       "required": false
     },
     {
-      "description": "Clean subspace common versions",
-      "parameterKind": "flag",
-      "longName": "--clean",
-      "associatedCommands": ["migrate-subspace"],
-      "required": false
-    },
-    {
       "parameterKind": "flag",
       "longName": "--move",
       "description": "Move projects to a new subspace",
