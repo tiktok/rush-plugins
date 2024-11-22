@@ -8,8 +8,7 @@ export const chooseCommandPrompt = async (): Promise<string> => {
       message: 'What would you like to do?',
       choices: [
         { name: 'Move a project to a new subspace', value: 'move' },
-        { name: 'Fix project dependencies version mismatches', value: 'sync' },
-        { name: 'Identify all version mismatches for a single project', value: 'analyze' },
+        { name: 'Scan & fix version mismatches', value: 'sync' },
         { name: 'Exit application', value: 'exit' }
       ]
     }

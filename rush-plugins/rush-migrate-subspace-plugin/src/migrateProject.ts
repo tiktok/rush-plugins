@@ -1,6 +1,6 @@
 import { chooseSubspacePrompt } from './prompts/subspace';
 import { addProjectToSubspace } from './functions/addProjectToSubspace';
-import { chooseProjectPrompt, confirmNextProjectPrompt } from './prompts/project';
+import { chooseProjectPrompt, confirmNextProjectToAddPrompt } from './prompts/project';
 import Console from './providers/console';
 import { getRootPath } from './utilities/path';
 import { Colorize } from '@rushstack/terminal';
@@ -14,8 +14,9 @@ import {
   querySubspaces
 } from './utilities/repository';
 import { RushConstants } from '@rushstack/rush-sdk';
+import { syncProjectMismatchedDependencies } from './functions/syncProjectDependencies';
 
-export async function migrateProject(): Promise<void> {
+export const migrateProject = async (): Promise<void> => {
   Console.debug('Executing project migration command...');
 
   Console.title(`🔍 Analyzing if monorepo ${Colorize.underline(getRootPath())} supports subspaces...`);
@@ -86,13 +87,18 @@ export async function migrateProject(): Promise<void> {
       return;
     }
 
-    const sourceProjectToMigrate: IRushConfigurationProjectJson = await chooseProjectPrompt(
-      sourceAvailableProjects
+    const sourceProjectNameToMigrate: string = await chooseProjectPrompt(
+      sourceAvailableProjects.map(({ packageName }) => packageName)
     );
+    const sourceProjectToMigrate: IRushConfigurationProjectJson | undefined = sourceAvailableProjects.find(
+      ({ packageName }) => packageName === sourceProjectNameToMigrate
+    );
+    if (!sourceProjectToMigrate) {
+      return;
+    }
+
     Console.title(
-      `🏃 Migrating project ${sourceProjectToMigrate.packageName} to subspace ${Colorize.bold(
-        targetSubspace
-      )}...`
+      `🏃 Migrating project ${sourceProjectToMigrate.packageName} to subspace ${targetSubspace}...`
     );
 
     if (sourceProjectToMigrate.subspaceName) {
@@ -102,16 +108,14 @@ export async function migrateProject(): Promise<void> {
         sourceProjectToMigrate.projectFolder
       );
 
-      const targetSubspaceConfigurationFolderPath: string =
-        getRushSubspaceConfigurationFolderPath(targetSubspace);
-
-      await updateSubspace(sourceSubspaceConfigurationFolderPath, targetSubspaceConfigurationFolderPath);
+      await updateSubspace(targetSubspace, sourceSubspaceConfigurationFolderPath);
     }
 
     await addProjectToSubspace(sourceProjectToMigrate, targetSubspace, sourceMonorepoPath);
-  } while (await confirmNextProjectPrompt(targetSubspace));
+    await syncProjectMismatchedDependencies(sourceProjectToMigrate.packageName);
+  } while (await confirmNextProjectToAddPrompt(targetSubspace));
 
   Console.warn(
     'Make sure to test thoroughly after updating the lockfile, there may be changes in the dependency versions.'
   );
-}
+};

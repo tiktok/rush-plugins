@@ -11,8 +11,8 @@ Please follow the [official doc](https://rushjs.io/pages/maintainer/using_rush_p
 2. Running `migrate-subspace`
 
 ```
-rush migrate-subspace
-rush migrate-subspace --report # generates full report
+rush migrate-subspace          # open interactive menu to handle the migration
+rush migrate-subspace --move   # move a project to a subspace
 ```
 
 If you encounter version inconsistency errors, you can use the migration tool to help you resolve them:
