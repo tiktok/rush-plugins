@@ -2,6 +2,18 @@
   "name": "rush-migrate-subspace-plugin",
   "entries": [
     {
+      "version": "1.2.0",
+      "tag": "rush-migrate-subspace-plugin_v1.2.0",
+      "date": "Fri, 22 Nov 2024 19:40:08 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "improve recommended version, fix minor issues and update mismatches per project"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.0",
       "tag": "rush-migrate-subspace-plugin_v1.1.0",
       "date": "Tue, 29 Oct 2024 03:43:55 GMT",
