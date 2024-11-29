@@ -1,3 +1,4 @@
+import { cleanSubspace } from './cleanSubspace';
 import { migrateProject } from './migrateProject';
 import { chooseCommandPrompt } from './prompts/command';
 import Console from './providers/console';
@@ -19,6 +20,11 @@ export const interactMenu = async (): Promise<void> => {
 
       case 'sync':
         await syncVersions();
+        Console.newLine();
+        break;
+
+      case 'clean':
+        await cleanSubspace();
         Console.newLine();
         break;
     }
