@@ -1,9 +1,8 @@
 import { compare, eq, intersects, minVersion, satisfies, subset, valid, validRange } from 'semver';
+import { RESERVED_VERSIONS } from '../constants/versions';
 
 export const subsetVersion = (version1: string, version2: string): boolean => {
-  if (version1 === version2) {
-    return true;
-  } else if (['latest', 'workspace:*'].includes(version2)) {
+  if (RESERVED_VERSIONS.includes(version2)) {
     return true;
   } else if ((!valid(version1) && !validRange(version1)) || (!valid(version2) && !validRange(version2))) {
     return false;
@@ -26,10 +25,10 @@ export const sortVersions = (versions: string[]): string[] => {
     if (v1 === v2) {
       // e.g. 1.0.0 , 1.0.0
       return 0;
-    } else if (['latest', 'workspace:*'].includes(v1)) {
+    } else if (RESERVED_VERSIONS.includes(v1)) {
       // e.g. workspace:*, 1.0.0
       return 1;
-    } else if (['latest', 'workspace:*'].includes(v2)) {
+    } else if (RESERVED_VERSIONS.includes(v2)) {
       // e.g. 1.0.0, workspace:*
       return -1;
     } else if (!valid(v1) && !validRange(v1)) {

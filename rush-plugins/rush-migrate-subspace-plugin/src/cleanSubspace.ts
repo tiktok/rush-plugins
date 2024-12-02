@@ -19,13 +19,14 @@ import { getRushSubspacesConfigurationJsonPath, querySubspaces } from './utiliti
 import { RushConstants } from '@rushstack/rush-sdk';
 import { chooseDependencyPrompt, confirmNextDependencyPrompt } from './prompts/dependency';
 import { IPackageJson, JsonFile } from '@rushstack/node-core-library';
-import { sortVersions, subsetVersion } from './utilities/dependency';
+import { rSortVersions, subsetVersion } from './utilities/dependency';
 import {
   getProjectPackageFilePath,
   loadProjectPackageJson,
   updateProjectDependency
 } from './utilities/project';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
+import { RESERVED_VERSIONS } from './constants/versions';
 
 const removeSupersetDependency = async (
   subspaceName: string,
@@ -40,20 +41,22 @@ const removeSupersetDependency = async (
     rootPath
   );
 
-  const validVersions: string[] = sortVersions(versions);
+  const validVersions: string[] = rSortVersions(versions).filter(
+    (version) => !RESERVED_VERSIONS.includes(version)
+  );
 
   let targetIndex: number = 0;
   while (targetIndex < validVersions.length) {
     const newVersion: string = validVersions[targetIndex];
     const toCompareVersions: string[] = validVersions.slice(targetIndex + 1);
 
-    const foundSubsetIndex: number = toCompareVersions.findIndex((toCompareVersion) =>
-      subsetVersion(toCompareVersion, newVersion)
+    const toDeleteIndex: number = toCompareVersions.findIndex(
+      (toCompareVersion) => newVersion !== toCompareVersion && subsetVersion(newVersion, toCompareVersion)
     );
 
-    if (foundSubsetIndex > -1) {
+    if (toDeleteIndex > -1) {
       // Delete superset version
-      const [deletedVersion] = validVersions.splice(targetIndex, 1);
+      const [deletedVersion] = validVersions.splice(targetIndex + toDeleteIndex + 1, 1);
       versionsMap.get(deletedVersion)?.forEach((projectName) => {
         if (updateProjectDependency(projectName, dependencyName, newVersion, rootPath)) {
           Console.debug(
