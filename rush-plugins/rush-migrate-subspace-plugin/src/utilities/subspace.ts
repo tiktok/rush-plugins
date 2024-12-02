@@ -15,7 +15,6 @@ import { VersionMismatchFinder } from '@rushstack/rush-sdk/lib/logic/versionMism
 import { VersionMismatchFinderEntity } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinderEntity';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { getProjectDependencies } from './project';
-import { sortVersions, subsetVersion } from './dependency';
 
 export const queryProjectsFromSubspace = (
   targetSubspaceName: string,
@@ -159,61 +158,4 @@ export const getSubspaceDependencies = (
   }
 
   return subspaceDependencies;
-};
-
-const reduceSubspaceDependencyVersions = (versions: string[]): string[] => {
-  const validVersions: string[] = sortVersions(versions);
-
-  let targetIndex: number = 0;
-  while (targetIndex < validVersions.length) {
-    const targetVersion: string = validVersions[targetIndex];
-    const toCompareVersions: string[] = validVersions.slice(targetIndex + 1);
-
-    const toDeleteIndex: number = toCompareVersions.findIndex((toCompareVersion) =>
-      subsetVersion(toCompareVersion, targetVersion)
-    );
-
-    if (toDeleteIndex > -1) {
-      validVersions.splice(targetIndex + 1 + toDeleteIndex, 1);
-    } else {
-      targetIndex += 1;
-    }
-  }
-
-  return validVersions;
-};
-
-export const cleanSubspaceCommonVersions = (
-  subspaceName: string,
-  rootPath: string = getRootPath()
-): boolean => {
-  let hasChanged: boolean = false;
-  const subspaceCommonVersionsPath: string = getRushSubspaceCommonVersionsFilePath(subspaceName, rootPath);
-  const subspaceCommonVersionsJson: RushSubspaceCommonVersionsJson = loadRushSubspaceCommonVersions(
-    subspaceName,
-    rootPath
-  );
-
-  subspaceCommonVersionsJson.allowedAlternativeVersions =
-    subspaceCommonVersionsJson.allowedAlternativeVersions || {};
-  for (const [dependency, versions] of Object.entries(
-    subspaceCommonVersionsJson.allowedAlternativeVersions
-  )) {
-    // Remove duplicates & unnecessary versions
-    const validVersions: string[] = reduceSubspaceDependencyVersions(versions);
-    if (validVersions.length === 0) {
-      delete subspaceCommonVersionsJson.allowedAlternativeVersions[dependency];
-    } else {
-      subspaceCommonVersionsJson.allowedAlternativeVersions[dependency] = validVersions;
-    }
-
-    hasChanged = hasChanged || validVersions.length !== versions.length;
-  }
-
-  if (hasChanged) {
-    JsonFile.save(subspaceCommonVersionsJson, subspaceCommonVersionsPath);
-    return true;
-  }
-
-  return false;
 };
