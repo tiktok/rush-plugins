@@ -81,15 +81,15 @@ export const scanForDuplicatedDependenciesPrompt = async (): Promise<boolean> =>
   return scanForDuplicated;
 };
 
-export const scanForSubsetDependencyVersionsPrompt = async (): Promise<boolean> => {
-  const { scanForSubset } = await inquirer.prompt([
+export const scanForSupersetDependencyVersionsPrompt = async (): Promise<boolean> => {
+  const { scanForSuperset } = await inquirer.prompt([
     {
-      message: 'Do you want to scan for subset dependency versions in the subspace?',
-      name: 'scanForSubset',
+      message: 'Do you want to scan for superset dependency versions in the subspace?',
+      name: 'scanForSuperset',
       type: 'confirm'
     }
   ]);
-  return scanForSubset;
+  return scanForSuperset;
 };
 
 export const scanForAllDependenciesPrompt = async (): Promise<boolean> => {
