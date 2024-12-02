@@ -2,7 +2,7 @@ import {
   chooseSubspacePrompt,
   scanForUnusedDependencyVersionsPrompt,
   scanForDuplicatedDependenciesPrompt,
-  scanForSubsetDependencyVersionsPrompt,
+  scanForSupersetDependencyVersionsPrompt,
   scanForAllDependenciesPrompt
 } from './prompts/subspace';
 import Console from './providers/console';
@@ -27,7 +27,7 @@ import {
 } from './utilities/project';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 
-const removeSubsetDependency = async (
+const removeSupersetDependency = async (
   subspaceName: string,
   dependencyName: string,
   versionsMap: Map<string, string[]>,
@@ -47,14 +47,13 @@ const removeSubsetDependency = async (
     const newVersion: string = validVersions[targetIndex];
     const toCompareVersions: string[] = validVersions.slice(targetIndex + 1);
 
-    const toDeleteIndex: number = toCompareVersions.findIndex((toCompareVersion) =>
+    const foundSubsetIndex: number = toCompareVersions.findIndex((toCompareVersion) =>
       subsetVersion(toCompareVersion, newVersion)
     );
 
-    if (toDeleteIndex > -1) {
-      // Delete subset version
-
-      const [deletedVersion] = validVersions.splice(targetIndex + 1 + toDeleteIndex, 1);
+    if (foundSubsetIndex > -1) {
+      // Delete superset version
+      const [deletedVersion] = validVersions.splice(targetIndex, 1);
       versionsMap.get(deletedVersion)?.forEach((projectName) => {
         if (updateProjectDependency(projectName, dependencyName, newVersion, rootPath)) {
           Console.debug(
@@ -180,7 +179,7 @@ const removeUnusedAlternativeVersions = (
   }
 };
 
-const removeSubsetDependencyVersions = async (
+const removeSupersetDependencyVersions = async (
   subspaceName: string,
   subspaceDependencies: Map<string, Map<string, string[]>>
 ): Promise<void> => {
@@ -196,15 +195,15 @@ const removeSubsetDependencyVersions = async (
   }
 
   if (await scanForAllDependenciesPrompt()) {
-    Console.log(`Removing subset versions for subspace ${Colorize.bold(subspaceName)}...`);
+    Console.log(`Removing superset versions for subspace ${Colorize.bold(subspaceName)}...`);
     await Promise.all(
       Array.from(subspaceDependencies.entries()).map(([dependency, versionsMap]) =>
-        removeSubsetDependency(subspaceName, dependency, versionsMap)
+        removeSupersetDependency(subspaceName, dependency, versionsMap)
       )
     ).then((countPerDependency) => {
       const count: number = countPerDependency.reduce((a, b) => a + b, 0);
       if (count > 0) {
-        Console.success(`Removed ${Colorize.bold(`${count}`)} subset alternative versions!`);
+        Console.success(`Removed ${Colorize.bold(`${count}`)} superset alternative versions!`);
       } else {
         Console.success(`No alternative versions have been removed!`);
       }
@@ -216,8 +215,8 @@ const removeSubsetDependencyVersions = async (
   do {
     const selectedDependency: string = await chooseDependencyPrompt(multipleVersionDependencies);
 
-    Console.log(`Removing subset versions for dependency ${Colorize.bold(selectedDependency)}...`);
-    const count: number = await removeSubsetDependency(
+    Console.log(`Removing superset versions for dependency ${Colorize.bold(selectedDependency)}...`);
+    const count: number = await removeSupersetDependency(
       subspaceName,
       selectedDependency,
       subspaceDependencies.get(selectedDependency) as Map<string, string[]>
@@ -225,7 +224,7 @@ const removeSubsetDependencyVersions = async (
 
     if (count > 0) {
       Console.success(
-        `Removed ${Colorize.bold(`${count}`)} subset alternative versions for dependency ${Colorize.bold(
+        `Removed ${Colorize.bold(`${count}`)} superset alternative versions for dependency ${Colorize.bold(
           selectedDependency
         )}!`
       );
@@ -264,8 +263,8 @@ export const cleanSubspace = async (): Promise<void> => {
     subspaceDependencies = getSubspaceDependencies(targetSubspace);
   }
 
-  if (await scanForSubsetDependencyVersionsPrompt()) {
-    await removeSubsetDependencyVersions(targetSubspace, subspaceDependencies);
+  if (await scanForSupersetDependencyVersionsPrompt()) {
+    await removeSupersetDependencyVersions(targetSubspace, subspaceDependencies);
     subspaceDependencies = getSubspaceDependencies(targetSubspace);
   }
 
