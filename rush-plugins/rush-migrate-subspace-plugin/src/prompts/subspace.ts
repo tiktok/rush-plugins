@@ -56,3 +56,50 @@ export const chooseCreateOrSelectSubspacePrompt = async (subspaces: string[]): P
 
   return subspaceSelection;
 };
+
+export const scanForUnusedDependencyVersionsPrompt = async (): Promise<boolean> => {
+  const { removeUnused } = await inquirer.prompt([
+    {
+      message: 'Do you want to remove unused alternative versions from the subspace?',
+      name: 'removeUnused',
+      type: 'confirm'
+    }
+  ]);
+
+  return removeUnused;
+};
+
+export const scanForDuplicatedDependenciesPrompt = async (): Promise<boolean> => {
+  const { scanForDuplicated } = await inquirer.prompt([
+    {
+      message: 'Do you want to scan for duplicated dependencies in the subspace?',
+      name: 'scanForDuplicated',
+      type: 'confirm'
+    }
+  ]);
+
+  return scanForDuplicated;
+};
+
+export const scanForSubsetDependencyVersionsPrompt = async (): Promise<boolean> => {
+  const { scanForSubset } = await inquirer.prompt([
+    {
+      message: 'Do you want to scan for subset dependency versions in the subspace?',
+      name: 'scanForSubset',
+      type: 'confirm'
+    }
+  ]);
+  return scanForSubset;
+};
+
+export const scanForAllDependenciesPrompt = async (): Promise<boolean> => {
+  const { executeForAll } = await inquirer.prompt([
+    {
+      message: `Do you want to scan for all dependencies?`,
+      type: 'confirm',
+      name: 'executeForAll'
+    }
+  ]);
+
+  return executeForAll;
+};

@@ -179,11 +179,17 @@ export const syncProjectMismatchedDependencies = async (projectName: string): Pr
       break;
     case 'fix':
       do {
-        const selectedDependency: string = await chooseDependencyPrompt(mismatchedDependencies);
+        const selectedDependency: string = await chooseDependencyPrompt(
+          mismatchedDependencies,
+          ` (${Colorize.bold(`${mismatchedDependencies.length}`)} mismatched dependencies)`
+        );
         if (await syncDependencyVersion(selectedDependency, projectName)) {
           mismatchedDependencies = fetchProjectMismatches(projectName);
         }
-      } while (mismatchedDependencies.length > 0 && (await confirmNextDependencyPrompt(projectName)));
+      } while (
+        mismatchedDependencies.length > 0 &&
+        (await confirmNextDependencyPrompt(` (Current project: ${Colorize.bold(projectName)})`))
+      );
 
       break;
     case 'skip':

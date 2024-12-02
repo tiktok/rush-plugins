@@ -98,3 +98,29 @@ export const getProjectMismatchedDependencies = (projectName: string): string[] 
 
   return Array.from(projectMismatches.keys());
 };
+
+export const updateProjectDependency = (
+  projectName: string,
+  dependencyName: string,
+  newVersion: string,
+  rootPath: string = getRootPath()
+): boolean => {
+  const project: IRushConfigurationProjectJson | undefined = queryProject(projectName, rootPath);
+  if (!project) {
+    return false;
+  }
+
+  const projectPackageFilePath: string = getProjectPackageFilePath(project.projectFolder, rootPath);
+  const projectPackageJson: IPackageJson = loadProjectPackageJson(project.projectFolder, rootPath);
+
+  if (projectPackageJson.dependencies![dependencyName]) {
+    projectPackageJson.dependencies![dependencyName] = newVersion;
+  }
+
+  if (projectPackageJson.devDependencies![dependencyName]) {
+    projectPackageJson.devDependencies![dependencyName] = newVersion;
+  }
+
+  JsonFile.save(projectPackageJson, projectPackageFilePath);
+  return true;
+};

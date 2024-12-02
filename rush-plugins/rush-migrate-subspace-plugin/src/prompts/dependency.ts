@@ -2,11 +2,11 @@ import { Colorize } from '@rushstack/terminal';
 import inquirer from 'inquirer';
 import { sortVersions } from '../utilities/dependency';
 
-export const confirmNextDependencyPrompt = async (projectName: string): Promise<boolean> => {
+export const confirmNextDependencyPrompt = async (suffix?: string): Promise<boolean> => {
   const { confirmNext } = await inquirer.prompt([
     {
-      message: `Do you want to fix another dependency?`,
-      suffix: ` (Current project: ${Colorize.bold(projectName)})`,
+      message: `Do you want to choose another dependency?`,
+      suffix,
       type: 'confirm',
       name: 'confirmNext',
       default: true
@@ -79,13 +79,13 @@ export const enterVersionPrompt = async (dependencyName: string): Promise<string
   return newVersion;
 };
 
-export const chooseDependencyPrompt = async (dependencies: string[]): Promise<string> => {
+export const chooseDependencyPrompt = async (dependencies: string[], suffix?: string): Promise<string> => {
   const { dependencyInput } = await inquirer.prompt([
     {
       type: 'list',
       name: 'dependencyInput',
-      message: `Please enter the dependency you wish to fix the mismatch.`,
-      suffix: ` (${Colorize.bold(`${dependencies.length}`)} mismatched dependencies)`,
+      message: `Please select the dependency name (Type to filter).`,
+      suffix,
 
       choices: dependencies.sort().map((name) => ({ name, value: name }))
     }
