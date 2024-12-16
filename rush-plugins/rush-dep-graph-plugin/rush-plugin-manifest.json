@@ -3,7 +3,7 @@
   "plugins": [
     {
       "pluginName": "dep-graph",
-      "description": "Check if new files are correct managed by git-lfs",
+      "description": "Display the dependency graph of the specified package.",
       "commandLineJsonFilePath": "command-line.json"
     }
   ]
