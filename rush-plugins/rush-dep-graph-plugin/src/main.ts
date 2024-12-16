@@ -16,7 +16,7 @@ export class ListGraph {
   private readonly _filter?: string;
   private readonly _visited: Set<string>;
 
-  constructor(selector: Selector, projectName: string, filter?: string) {
+  public constructor(selector: Selector, projectName: string, filter?: string) {
     this._terminal = new Terminal(new ConsoleTerminalProvider());
     this._rushConfiguration = RushConfiguration.loadFromDefaultLocation();
     this._selector = selector;
