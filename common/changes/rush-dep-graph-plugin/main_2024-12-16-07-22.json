@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "rush-dep-graph-plugin",
+      "comment": "Create a `rush-dep-graph-plugin` Rush plugin to display the dependency graph.",
+      "type": "minor"
+    }
+  ],
+  "packageName": "rush-dep-graph-plugin"
+}
