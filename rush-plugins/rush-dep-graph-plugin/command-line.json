@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/command-line.schema.json",
+  "commands": [
+    {
+      "name": "dep-graph",
+      "commandKind": "global",
+      "summary": "Display the dependency graph of the specified package.",
+      "description": "Display the dependency graph of the specified package.",
+      "shellCommand": "ts-node common/autoinstallers/dep-graph/src/index.ts",
+      "autoinstallerName": "dep-graph",
+      "safeForSimultaneousRushProcesses": true
+    }
+  ],
+  "parameters": [
+    {
+      "parameterKind": "string",
+      "argumentName": "PROJECT_NAME",
+      "description": "Select the packages that depend on specific project.",
+      "longName": "--to",
+      "shortName": "-t",
+      "associatedCommands": ["dep-graph"]
+    },
+    {
+      "parameterKind": "string",
+      "argumentName": "PROJECT_NAME",
+      "description": "Select the package that is dependent on specific package.",
+      "longName": "--from",
+      "shortName": "-f",
+      "associatedCommands": ["dep-graph"]
+    },
+    {
+      "parameterKind": "string",
+      "argumentName": "PROJECT_NAME",
+      "description": "Select the packages based on a custom filter criteria, such as specific keywords in the package name.",
+      "longName": "--filter",
+      "associatedCommands": ["dep-graph"]
+    }
+  ]
+}

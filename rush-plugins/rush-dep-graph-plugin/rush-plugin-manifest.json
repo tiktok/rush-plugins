@@ -1,0 +1,10 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/rush-plugin-manifest.schema.json",
+  "plugins": [
+    {
+      "pluginName": "dep-graph",
+      "description": "Display the dependency graph of the specified package.",
+      "commandLineJsonFilePath": "command-line.json"
+    }
+  ]
+}

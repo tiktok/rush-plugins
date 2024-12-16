@@ -501,6 +501,11 @@
       "packageName": "rush-git-lfs-plugin",
       "projectFolder": "rush-plugins/rush-git-lfs-plugin",
       "shouldPublish": true
+    },
+    {
+      "packageName": "rush-dep-graph-plugin",
+      "projectFolder": "rush-plugins/rush-dep-graph-plugin",
+      "shouldPublish": true
     }
   ]
 }
