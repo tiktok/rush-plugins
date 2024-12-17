@@ -22,7 +22,7 @@ export async function updateEdenProject(
       );
 
       Console.debug(
-        `Updating ${Colorize.bold(edenPipelineJson)}, by adding ${Colorize.bold(
+        `Updating ${Colorize.bold(edenPipelineFilePath)}, by adding ${Colorize.bold(
           targetProject.packageName
         )} into pipeline path...`
       );
@@ -44,7 +44,7 @@ export async function updateEdenProject(
     edenProject.path = targetProject.projectFolder;
 
     Console.debug(
-      `Updating ${Colorize.bold(edenMonorepoJson)}, by adding ${Colorize.bold(
+      `Updating ${Colorize.bold(edenMonorepoFilePath)}, by adding ${Colorize.bold(
         targetProject.packageName
       )} into package path...`
     );

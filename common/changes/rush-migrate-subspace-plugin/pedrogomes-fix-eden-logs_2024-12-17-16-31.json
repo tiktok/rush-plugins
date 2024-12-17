@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "rush-migrate-subspace-plugin",
+      "comment": "Fixes debug logs during eden update",
+      "type": "patch"
+    }
+  ],
+  "packageName": "rush-migrate-subspace-plugin"
+}
