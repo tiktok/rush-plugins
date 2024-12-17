@@ -1,6 +1,6 @@
 {
   "name": "rush-dep-graph-plugin",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A Rush plugin that displays the dependency graph.",
   "keywords": [
     "rush",

@@ -1,0 +1,22 @@
+{
+  "name": "rush-dep-graph-plugin",
+  "entries": [
+    {
+      "version": "0.1.0",
+      "tag": "rush-dep-graph-plugin_v0.1.0",
+      "date": "Tue, 17 Dec 2024 03:42:09 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Create a `rush-dep-graph-plugin` Rush plugin to display the dependency graph."
+          }
+        ],
+        "none": [
+          {
+            "comment": "Try to fix the CI issue"
+          }
+        ]
+      }
+    }
+  ]
+}
