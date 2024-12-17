@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "rush-dep-graph-plugin",
+      "comment": "Try to fix the CI issue",
+      "type": "none"
+    }
+  ],
+  "packageName": "rush-dep-graph-plugin"
+}
