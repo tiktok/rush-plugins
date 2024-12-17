@@ -1,7 +1,6 @@
-import { Terminal, ConsoleTerminalProvider } from '@rushstack/terminal';
+import { Terminal, ConsoleTerminalProvider, Colorize } from '@rushstack/terminal';
 import archy from 'archy';
 import { RushConfiguration, RushConfigurationProject } from '@rushstack/rush-sdk';
-import chalk from 'chalk';
 
 export const enum Selector {
   To = 'to',
@@ -46,7 +45,7 @@ export class ListGraph {
     }
 
     if (this._visited.has(projectName)) {
-      data.label = data.label + chalk.yellow(' (circular)');
+      data.label = data.label + Colorize.yellow(' (circular)');
       return;
     }
 
