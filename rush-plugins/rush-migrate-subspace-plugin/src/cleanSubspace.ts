@@ -41,42 +41,39 @@ const removeSupersetDependency = async (
     rootPath
   );
 
-  const validVersions: string[] = rSortVersions(versions).filter(
-    (version) => !RESERVED_VERSIONS.includes(version)
-  );
-
-  let targetIndex: number = 0;
-  while (targetIndex < validVersions.length) {
-    const newVersion: string = validVersions[targetIndex];
-    const toCompareVersions: string[] = validVersions.slice(targetIndex + 1);
-
-    const toDeleteIndex: number = toCompareVersions.findIndex(
-      (toCompareVersion) => newVersion !== toCompareVersion && subsetVersion(newVersion, toCompareVersion)
-    );
-
-    if (toDeleteIndex > -1) {
-      // Delete superset version
-      const [deletedVersion] = validVersions.splice(targetIndex + toDeleteIndex + 1, 1);
-      versionsMap.get(deletedVersion)?.forEach((projectName) => {
-        if (updateProjectDependency(projectName, dependencyName, newVersion, rootPath)) {
-          Console.debug(
-            `Updated project ${Colorize.bold(projectName)} for dependency ${Colorize.bold(
-              dependencyName
-            )} ${Colorize.bold(deletedVersion)} => ${Colorize.bold(newVersion)}!`
-          );
-        }
-      });
+  const newValidVersions: string[] = rSortVersions(versions).reduce<string[]>((prevVersions, currVersion) => {
+    const newVersions: string[] = [...prevVersions];
+    if (newVersions.includes(currVersion)) {
+      // do nothing.
+    } else if (RESERVED_VERSIONS.includes(currVersion)) {
+      newVersions.push(currVersion);
     } else {
-      // Go to next version
-      targetIndex += 1;
+      // Find and replace versions with subset versions
+      const newSubsetVersion: string | undefined = newVersions.find((newVersion) =>
+        subsetVersion(newVersion, currVersion)
+      );
+      if (newSubsetVersion) {
+        // Update projects with new subset version
+        versionsMap.get(currVersion)?.forEach((projectName) => {
+          if (updateProjectDependency(projectName, dependencyName, newSubsetVersion, rootPath)) {
+            Console.debug(
+              `Updated project ${Colorize.bold(projectName)} for dependency ${Colorize.bold(
+                dependencyName
+              )} ${Colorize.bold(currVersion)} => ${Colorize.bold(newSubsetVersion)}!`
+            );
+          }
+        });
+      }
     }
-  }
 
-  const removedAlternativeVersionsCount: number = versions.length - validVersions.length;
+    return newVersions;
+  }, []);
+
+  const removedAlternativeVersionsCount: number = versions.length - newValidVersions.length;
   if (removedAlternativeVersionsCount > 0) {
     // Update subspace common versions
-    if (validVersions.length > 0) {
-      subspaceCommonVersionsJson.allowedAlternativeVersions![dependencyName] = validVersions;
+    if (newValidVersions.length > 0) {
+      subspaceCommonVersionsJson.allowedAlternativeVersions![dependencyName] = newValidVersions;
     } else {
       delete subspaceCommonVersionsJson.allowedAlternativeVersions![dependencyName];
     }
