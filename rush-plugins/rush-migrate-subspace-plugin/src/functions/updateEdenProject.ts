@@ -7,23 +7,19 @@ import { getRootPath } from '../utilities/path';
 
 export async function updateEdenProject(
   sourceProject: IRushConfigurationProjectJson,
-  targetProject: IRushConfigurationProjectJson
+  targetProjectFolderPath: string
 ): Promise<void> {
   Console.debug(`Update monorepo eden configuration on ${Colorize.bold(getRootPath())}...`);
 
   const edenPipelineFilePath: string = `${getRootPath()}/${RushNameConstants.EdenPipelineFileName}`;
   const edenPipelineJson: JsonObject = JsonFile.load(edenPipelineFilePath);
   for (const entry of Object.values<JsonObject>(edenPipelineJson.scene.scm)) {
-    if (entry.entries[0] === targetProject.packageName && entry.pipelinePath) {
-      // Update the pipelinePath
-      entry.pipelinePath = entry.pipelinePath.replace(
-        sourceProject.projectFolder,
-        targetProject.projectFolder
-      );
+    if (entry.pipelinePath?.includes(sourceProject.projectFolder)) {
+      entry.pipelinePath = entry.pipelinePath.replace(sourceProject.projectFolder, targetProjectFolderPath);
 
       Console.debug(
-        `Updating ${Colorize.bold(edenPipelineJson)}, by adding ${Colorize.bold(
-          targetProject.packageName
+        `Updating ${Colorize.bold(edenPipelineFilePath)}, by adding ${Colorize.bold(
+          sourceProject.packageName
         )} into pipeline path...`
       );
       JsonFile.save(edenPipelineJson, edenPipelineFilePath, {
@@ -36,16 +32,16 @@ export async function updateEdenProject(
 
   const edenMonorepoFilePath: string = `${getRootPath()}/${RushNameConstants.EdenMonorepoFileName}`;
   const edenMonorepoJson: JsonObject = JsonFile.load(edenMonorepoFilePath);
-  const edenProject: JsonObject = edenMonorepoJson.packages.filter(
-    ({ name }: JsonObject) => name === targetProject.packageName
-  )[0];
+  const edenProject: JsonObject = edenMonorepoJson.packages.find(
+    ({ name }: JsonObject) => name === sourceProject.packageName
+  );
 
   if (edenProject) {
-    edenProject.path = targetProject.projectFolder;
+    edenProject.path = targetProjectFolderPath;
 
     Console.debug(
-      `Updating ${Colorize.bold(edenMonorepoJson)}, by adding ${Colorize.bold(
-        targetProject.packageName
+      `Updating ${Colorize.bold(edenMonorepoFilePath)}, by adding ${Colorize.bold(
+        sourceProject.packageName
       )} into package path...`
     );
 

@@ -5,7 +5,6 @@ import Console from '../providers/console';
 import { Colorize } from '@rushstack/terminal';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { enterNewProjectLocationPrompt, moveProjectPrompt } from '../prompts/project';
-import { queryProject } from '../utilities/project';
 import { getRootPath } from '../utilities/path';
 import { RushConstants } from '@rushstack/rush-sdk';
 import { addProjectToRushConfiguration } from './updateRushConfiguration';
@@ -16,6 +15,7 @@ import {
 } from '../utilities/repository';
 import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/SubspacesConfiguration';
 import { queryProjectsFromSubspace } from '../utilities/subspace';
+import path from 'path';
 
 const refreshSubspace = (subspaceName: string, rootPath: string): void => {
   const subspacesConfig: ISubspacesConfigurationJson = loadRushSubspacesConfiguration(rootPath);
@@ -88,10 +88,7 @@ export const addProjectToSubspace = async (
     }
 
     if (FileSystem.exists(`${getRootPath()}/${RushNameConstants.EdenMonorepoFileName}`)) {
-      const targetProject: IRushConfigurationProjectJson = queryProject(
-        sourceProject.packageName
-      ) as IRushConfigurationProjectJson;
-      await updateEdenProject(sourceProject, targetProject);
+      await updateEdenProject(sourceProject, path.relative(sourceMonorepoPath, targetProjectFolderPath));
     }
   }
 
