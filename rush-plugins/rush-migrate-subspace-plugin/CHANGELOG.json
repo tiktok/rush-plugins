@@ -2,6 +2,21 @@
   "name": "rush-migrate-subspace-plugin",
   "entries": [
     {
+      "version": "1.2.1",
+      "tag": "rush-migrate-subspace-plugin_v1.2.1",
+      "date": "Wed, 18 Dec 2024 18:39:31 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fixes debug logs during eden update"
+          },
+          {
+            "comment": "Updates properly eden.pipeline and eden.monorepo files when project changes path"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.2.0",
       "tag": "rush-migrate-subspace-plugin_v1.2.0",
       "date": "Fri, 22 Nov 2024 19:40:08 GMT",
