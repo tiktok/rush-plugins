@@ -5,7 +5,6 @@ import Console from '../providers/console';
 import { Colorize } from '@rushstack/terminal';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { enterNewProjectLocationPrompt, moveProjectPrompt } from '../prompts/project';
-import { getRootPath } from '../utilities/path';
 import { RushConstants } from '@rushstack/rush-sdk';
 import { addProjectToRushConfiguration } from './updateRushConfiguration';
 import {
@@ -20,7 +19,7 @@ import path from 'path';
 const refreshSubspace = (subspaceName: string, rootPath: string): void => {
   const subspacesConfig: ISubspacesConfigurationJson = loadRushSubspacesConfiguration(rootPath);
   const newSubspaces: string[] = [...subspacesConfig.subspaceNames];
-  if (queryProjectsFromSubspace(subspaceName).length === 0) {
+  if (queryProjectsFromSubspace(subspaceName, rootPath).length === 0) {
     newSubspaces.splice(newSubspaces.indexOf(subspaceName), 1);
   }
 
@@ -31,11 +30,10 @@ const refreshSubspace = (subspaceName: string, rootPath: string): void => {
 
 const moveProjectToSubspaceFolder = async (
   sourceProjectFolderPath: string,
-  targetSubspace: string
+  targetSubspace: string,
+  rootPath: string
 ): Promise<string | undefined> => {
-  const targetSubspaceFolderPath: string = `${getRootPath()}/${
-    RushNameConstants.SubspacesFolderName
-  }/${targetSubspace}`;
+  const targetSubspaceFolderPath: string = `${rootPath}/${RushNameConstants.SubspacesFolderName}/${targetSubspace}`;
 
   const targetProjectFolderPath: string = await enterNewProjectLocationPrompt(
     sourceProjectFolderPath,
@@ -71,7 +69,8 @@ const moveProjectToSubspaceFolder = async (
 export const addProjectToSubspace = async (
   sourceProject: IRushConfigurationProjectJson,
   targetSubspace: string,
-  sourceMonorepoPath: string
+  sourceMonorepoPath: string,
+  targetMonorepoPath: string
 ): Promise<void> => {
   Console.debug(
     `Adding project ${Colorize.bold(sourceProject.packageName)} to subspace ${Colorize.bold(
@@ -79,16 +78,24 @@ export const addProjectToSubspace = async (
     )}...`
   );
 
-  let targetProjectFolderPath: string | undefined = `${getRootPath()}/${sourceProject.projectFolder}`;
-  if (isExternalMonorepo(sourceMonorepoPath) || (await moveProjectPrompt())) {
+  let targetProjectFolderPath: string | undefined = `${targetMonorepoPath}/${sourceProject.projectFolder}`;
+  if (isExternalMonorepo(sourceMonorepoPath, targetMonorepoPath) || (await moveProjectPrompt())) {
     const sourceProjectFolderPath: string = `${sourceMonorepoPath}/${sourceProject.projectFolder}`;
-    targetProjectFolderPath = await moveProjectToSubspaceFolder(sourceProjectFolderPath, targetSubspace);
+    targetProjectFolderPath = await moveProjectToSubspaceFolder(
+      sourceProjectFolderPath,
+      targetSubspace,
+      targetMonorepoPath
+    );
     if (!targetProjectFolderPath) {
       return;
     }
 
-    if (FileSystem.exists(`${getRootPath()}/${RushNameConstants.EdenMonorepoFileName}`)) {
-      await updateEdenProject(sourceProject, path.relative(sourceMonorepoPath, targetProjectFolderPath));
+    if (FileSystem.exists(`${targetMonorepoPath}/${RushNameConstants.EdenMonorepoFileName}`)) {
+      await updateEdenProject(
+        sourceProject,
+        path.relative(sourceMonorepoPath, targetProjectFolderPath),
+        targetMonorepoPath
+      );
     }
   }
 
@@ -103,7 +110,7 @@ export const addProjectToSubspace = async (
     FileSystem.deleteFolder(targetLegacySubspaceFolderPath);
   }
 
-  addProjectToRushConfiguration(sourceProject, targetSubspace, targetProjectFolderPath);
+  addProjectToRushConfiguration(sourceProject, targetSubspace, targetProjectFolderPath, targetMonorepoPath);
   if (sourceProject.subspaceName) {
     refreshSubspace(sourceProject.subspaceName, sourceMonorepoPath);
   }

@@ -1,9 +1,10 @@
+import { cleanSubspace } from './cleanSubspace';
 import { migrateProject } from './migrateProject';
 import { chooseCommandPrompt } from './prompts/command';
 import Console from './providers/console';
 import { syncVersions } from './syncVersions';
 
-export const interactMenu = async (): Promise<void> => {
+export const interactMenu = async (sourceMonorepoPath: string, targetMonorepoPath: string): Promise<void> => {
   let exitApplication: boolean = false;
   do {
     const nextCommand: string = await chooseCommandPrompt();
@@ -13,12 +14,17 @@ export const interactMenu = async (): Promise<void> => {
         break;
 
       case 'move':
-        await migrateProject();
+        await migrateProject(sourceMonorepoPath, targetMonorepoPath);
         Console.newLine();
         break;
 
       case 'sync':
-        await syncVersions();
+        await syncVersions(targetMonorepoPath);
+        Console.newLine();
+        break;
+
+      case 'clean':
+        await cleanSubspace(targetMonorepoPath);
         Console.newLine();
         break;
     }

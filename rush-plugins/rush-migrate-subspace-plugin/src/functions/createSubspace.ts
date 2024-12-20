@@ -8,9 +8,9 @@ import {
 import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/SubspacesConfiguration';
 import { getRushSubspaceConfigurationFolderPath } from '../utilities/subspace';
 
-export const createSubspace = async (subspaceName: string): Promise<void> => {
+export const createSubspace = async (subspaceName: string, rootPath: string): Promise<void> => {
   Console.debug(`Creating subspace ${Colorize.bold(subspaceName)}...`);
-  const subspaceConfigFolder: string = getRushSubspaceConfigurationFolderPath(subspaceName);
+  const subspaceConfigFolder: string = getRushSubspaceConfigurationFolderPath(subspaceName, rootPath);
   FileSystem.ensureFolder(subspaceConfigFolder);
 
   const files: string[] = ['.npmrc', 'common-versions.json', 'repo-state.json'];
@@ -23,17 +23,19 @@ export const createSubspace = async (subspaceName: string): Promise<void> => {
     }
   }
 
-  const subspacesConfigJson: ISubspacesConfigurationJson = loadRushSubspacesConfiguration();
+  const subspacesConfigJson: ISubspacesConfigurationJson = loadRushSubspacesConfiguration(rootPath);
   if (!subspacesConfigJson.subspaceNames.includes(subspaceName)) {
     Console.debug(
-      `Updating ${getRushSubspacesConfigurationJsonPath()} by adding ${Colorize.bold(subspaceName)}...`
+      `Updating ${getRushSubspacesConfigurationJsonPath(rootPath)} by adding ${Colorize.bold(
+        subspaceName
+      )}...`
     );
     const newSubspacesConfigJson: ISubspacesConfigurationJson = {
       ...subspacesConfigJson,
       subspaceNames: [...subspacesConfigJson.subspaceNames, subspaceName]
     };
 
-    JsonFile.save(newSubspacesConfigJson, getRushSubspacesConfigurationJsonPath(), {
+    JsonFile.save(newSubspacesConfigJson, getRushSubspacesConfigurationJsonPath(rootPath), {
       updateExistingFile: true
     });
   }

@@ -12,10 +12,14 @@ import {
 
 const mergeSubspaceCommonVersionsFiles = (
   targetSubspaceName: string,
-  sourceSubspaceFolderPath: string
+  sourceSubspaceFolderPath: string,
+  rootPath: string
 ): void => {
   const sourceCommonVersionsFilePath: string = `${sourceSubspaceFolderPath}/${RushConstants.commonVersionsFilename}`;
-  const targetCommonVersionsFilePath: string = getRushSubspaceCommonVersionsFilePath(targetSubspaceName);
+  const targetCommonVersionsFilePath: string = getRushSubspaceCommonVersionsFilePath(
+    targetSubspaceName,
+    rootPath
+  );
 
   const sourceCommonVersions: RushSubspaceCommonVersionsJson = JsonFile.load(sourceCommonVersionsFilePath);
   if (FileSystem.exists(targetCommonVersionsFilePath)) {
@@ -97,15 +101,20 @@ const copySubspaceRepoStateFile = (
 };
 */
 
-const mergeSubspacePnpmFiles = (targetSubspaceName: string, sourceSubspaceFolderPath: string): void => {
+const mergeSubspacePnpmFiles = (
+  targetSubspaceName: string,
+  sourceSubspaceFolderPath: string,
+  rootPath: string
+): void => {
   const sourcePnpmFilePath: string = `${sourceSubspaceFolderPath}/${RushNameConstants.PnpmSubspaceFileName}`;
-  const targetPnpmFilePath: string = getRushSubspacePnpmFilePath(targetSubspaceName);
+  const targetPnpmFilePath: string = getRushSubspacePnpmFilePath(targetSubspaceName, rootPath);
 
   if (FileSystem.exists(sourcePnpmFilePath)) {
     if (FileSystem.exists(targetPnpmFilePath)) {
       const tempPnpmSubspaceFileName: string = `.pnpmfile-subspace-temp_${new Date().getTime()}.cjs`;
       const targetPnpmTempFilePath: string = `${getRushSubspaceConfigurationFolderPath(
-        targetSubspaceName
+        targetSubspaceName,
+        rootPath
       )}/${tempPnpmSubspaceFileName}`;
       Console.debug(
         `Duplicating temporary ${Colorize.bold(sourcePnpmFilePath)} into ${Colorize.bold(
@@ -139,9 +148,13 @@ const mergeSubspacePnpmFiles = (targetSubspaceName: string, sourceSubspaceFolder
   }
 };
 
-const copySubspaceNpmRcFile = (targetSubspaceName: string, sourceSubspaceFolderPath: string): void => {
+const copySubspaceNpmRcFile = (
+  targetSubspaceName: string,
+  sourceSubspaceFolderPath: string,
+  rootPath: string
+): void => {
   const sourceNpmRcFilePath: string = `${sourceSubspaceFolderPath}/${RushNameConstants.NpmRcFileName}`;
-  const targetNpmRcFilePath: string = getRushSubspaceNpmRcFilePath(targetSubspaceName);
+  const targetNpmRcFilePath: string = getRushSubspaceNpmRcFilePath(targetSubspaceName, rootPath);
 
   if (FileSystem.exists(sourceNpmRcFilePath)) {
     Console.debug(
@@ -156,10 +169,11 @@ const copySubspaceNpmRcFile = (targetSubspaceName: string, sourceSubspaceFolderP
 
 export const updateSubspace = async (
   targetSubspaceName: string,
-  sourceSubspaceConfigurationFolderPath: string
+  sourceSubspaceConfigurationFolderPath: string,
+  rootPath: string
 ): Promise<void> => {
-  copySubspaceNpmRcFile(targetSubspaceName, sourceSubspaceConfigurationFolderPath);
-  mergeSubspaceCommonVersionsFiles(targetSubspaceName, sourceSubspaceConfigurationFolderPath);
+  copySubspaceNpmRcFile(targetSubspaceName, sourceSubspaceConfigurationFolderPath, rootPath);
+  mergeSubspaceCommonVersionsFiles(targetSubspaceName, sourceSubspaceConfigurationFolderPath, rootPath);
   // copySubspaceRepoStateFile(sourceSubspaceConfigurationFolderPath, targetSubspaceConfigurationFolderPath);
-  mergeSubspacePnpmFiles(targetSubspaceName, sourceSubspaceConfigurationFolderPath);
+  mergeSubspacePnpmFiles(targetSubspaceName, sourceSubspaceConfigurationFolderPath, rootPath);
 };
