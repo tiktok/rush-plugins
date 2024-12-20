@@ -1,5 +1,4 @@
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
-import { getRootPath } from '../utilities/path';
 import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
 import { loadRushConfiguration } from '../utilities/repository';
 import Console from '../providers/console';
@@ -10,10 +9,10 @@ import path from 'path';
 
 export const removeProjectFromRushConfiguration = (
   project: IRushConfigurationProjectJson,
-  monoRepoRootPath: string = getRootPath()
+  rootPath: string
 ): void => {
-  const rushConfigFile: string = `${monoRepoRootPath}/${RushConstants.rushJsonFilename}`;
-  const rushConfig: IRushConfigurationJson = loadRushConfiguration(monoRepoRootPath);
+  const rushConfigFile: string = `${rootPath}/${RushConstants.rushJsonFilename}`;
+  const rushConfig: IRushConfigurationJson = loadRushConfiguration(rootPath);
   const projectIndex: number = rushConfig.projects.findIndex(
     ({ packageName }) => packageName === project.packageName
   );
@@ -47,17 +46,17 @@ export const addProjectToRushConfiguration = (
   sourceProject: IRushConfigurationProjectJson,
   targetSubspace: string,
   targetProjectFolderPath: string,
-  monoRepoRootPath: string = getRootPath()
+  rootPath: string
 ): void => {
-  const rushConfigFile: string = `${monoRepoRootPath}/${RushConstants.rushJsonFilename}`;
-  const rushConfig: IRushConfigurationJson = loadRushConfiguration(monoRepoRootPath);
+  const rushConfigFile: string = `${rootPath}/${RushConstants.rushJsonFilename}`;
+  const rushConfig: IRushConfigurationJson = loadRushConfiguration(rootPath);
   const projectIndex: number = rushConfig.projects.findIndex(
     ({ packageName }) => packageName === sourceProject.packageName
   );
   let newTargetProject: IRushConfigurationProjectJson = {
     subspaceName: targetSubspace,
     packageName: sourceProject.packageName,
-    projectFolder: path.relative(monoRepoRootPath, targetProjectFolderPath),
+    projectFolder: path.relative(rootPath, targetProjectFolderPath),
     decoupledLocalDependencies: []
   };
 

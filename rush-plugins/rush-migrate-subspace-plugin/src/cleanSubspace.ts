@@ -19,7 +19,7 @@ import { getRushSubspacesConfigurationJsonPath, querySubspaces } from './utiliti
 import { RushConstants } from '@rushstack/rush-sdk';
 import { chooseDependencyPrompt, confirmNextDependencyPrompt } from './prompts/dependency';
 import { IPackageJson, JsonFile } from '@rushstack/node-core-library';
-import { rSortVersions, subsetVersion } from './utilities/dependency';
+import { reverseSortVersions, subsetVersion } from './utilities/dependency';
 import {
   getProjectPackageFilePath,
   loadProjectPackageJson,
@@ -28,12 +28,12 @@ import {
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { RESERVED_VERSIONS } from './constants/versions';
 
-const removeSupersetDependency = async (
+const removeSupersetDependency = (
   subspaceName: string,
   dependencyName: string,
   versionsMap: Map<string, string[]>,
-  rootPath: string = getRootPath()
-): Promise<number> => {
+  rootPath: string
+): number => {
   const versions: string[] = Array.from(versionsMap.keys());
   const subspaceCommonVersionsPath: string = getRushSubspaceCommonVersionsFilePath(subspaceName, rootPath);
   const subspaceCommonVersionsJson: RushSubspaceCommonVersionsJson = loadRushSubspaceCommonVersions(
@@ -41,33 +41,36 @@ const removeSupersetDependency = async (
     rootPath
   );
 
-  const newValidVersions: string[] = rSortVersions(versions).reduce<string[]>((prevVersions, currVersion) => {
-    const newVersions: string[] = [...prevVersions];
-    if (newVersions.includes(currVersion)) {
-      return newVersions;
-    }
+  const newValidVersions: string[] = reverseSortVersions(versions).reduce<string[]>(
+    (prevVersions, currVersion) => {
+      const newVersions: string[] = [...prevVersions];
+      if (newVersions.includes(currVersion)) {
+        return newVersions;
+      }
 
-    const newSubsetVersion: string | undefined = newVersions.find((newVersion) =>
-      subsetVersion(newVersion, currVersion)
-    );
+      const newSubsetVersion: string | undefined = newVersions.find((newVersion) =>
+        subsetVersion(newVersion, currVersion)
+      );
 
-    if (RESERVED_VERSIONS.includes(currVersion) || !newSubsetVersion) {
-      newVersions.push(currVersion);
-    } else {
-      // Update projects with new subset version
-      versionsMap.get(currVersion)?.forEach((projectName) => {
-        if (updateProjectDependency(projectName, dependencyName, newSubsetVersion, rootPath)) {
-          Console.debug(
-            `Updated project ${Colorize.bold(projectName)} for dependency ${Colorize.bold(
-              dependencyName
-            )} ${Colorize.bold(currVersion)} => ${Colorize.bold(newSubsetVersion)}!`
-          );
+      if (RESERVED_VERSIONS.includes(currVersion) || !newSubsetVersion) {
+        newVersions.push(currVersion);
+      } else {
+        // Update projects with new subset version
+        for (const projectName of versionsMap.get(currVersion) || []) {
+          if (updateProjectDependency(projectName, dependencyName, newSubsetVersion, rootPath)) {
+            Console.debug(
+              `Updated project ${Colorize.bold(projectName)} for dependency ${Colorize.bold(
+                dependencyName
+              )} ${Colorize.bold(currVersion)} => ${Colorize.bold(newSubsetVersion)}!`
+            );
+          }
         }
-      });
-    }
+      }
 
-    return newVersions;
-  }, []);
+      return newVersions;
+    },
+    []
+  );
 
   const removedAlternativeVersionsCount: number = versions.length - newValidVersions.length;
   if (removedAlternativeVersionsCount > 0) {
@@ -84,19 +87,20 @@ const removeSupersetDependency = async (
   return removedAlternativeVersionsCount;
 };
 
-const removeDuplicatedDependencies = (subspaceName: string, rootPath: string = getRootPath()): void => {
+const removeDuplicatedDependencies = (subspaceName: string, rootPath: string): void => {
   Console.log(`Removing duplicated dependencies for subspace ${Colorize.bold(subspaceName)}...`);
 
   const projects: IRushConfigurationProjectJson[] = queryProjectsFromSubspace(subspaceName, rootPath);
   let countRemoved: number = 0;
-  projects.forEach((project) => {
+
+  for (const project of projects) {
     const projectPackageFilePath: string = getProjectPackageFilePath(project.projectFolder, rootPath);
     const projectPackageJson: IPackageJson = loadProjectPackageJson(project.projectFolder, rootPath);
 
     const dependencies: string[] = Object.keys(projectPackageJson.dependencies || {});
     const devDependencies: string[] = Object.keys(projectPackageJson.devDependencies || {});
 
-    devDependencies.forEach((devDependency) => {
+    for (const devDependency of devDependencies) {
       if (dependencies.includes(devDependency)) {
         countRemoved += 1;
         Console.debug(
@@ -104,10 +108,10 @@ const removeDuplicatedDependencies = (subspaceName: string, rootPath: string = g
         );
         delete projectPackageJson.devDependencies![devDependency];
       }
-    });
+    }
 
     JsonFile.save(projectPackageJson, projectPackageFilePath);
-  });
+  }
 
   if (countRemoved > 0) {
     Console.success(
@@ -122,13 +126,16 @@ const removeDuplicatedDependencies = (subspaceName: string, rootPath: string = g
 
 const removeUnusedAlternativeVersions = (
   subspaceName: string,
-  subspaceDependencies: Map<string, Map<string, string[]>>
+  subspaceDependencies: Map<string, Map<string, string[]>>,
+  rootPath: string
 ): void => {
   Console.log(`Removing unused alternative versions for subspace ${Colorize.bold(subspaceName)}...`);
 
-  const subspaceCommonVersionsPath: string = getRushSubspaceCommonVersionsFilePath(subspaceName);
-  const subspaceCommonVersionsJson: RushSubspaceCommonVersionsJson =
-    loadRushSubspaceCommonVersions(subspaceName);
+  const subspaceCommonVersionsPath: string = getRushSubspaceCommonVersionsFilePath(subspaceName, rootPath);
+  const subspaceCommonVersionsJson: RushSubspaceCommonVersionsJson = loadRushSubspaceCommonVersions(
+    subspaceName,
+    rootPath
+  );
 
   if (!subspaceCommonVersionsJson.allowedAlternativeVersions) {
     return;
@@ -181,7 +188,8 @@ const removeUnusedAlternativeVersions = (
 
 const removeSupersetDependencyVersions = async (
   subspaceName: string,
-  subspaceDependencies: Map<string, Map<string, string[]>>
+  subspaceDependencies: Map<string, Map<string, string[]>>,
+  rootPath: string
 ): Promise<void> => {
   const multipleVersionDependencies: string[] = Array.from(subspaceDependencies.keys()).filter(
     (dependency) => subspaceDependencies.get(dependency)!.size > 1
@@ -196,18 +204,16 @@ const removeSupersetDependencyVersions = async (
 
   if (await scanForAllDependenciesPrompt()) {
     Console.log(`Removing superset versions for subspace ${Colorize.bold(subspaceName)}...`);
-    await Promise.all(
-      Array.from(subspaceDependencies.entries()).map(([dependency, versionsMap]) =>
-        removeSupersetDependency(subspaceName, dependency, versionsMap)
-      )
-    ).then((countPerDependency) => {
-      const count: number = countPerDependency.reduce((a, b) => a + b, 0);
-      if (count > 0) {
-        Console.success(`Removed ${Colorize.bold(`${count}`)} superset alternative versions!`);
-      } else {
-        Console.success(`No alternative versions have been removed!`);
-      }
-    });
+    const countPerDependency: number[] = Array.from(subspaceDependencies.entries()).map(
+      ([dependency, versionsMap]) => removeSupersetDependency(subspaceName, dependency, versionsMap, rootPath)
+    );
+
+    const count: number = countPerDependency.reduce((a, b) => a + b, 0);
+    if (count > 0) {
+      Console.success(`Removed ${Colorize.bold(`${count}`)} superset alternative versions!`);
+    } else {
+      Console.success(`No alternative versions have been removed!`);
+    }
 
     return;
   }
@@ -219,7 +225,8 @@ const removeSupersetDependencyVersions = async (
     const count: number = await removeSupersetDependency(
       subspaceName,
       selectedDependency,
-      subspaceDependencies.get(selectedDependency) as Map<string, string[]>
+      subspaceDependencies.get(selectedDependency) as Map<string, string[]>,
+      rootPath
     );
 
     if (count > 0) {
@@ -239,16 +246,16 @@ const removeSupersetDependencyVersions = async (
   } while (multipleVersionDependencies.length > 0 && (await confirmNextDependencyPrompt()));
 };
 
-export const cleanSubspace = async (): Promise<void> => {
+export const cleanSubspace = async (targetMonorepoPath: string = getRootPath()): Promise<void> => {
   Console.debug('Executing clean subspace command...');
 
-  const targetSubspaces: string[] = querySubspaces();
-  if (!isSubspaceSupported()) {
+  const targetSubspaces: string[] = querySubspaces(targetMonorepoPath);
+  if (!isSubspaceSupported(targetMonorepoPath)) {
     Console.error(
       `The monorepo ${Colorize.bold(
-        getRootPath()
+        targetMonorepoPath
       )} doesn't support subspaces! Make sure you have ${Colorize.bold(
-        getRushSubspacesConfigurationJsonPath()
+        getRushSubspacesConfigurationJsonPath(targetMonorepoPath)
       )} with the ${Colorize.bold(RushConstants.defaultSubspaceName)} subspace. Exiting...`
     );
     return;
@@ -257,19 +264,22 @@ export const cleanSubspace = async (): Promise<void> => {
   const targetSubspace: string = await chooseSubspacePrompt(targetSubspaces);
   Console.title(`🛁 Cleaning subspace ${Colorize.underline(targetSubspace)} alternative versions...`);
 
-  let subspaceDependencies: Map<string, Map<string, string[]>> = getSubspaceDependencies(targetSubspace);
+  let subspaceDependencies: Map<string, Map<string, string[]>> = getSubspaceDependencies(
+    targetSubspace,
+    targetMonorepoPath
+  );
   if (await scanForDuplicatedDependenciesPrompt()) {
-    removeDuplicatedDependencies(targetSubspace);
-    subspaceDependencies = getSubspaceDependencies(targetSubspace);
+    removeDuplicatedDependencies(targetSubspace, targetMonorepoPath);
+    subspaceDependencies = getSubspaceDependencies(targetSubspace, targetMonorepoPath);
   }
 
   if (await scanForSupersetDependencyVersionsPrompt()) {
-    await removeSupersetDependencyVersions(targetSubspace, subspaceDependencies);
-    subspaceDependencies = getSubspaceDependencies(targetSubspace);
+    await removeSupersetDependencyVersions(targetSubspace, subspaceDependencies, targetMonorepoPath);
+    subspaceDependencies = getSubspaceDependencies(targetSubspace, targetMonorepoPath);
   }
 
   if (await scanForUnusedDependencyVersionsPrompt()) {
-    removeUnusedAlternativeVersions(targetSubspace, subspaceDependencies);
+    removeUnusedAlternativeVersions(targetSubspace, subspaceDependencies, targetMonorepoPath);
   }
 
   Console.warn(

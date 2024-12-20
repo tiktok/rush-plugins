@@ -16,36 +16,36 @@ import {
 import { RushConstants } from '@rushstack/rush-sdk';
 import { syncProjectMismatchedDependencies } from './functions/syncProjectDependencies';
 
-export const migrateProject = async (): Promise<void> => {
+export const migrateProject = async (targetMonorepoPath: string = getRootPath()): Promise<void> => {
   Console.debug('Executing project migration command...');
 
-  Console.title(`🔍 Analyzing if monorepo ${Colorize.underline(getRootPath())} supports subspaces...`);
+  Console.title(`🔍 Analyzing if monorepo ${Colorize.underline(targetMonorepoPath)} supports subspaces...`);
 
   /**
    * WARN: Disabling auto subspace initialization for now.
    * if (!isSubspaceSupported()) {
    *     Console.warn(
-   *  `The monorepo ${Colorize.bold(getRootPath())} doesn't contain subspaces. Initializing subspaces...`
+   *  `The monorepo ${Colorize.bold(rootPath)} doesn't contain subspaces. Initializing subspaces...`
    *);
    * await initSubspaces();
    * }
    */
 
-  const targetSubspaces: string[] = querySubspaces();
-  if (!isSubspaceSupported() || targetSubspaces.length === 0) {
+  const targetSubspaces: string[] = querySubspaces(targetMonorepoPath);
+  if (!isSubspaceSupported(targetMonorepoPath) || targetSubspaces.length === 0) {
     Console.error(
       `The monorepo ${Colorize.bold(
-        getRootPath()
+        targetMonorepoPath
       )} doesn't support subspaces! Make sure you have ${Colorize.bold(
-        getRushSubspacesConfigurationJsonPath()
+        getRushSubspacesConfigurationJsonPath(targetMonorepoPath)
       )} with the ${Colorize.bold(RushConstants.defaultSubspaceName)} subspace. Exiting...`
     );
     return;
   }
 
-  Console.success(`Monorepo ${Colorize.bold(getRootPath())} fully supports subspaces!`);
+  Console.success(`Monorepo ${Colorize.bold(targetMonorepoPath)} fully supports subspaces!`);
 
-  Console.title(`🔍 Finding projects to migrate to ${Colorize.bold(getRootPath())}...`);
+  Console.title(`🔍 Finding projects to migrate to ${Colorize.bold(targetMonorepoPath)}...`);
 
   /**
    * WARN: Disabling different repository selection for now.
@@ -76,7 +76,10 @@ export const migrateProject = async (): Promise<void> => {
   // Loop until user asks to quit
   do {
     const sourceProjects: IRushConfigurationProjectJson[] = queryProjects(sourceMonorepoPath);
-    const sourceAvailableProjects: IRushConfigurationProjectJson[] = isExternalMonorepo(sourceMonorepoPath)
+    const sourceAvailableProjects: IRushConfigurationProjectJson[] = isExternalMonorepo(
+      sourceMonorepoPath,
+      targetMonorepoPath
+    )
       ? sourceProjects
       : sourceProjects.filter(({ subspaceName }) => subspaceName !== targetSubspace);
 
@@ -108,11 +111,16 @@ export const migrateProject = async (): Promise<void> => {
         sourceProjectToMigrate.projectFolder
       );
 
-      await updateSubspace(targetSubspace, sourceSubspaceConfigurationFolderPath);
+      await updateSubspace(targetSubspace, sourceSubspaceConfigurationFolderPath, targetMonorepoPath);
     }
 
-    await addProjectToSubspace(sourceProjectToMigrate, targetSubspace, sourceMonorepoPath);
-    await syncProjectMismatchedDependencies(sourceProjectToMigrate.packageName);
+    await addProjectToSubspace(
+      sourceProjectToMigrate,
+      targetSubspace,
+      sourceMonorepoPath,
+      targetMonorepoPath
+    );
+    await syncProjectMismatchedDependencies(sourceProjectToMigrate.packageName, targetMonorepoPath);
   } while (await confirmNextProjectToAddPrompt(targetSubspace));
 
   Console.warn(

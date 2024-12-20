@@ -5,12 +5,11 @@ import { RushConstants } from '@rushstack/rush-sdk';
 import { getRushSubspacesConfigurationJsonPath } from '../utilities/repository';
 import { getRushSubspaceConfigurationFolderPath } from '../utilities/subspace';
 import { Colorize } from '@rushstack/terminal';
-import { getRootPath } from '../utilities/path';
 
-export const initSubspaces = async (): Promise<void> => {
-  Console.debug(`Starting subspaces feature on ${Colorize.bold(getRootPath())}...`);
+export const initSubspaces = async (rootPath: string): Promise<void> => {
+  Console.debug(`Starting subspaces feature on ${Colorize.bold(rootPath)}...`);
 
-  const subspacesConfigurationJsonPath: string = getRushSubspacesConfigurationJsonPath();
+  const subspacesConfigurationJsonPath: string = getRushSubspacesConfigurationJsonPath(rootPath);
   if (!FileSystem.exists(subspacesConfigurationJsonPath)) {
     FileSystem.copyFile({
       sourcePath: FileSystem.getRealPath(`${__dirname}/../templates/subspaces.json`),
@@ -20,7 +19,9 @@ export const initSubspaces = async (): Promise<void> => {
     Console.success(`${Colorize.bold(subspacesConfigurationJsonPath)} file created successfully!`);
   }
 
-  if (!FileSystem.exists(getRushSubspaceConfigurationFolderPath(RushConstants.defaultSubspaceName))) {
-    await createSubspace(RushConstants.defaultSubspaceName);
+  if (
+    !FileSystem.exists(getRushSubspaceConfigurationFolderPath(RushConstants.defaultSubspaceName, rootPath))
+  ) {
+    await createSubspace(RushConstants.defaultSubspaceName, rootPath);
   }
 };

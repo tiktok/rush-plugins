@@ -71,13 +71,13 @@ export const sortVersions = (versions: string[]): string[] => {
   return newVersions;
 };
 
-export const rSortVersions = (versions: string[]): string[] => {
+export const reverseSortVersions = (versions: string[]): string[] => {
   return sortVersions(versions).reverse();
 };
 
 export const getClosestVersion = (targetVersion: string, versions: string[]): string | undefined => {
-  const rSortedVersions: string[] = rSortVersions(versions);
-  return rSortedVersions.find((version) => intersectsVersion(targetVersion, version));
+  const reverseSortedVersions: string[] = reverseSortVersions(versions);
+  return reverseSortedVersions.find((version) => intersectsVersion(targetVersion, version));
 };
 
 export const getRecommendedVersion = (targetVersion: string, versions: string[]): string | undefined => {

@@ -3,15 +3,15 @@ import { RushNameConstants } from '../constants/paths';
 import Console from '../providers/console';
 import { Colorize } from '@rushstack/terminal';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
-import { getRootPath } from '../utilities/path';
 
 export async function updateEdenProject(
   sourceProject: IRushConfigurationProjectJson,
-  targetProjectFolderPath: string
+  targetProjectFolderPath: string,
+  rootPath: string
 ): Promise<void> {
-  Console.debug(`Update monorepo eden configuration on ${Colorize.bold(getRootPath())}...`);
+  Console.debug(`Update monorepo eden configuration on ${Colorize.bold(rootPath)}...`);
 
-  const edenPipelineFilePath: string = `${getRootPath()}/${RushNameConstants.EdenPipelineFileName}`;
+  const edenPipelineFilePath: string = `${rootPath}/${RushNameConstants.EdenPipelineFileName}`;
   const edenPipelineJson: JsonObject = JsonFile.load(edenPipelineFilePath);
   for (const entry of Object.values<JsonObject>(edenPipelineJson.scene.scm)) {
     if (entry.pipelinePath?.includes(sourceProject.projectFolder)) {
@@ -30,7 +30,7 @@ export async function updateEdenProject(
     }
   }
 
-  const edenMonorepoFilePath: string = `${getRootPath()}/${RushNameConstants.EdenMonorepoFileName}`;
+  const edenMonorepoFilePath: string = `${rootPath}/${RushNameConstants.EdenMonorepoFileName}`;
   const edenMonorepoJson: JsonObject = JsonFile.load(edenMonorepoFilePath);
   const edenProject: JsonObject = edenMonorepoJson.packages.find(
     ({ name }: JsonObject) => name === sourceProject.packageName

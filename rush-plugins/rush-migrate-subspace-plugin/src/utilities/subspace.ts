@@ -1,7 +1,6 @@
 import { FileSystem, IPackageJsonDependencyTable, JsonFile } from '@rushstack/node-core-library';
 import { RushNameConstants, RushPathConstants } from '../constants/paths';
 import { ISubspacesConfigurationJson } from '@rushstack/rush-sdk/lib/api/SubspacesConfiguration';
-import { getRootPath } from './path';
 import {
   getRushConfigurationJsonPath,
   getRushSubspacesConfigurationJsonPath,
@@ -18,7 +17,7 @@ import { getProjectDependencies } from './project';
 
 export const queryProjectsFromSubspace = (
   targetSubspaceName: string,
-  rootPath: string = getRootPath()
+  rootPath: string
 ): IRushConfigurationProjectJson[] => {
   const rushConfig: IRushConfigurationJson = loadRushConfiguration(rootPath);
   return rushConfig.projects.filter(({ subspaceName }) => subspaceName === targetSubspaceName);
@@ -27,14 +26,14 @@ export const queryProjectsFromSubspace = (
 const getRushLegacySubspaceConfigurationFolderPath = (
   subspaceName: string,
   projectFolderPath: string,
-  rootPath: string = getRootPath()
+  rootPath: string
 ): string => {
   return `${rootPath}/${projectFolderPath}/subspace/${subspaceName}`;
 };
 
 export const getRushSubspaceConfigurationFolderPath = (
   subspaceName: string,
-  rootPath: string = getRootPath(),
+  rootPath: string,
   projectFolderPath?: string
 ): string => {
   if (projectFolderPath) {
@@ -52,10 +51,7 @@ export const getRushSubspaceConfigurationFolderPath = (
   return `${rootPath}/${RushPathConstants.SubspacesConfigurationFolderPath}/${subspaceName}`;
 };
 
-export const getRushSubspaceCommonVersionsFilePath = (
-  subspaceName: string,
-  rootPath: string = getRootPath()
-): string => {
+export const getRushSubspaceCommonVersionsFilePath = (subspaceName: string, rootPath: string): string => {
   return `${getRushSubspaceConfigurationFolderPath(subspaceName, rootPath)}/${
     RushConstants.commonVersionsFilename
   }`;
@@ -63,15 +59,12 @@ export const getRushSubspaceCommonVersionsFilePath = (
 
 export const loadRushSubspaceCommonVersions = (
   subspaceName: string,
-  rootPath: string = getRootPath()
+  rootPath: string
 ): RushSubspaceCommonVersionsJson => {
   return JsonFile.load(getRushSubspaceCommonVersionsFilePath(subspaceName, rootPath));
 };
 
-export const getRushSubspacePnpmFilePath = (
-  subspaceName: string,
-  rootPath: string = getRootPath()
-): string => {
+export const getRushSubspacePnpmFilePath = (subspaceName: string, rootPath: string): string => {
   return `${getRushSubspaceConfigurationFolderPath(subspaceName, rootPath)}/${
     RushNameConstants.PnpmSubspaceFileName
   }`;
@@ -79,15 +72,12 @@ export const getRushSubspacePnpmFilePath = (
 
 export const loadRushSubspacePnpm = (
   subspaceName: string,
-  rootPath: string = getRootPath()
+  rootPath: string
 ): RushSubspaceCommonVersionsJson => {
   return JsonFile.load(getRushSubspacePnpmFilePath(subspaceName, rootPath));
 };
 
-export const getRushSubspaceNpmRcFilePath = (
-  subspaceName: string,
-  rootPath: string = getRootPath()
-): string => {
+export const getRushSubspaceNpmRcFilePath = (subspaceName: string, rootPath: string): string => {
   return `${getRushSubspaceConfigurationFolderPath(subspaceName, rootPath)}/${
     RushNameConstants.NpmRcFileName
   }`;
@@ -95,31 +85,31 @@ export const getRushSubspaceNpmRcFilePath = (
 
 export const loadRushSubspaceNpmRc = (
   subspaceName: string,
-  rootPath: string = getRootPath()
+  rootPath: string
 ): RushSubspaceCommonVersionsJson => {
   return JsonFile.load(getRushSubspaceNpmRcFilePath(subspaceName, rootPath));
 };
 
-export const isSubspaceSupported = (rootPath: string = getRootPath()): boolean => {
+export const isSubspaceSupported = (rootPath: string): boolean => {
   if (
     FileSystem.exists(getRushSubspacesConfigurationJsonPath(rootPath)) &&
     FileSystem.exists(getRushSubspaceConfigurationFolderPath(RushConstants.defaultSubspaceName, rootPath))
   ) {
-    const subspacesConfig: ISubspacesConfigurationJson = loadRushSubspacesConfiguration();
+    const subspacesConfig: ISubspacesConfigurationJson = loadRushSubspacesConfiguration(rootPath);
     return subspacesConfig.subspacesEnabled;
   }
 
   return false;
 };
 
-export const subspaceExists = (subspaceName: string, rootPath: string = getRootPath()): boolean => {
+export const subspaceExists = (subspaceName: string, rootPath: string): boolean => {
   const subspaces: string[] = querySubspaces(rootPath);
   return !!subspaces.find((name) => name === subspaceName);
 };
 
 export const getSubspaceMismatches = (
   subspaceName: string,
-  rootPath: string = getRootPath()
+  rootPath: string
 ): ReadonlyMap<string, ReadonlyMap<string, readonly VersionMismatchFinderEntity[]>> => {
   const rushConfig: RushConfiguration = RushConfiguration.loadFromConfigurationFile(
     getRushConfigurationJsonPath(rootPath)
@@ -135,7 +125,7 @@ export const getSubspaceMismatches = (
 
 export const getSubspaceDependencies = (
   subspaceName: string,
-  rootPath: string = getRootPath()
+  rootPath: string
 ): Map<string, Map<string, string[]>> => {
   const subspaceProjects: IRushConfigurationProjectJson[] = queryProjectsFromSubspace(subspaceName, rootPath);
   const subspaceDependencies: Map<string, Map<string, string[]>> = new Map<string, Map<string, string[]>>();

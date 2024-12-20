@@ -1,41 +1,32 @@
 import { IRushConfigurationJson } from '@rushstack/rush-sdk/lib/api/RushConfiguration';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
-import { getRootPath } from './path';
 import { loadRushConfiguration } from './repository';
 import { getSubspaceMismatches } from './subspace';
 import { VersionMismatchFinderEntity } from '@rushstack/rush-sdk/lib/logic/versionMismatch/VersionMismatchFinderEntity';
 import { RushNameConstants } from '../constants/paths';
 import { IPackageJson, IPackageJsonDependencyTable, JsonFile } from '@rushstack/node-core-library';
 
-export const getProjectPackageFilePath = (
-  projectFolder: string,
-  rootPath: string = getRootPath()
-): string => {
+export const getProjectPackageFilePath = (projectFolder: string, rootPath: string): string => {
   return `${rootPath}/${projectFolder}/${RushNameConstants.PackageName}`;
 };
 
-export const loadProjectPackageJson = (
-  projectFolder: string,
-  rootPath: string = getRootPath()
-): IPackageJson => {
+export const loadProjectPackageJson = (projectFolder: string, rootPath: string): IPackageJson => {
   return JsonFile.load(getProjectPackageFilePath(projectFolder, rootPath));
 };
 
-export const queryProjects = (rootPath: string = getRootPath()): IRushConfigurationProjectJson[] => {
+export const queryProjects = (rootPath: string): IRushConfigurationProjectJson[] => {
   const rushJson: IRushConfigurationJson = loadRushConfiguration(rootPath);
   return rushJson.projects;
 };
 
-export const queryProjectsWithoutSubspace = (
-  rootPath: string = getRootPath()
-): IRushConfigurationProjectJson[] => {
+export const queryProjectsWithoutSubspace = (rootPath: string): IRushConfigurationProjectJson[] => {
   const projects: IRushConfigurationProjectJson[] = queryProjects(rootPath);
   return projects.filter(({ subspaceName }) => !subspaceName);
 };
 
 export const queryProject = (
   projectName: string,
-  rootPath: string = getRootPath()
+  rootPath: string
 ): IRushConfigurationProjectJson | undefined => {
   const projects: IRushConfigurationProjectJson[] = queryProjects(rootPath);
   return projects.find(({ packageName }) => packageName === projectName);
@@ -43,7 +34,7 @@ export const queryProject = (
 
 export const getProjectMismatches = (
   projectName: string,
-  rootPath: string = getRootPath()
+  rootPath: string
 ): ReadonlyMap<string, ReadonlyMap<string, readonly VersionMismatchFinderEntity[]>> => {
   const project: IRushConfigurationProjectJson | undefined = queryProject(projectName, rootPath);
   if (!project || !project.subspaceName) {
@@ -76,7 +67,7 @@ export const getProjectMismatches = (
 
 export const getProjectDependencies = (
   projectName: string,
-  rootPath: string = getRootPath()
+  rootPath: string
 ): IPackageJsonDependencyTable | undefined => {
   const project: IRushConfigurationProjectJson | undefined = queryProject(projectName, rootPath);
   if (!project || !project.subspaceName) {
@@ -90,11 +81,11 @@ export const getProjectDependencies = (
   };
 };
 
-export const getProjectMismatchedDependencies = (projectName: string): string[] => {
+export const getProjectMismatchedDependencies = (projectName: string, rootPath: string): string[] => {
   const projectMismatches: ReadonlyMap<
     string,
     ReadonlyMap<string, readonly VersionMismatchFinderEntity[]>
-  > = getProjectMismatches(projectName);
+  > = getProjectMismatches(projectName, rootPath);
 
   return Array.from(projectMismatches.keys());
 };
@@ -103,7 +94,7 @@ export const updateProjectDependency = (
   projectName: string,
   dependencyName: string,
   newVersion: string,
-  rootPath: string = getRootPath()
+  rootPath: string
 ): boolean => {
   const project: IRushConfigurationProjectJson | undefined = queryProject(projectName, rootPath);
   if (!project) {
@@ -113,12 +104,12 @@ export const updateProjectDependency = (
   const projectPackageFilePath: string = getProjectPackageFilePath(project.projectFolder, rootPath);
   const projectPackageJson: IPackageJson = loadProjectPackageJson(project.projectFolder, rootPath);
 
-  if (projectPackageJson.dependencies![dependencyName]) {
-    projectPackageJson.dependencies![dependencyName] = newVersion;
+  if (projectPackageJson.dependencies?.[dependencyName]) {
+    projectPackageJson.dependencies[dependencyName] = newVersion;
   }
 
-  if (projectPackageJson.devDependencies![dependencyName]) {
-    projectPackageJson.devDependencies![dependencyName] = newVersion;
+  if (projectPackageJson.devDependencies?.[dependencyName]) {
+    projectPackageJson.devDependencies[dependencyName] = newVersion;
   }
 
   JsonFile.save(projectPackageJson, projectPackageFilePath);
