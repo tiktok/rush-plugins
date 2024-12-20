@@ -23,7 +23,7 @@ program
     const packageJson: IPackageJson = JsonFile.load(`${path.resolve(__dirname, '../package.json')}`);
 
     Console.enableDebug(debug);
-    Console.title(`🚀 Welcome to the Rush Migrate Subspace Plugin! Version: ${packageJson.version}`);
+    Console.title(`🚀 Rush Migrate Subspace Plugin - version ${packageJson.version}`);
     Console.newLine();
 
     if (sync) {
