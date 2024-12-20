@@ -44,26 +44,26 @@ const removeSupersetDependency = async (
   const newValidVersions: string[] = rSortVersions(versions).reduce<string[]>((prevVersions, currVersion) => {
     const newVersions: string[] = [...prevVersions];
     if (newVersions.includes(currVersion)) {
-      // do nothing.
-    } else if (RESERVED_VERSIONS.includes(currVersion)) {
+      return newVersions;
+    }
+
+    const newSubsetVersion: string | undefined = newVersions.find((newVersion) =>
+      subsetVersion(newVersion, currVersion)
+    );
+
+    if (RESERVED_VERSIONS.includes(currVersion) || !newSubsetVersion) {
       newVersions.push(currVersion);
     } else {
-      // Find and replace versions with subset versions
-      const newSubsetVersion: string | undefined = newVersions.find((newVersion) =>
-        subsetVersion(newVersion, currVersion)
-      );
-      if (newSubsetVersion) {
-        // Update projects with new subset version
-        versionsMap.get(currVersion)?.forEach((projectName) => {
-          if (updateProjectDependency(projectName, dependencyName, newSubsetVersion, rootPath)) {
-            Console.debug(
-              `Updated project ${Colorize.bold(projectName)} for dependency ${Colorize.bold(
-                dependencyName
-              )} ${Colorize.bold(currVersion)} => ${Colorize.bold(newSubsetVersion)}!`
-            );
-          }
-        });
-      }
+      // Update projects with new subset version
+      versionsMap.get(currVersion)?.forEach((projectName) => {
+        if (updateProjectDependency(projectName, dependencyName, newSubsetVersion, rootPath)) {
+          Console.debug(
+            `Updated project ${Colorize.bold(projectName)} for dependency ${Colorize.bold(
+              dependencyName
+            )} ${Colorize.bold(currVersion)} => ${Colorize.bold(newSubsetVersion)}!`
+          );
+        }
+      });
     }
 
     return newVersions;
