@@ -84,7 +84,7 @@ export const scanForDuplicatedDependenciesPrompt = async (): Promise<boolean> =>
 export const scanForSupersetDependencyVersionsPrompt = async (): Promise<boolean> => {
   const { scanForSuperset } = await inquirer.prompt([
     {
-      message: 'Do you want to remove superset dependency versions in the subspace (EXPERIMENTAL)?',
+      message: '(EXPERIMENTAL) Do you want to remove superset dependency versions from the subspace?',
       name: 'scanForSuperset',
       type: 'confirm'
     }
