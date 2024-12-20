@@ -8,6 +8,7 @@ import { migrateProject } from './migrateProject';
 import Console from './providers/console';
 import { interactMenu } from './interactMenu';
 import { cleanSubspace } from './cleanSubspace';
+import { getRootPath } from './utilities/path';
 
 inquirer.registerPrompt('search-list', inquirerSearchList);
 
@@ -26,14 +27,17 @@ program
     Console.title(`🚀 Rush Migrate Subspace Plugin - version ${packageJson.version}`);
     Console.newLine();
 
+    const sourceMonorepoPath: string = getRootPath();
+    const targetMonorepoPath: string = getRootPath();
+
     if (sync) {
-      await syncVersions();
+      await syncVersions(targetMonorepoPath);
     } else if (move) {
-      await migrateProject();
+      await migrateProject(sourceMonorepoPath, targetMonorepoPath);
     } else if (clean) {
-      await cleanSubspace();
+      await cleanSubspace(targetMonorepoPath);
     } else {
-      await interactMenu();
+      await interactMenu(sourceMonorepoPath, targetMonorepoPath);
     }
   });
 

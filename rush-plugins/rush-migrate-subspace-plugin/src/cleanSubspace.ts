@@ -6,7 +6,6 @@ import {
   scanForAllDependenciesPrompt
 } from './prompts/subspace';
 import Console from './providers/console';
-import { getRootPath } from './utilities/path';
 import { Colorize } from '@rushstack/terminal';
 import {
   getRushSubspaceCommonVersionsFilePath,
@@ -246,16 +245,14 @@ const removeSupersetDependencyVersions = async (
   } while (multipleVersionDependencies.length > 0 && (await confirmNextDependencyPrompt()));
 };
 
-export const cleanSubspace = async (targetMonorepoPath: string = getRootPath()): Promise<void> => {
+export const cleanSubspace = async (rootPath: string): Promise<void> => {
   Console.debug('Executing clean subspace command...');
 
-  const targetSubspaces: string[] = querySubspaces(targetMonorepoPath);
-  if (!isSubspaceSupported(targetMonorepoPath)) {
+  const targetSubspaces: string[] = querySubspaces(rootPath);
+  if (!isSubspaceSupported(rootPath)) {
     Console.error(
-      `The monorepo ${Colorize.bold(
-        targetMonorepoPath
-      )} doesn't support subspaces! Make sure you have ${Colorize.bold(
-        getRushSubspacesConfigurationJsonPath(targetMonorepoPath)
+      `The monorepo ${Colorize.bold(rootPath)} doesn't support subspaces! Make sure you have ${Colorize.bold(
+        getRushSubspacesConfigurationJsonPath(rootPath)
       )} with the ${Colorize.bold(RushConstants.defaultSubspaceName)} subspace. Exiting...`
     );
     return;
@@ -266,20 +263,20 @@ export const cleanSubspace = async (targetMonorepoPath: string = getRootPath()):
 
   let subspaceDependencies: Map<string, Map<string, string[]>> = getSubspaceDependencies(
     targetSubspace,
-    targetMonorepoPath
+    rootPath
   );
   if (await scanForDuplicatedDependenciesPrompt()) {
-    removeDuplicatedDependencies(targetSubspace, targetMonorepoPath);
-    subspaceDependencies = getSubspaceDependencies(targetSubspace, targetMonorepoPath);
+    removeDuplicatedDependencies(targetSubspace, rootPath);
+    subspaceDependencies = getSubspaceDependencies(targetSubspace, rootPath);
   }
 
   if (await scanForSupersetDependencyVersionsPrompt()) {
-    await removeSupersetDependencyVersions(targetSubspace, subspaceDependencies, targetMonorepoPath);
-    subspaceDependencies = getSubspaceDependencies(targetSubspace, targetMonorepoPath);
+    await removeSupersetDependencyVersions(targetSubspace, subspaceDependencies, rootPath);
+    subspaceDependencies = getSubspaceDependencies(targetSubspace, rootPath);
   }
 
   if (await scanForUnusedDependencyVersionsPrompt()) {
-    removeUnusedAlternativeVersions(targetSubspace, subspaceDependencies, targetMonorepoPath);
+    removeUnusedAlternativeVersions(targetSubspace, subspaceDependencies, rootPath);
   }
 
   Console.warn(

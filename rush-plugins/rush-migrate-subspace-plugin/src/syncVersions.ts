@@ -3,7 +3,6 @@ import { VersionMismatchFinderEntity } from '@rushstack/rush-sdk/lib/logic/versi
 import Console from './providers/console';
 import { Colorize } from '@rushstack/terminal';
 import { querySubspaces } from './utilities/repository';
-import { getRootPath } from './utilities/path';
 import { getSubspaceMismatches } from './utilities/subspace';
 import { chooseProjectPrompt, confirmNextProjectToSyncPrompt } from './prompts/project';
 import { syncProjectMismatchedDependencies } from './functions/syncProjectDependencies';
@@ -32,22 +31,19 @@ const fetchSubspaceMismatchedProjects = (subspaceName: string, rootPath: string)
   return mismatchedProjects;
 };
 
-export const syncVersions = async (targetMonorepoPath: string = getRootPath()): Promise<void> => {
+export const syncVersions = async (rootPath: string): Promise<void> => {
   Console.debug('Synching project version...');
 
-  const sourceSubspaces: string[] = querySubspaces(targetMonorepoPath);
+  const sourceSubspaces: string[] = querySubspaces(rootPath);
   if (sourceSubspaces.length === 0) {
-    Console.error(`No subspaces found in the monorepo ${Colorize.bold(targetMonorepoPath)}! Exiting...`);
+    Console.error(`No subspaces found in the monorepo ${Colorize.bold(rootPath)}! Exiting...`);
     return;
   }
 
   const selectedSubspaceName: string = await chooseSubspacePrompt(sourceSubspaces);
   Console.title(`🔄 Syncing version mismatches for subspace ${Colorize.bold(selectedSubspaceName)}...`);
 
-  let mismatchedProjects: string[] = fetchSubspaceMismatchedProjects(
-    selectedSubspaceName,
-    targetMonorepoPath
-  );
+  let mismatchedProjects: string[] = fetchSubspaceMismatchedProjects(selectedSubspaceName, rootPath);
   if (mismatchedProjects.length === 0) {
     Console.success(`No mismatches found in the subspace ${Colorize.bold(selectedSubspaceName)}! Exiting...`);
     return;
@@ -55,11 +51,11 @@ export const syncVersions = async (targetMonorepoPath: string = getRootPath()): 
 
   do {
     const selectedProjectName: string = await chooseProjectPrompt(mismatchedProjects);
-    if (!(await syncProjectMismatchedDependencies(selectedProjectName, targetMonorepoPath))) {
+    if (!(await syncProjectMismatchedDependencies(selectedProjectName, rootPath))) {
       return;
     }
 
-    mismatchedProjects = fetchSubspaceMismatchedProjects(selectedSubspaceName, targetMonorepoPath);
+    mismatchedProjects = fetchSubspaceMismatchedProjects(selectedSubspaceName, rootPath);
   } while (mismatchedProjects.length > 0 && (await confirmNextProjectToSyncPrompt(selectedSubspaceName)));
 
   if (mismatchedProjects.length === 0) {

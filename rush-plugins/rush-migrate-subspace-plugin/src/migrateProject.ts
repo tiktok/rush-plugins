@@ -2,7 +2,6 @@ import { chooseSubspacePrompt } from './prompts/subspace';
 import { addProjectToSubspace } from './functions/addProjectToSubspace';
 import { chooseProjectPrompt, confirmNextProjectToAddPrompt } from './prompts/project';
 import Console from './providers/console';
-import { getRootPath } from './utilities/path';
 import { Colorize } from '@rushstack/terminal';
 import { updateSubspace } from './functions/updateSubspace';
 import { getRushSubspaceConfigurationFolderPath, isSubspaceSupported } from './utilities/subspace';
@@ -16,7 +15,10 @@ import {
 import { RushConstants } from '@rushstack/rush-sdk';
 import { syncProjectMismatchedDependencies } from './functions/syncProjectDependencies';
 
-export const migrateProject = async (targetMonorepoPath: string = getRootPath()): Promise<void> => {
+export const migrateProject = async (
+  sourceMonorepoPath: string,
+  targetMonorepoPath: string
+): Promise<void> => {
   Console.debug('Executing project migration command...');
 
   Console.title(`🔍 Analyzing if monorepo ${Colorize.underline(targetMonorepoPath)} supports subspaces...`);
@@ -54,8 +56,6 @@ export const migrateProject = async (targetMonorepoPath: string = getRootPath())
    *   `The script will migrate from ${Colorize.bold(sourceMonorepoPath)} to ${Colorize.bold(getRootPath())}`
    * );
    */
-
-  const sourceMonorepoPath: string = getRootPath();
 
   /**
    * WARN: Disabling creating new subspaces for now.
