@@ -28,6 +28,12 @@
       "longName": "--debug",
       "description": "Provide debug logs",
       "associatedCommands": ["migrate-subspace"]
+    },
+    {
+      "parameterKind": "flag",
+      "longName": "--clean",
+      "description": "Merge and clean multiple common versions together",
+      "associatedCommands": ["migrate-subspace"]
     }
   ]
 }

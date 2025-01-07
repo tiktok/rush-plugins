@@ -23,11 +23,14 @@ import { generateReport } from './generateReport';
 const addVersionToCommonVersionConfiguration = (
   subspaceName: string,
   dependencyName: string,
-  selectedVersion: string
+  selectedVersion: string,
+  rootPath: string
 ): void => {
-  const subspaceCommonVersionsPath: string = getRushSubspaceCommonVersionsFilePath(subspaceName);
-  const subspaceCommonVersionsJson: RushSubspaceCommonVersionsJson =
-    loadRushSubspaceCommonVersions(subspaceName);
+  const subspaceCommonVersionsPath: string = getRushSubspaceCommonVersionsFilePath(subspaceName, rootPath);
+  const subspaceCommonVersionsJson: RushSubspaceCommonVersionsJson = loadRushSubspaceCommonVersions(
+    subspaceName,
+    rootPath
+  );
 
   Console.debug(
     `Adding ${Colorize.bold(selectedVersion)} to allowedAlternativeVersions of ${Colorize.bold(
@@ -49,16 +52,19 @@ const addVersionToCommonVersionConfiguration = (
 
 const syncDependencyVersion = async (
   dependencyToUpdate: string,
-  projectToUpdate: string
+  projectToUpdate: string,
+  rootPath: string
 ): Promise<boolean> => {
   const dependencyName: string = dependencyToUpdate.replace(' (cyclic)', '');
-  const project: IRushConfigurationProjectJson | undefined = queryProject(projectToUpdate);
+  const project: IRushConfigurationProjectJson | undefined = queryProject(projectToUpdate, rootPath);
   if (!project || !project.subspaceName) {
     return false;
   }
 
-  const projectDependencies: IPackageJsonDependencyTable | undefined =
-    getProjectDependencies(projectToUpdate);
+  const projectDependencies: IPackageJsonDependencyTable | undefined = getProjectDependencies(
+    projectToUpdate,
+    rootPath
+  );
   const currentVersion: string | undefined = projectDependencies?.[dependencyName];
   if (!currentVersion) {
     Console.error(
@@ -69,12 +75,16 @@ const syncDependencyVersion = async (
     return false;
   }
 
-  const subspaceCommonVersionsJson: JsonObject = loadRushSubspaceCommonVersions(project.subspaceName);
+  const subspaceCommonVersionsJson: JsonObject = loadRushSubspaceCommonVersions(
+    project.subspaceName,
+    rootPath
+  );
   const subspaceAlternativeVersions: string[] =
     subspaceCommonVersionsJson.allowedAlternativeVersions[dependencyName] || [];
 
   const subspaceDependencies: Map<string, Map<string, string[]>> = getSubspaceDependencies(
-    project.subspaceName
+    project.subspaceName,
+    rootPath
   );
 
   const subspaceVersionsMap: Map<string, string[]> = subspaceDependencies.get(dependencyName) as Map<
@@ -118,22 +128,22 @@ const syncDependencyVersion = async (
     return false;
   } else if (versionToSync === 'manual') {
     const newVersion: string = (await enterVersionPrompt(dependencyName)).trim();
-    addVersionToCommonVersionConfiguration(project.subspaceName, dependencyName, newVersion);
-    await updateProjectDependency(projectToUpdate, dependencyName, newVersion);
+    addVersionToCommonVersionConfiguration(project.subspaceName, dependencyName, newVersion, rootPath);
+    await updateProjectDependency(projectToUpdate, dependencyName, newVersion, rootPath);
   } else if (versionToSync === 'alternative') {
-    addVersionToCommonVersionConfiguration(project.subspaceName, dependencyName, currentVersion);
+    addVersionToCommonVersionConfiguration(project.subspaceName, dependencyName, currentVersion, rootPath);
   } else {
-    await updateProjectDependency(projectToUpdate, dependencyName, versionToSync);
+    await updateProjectDependency(projectToUpdate, dependencyName, versionToSync, rootPath);
   }
 
   return true;
 };
 
-const fetchProjectMismatches = (projectName: string): string[] => {
+const fetchProjectMismatches = (projectName: string, rootPath: string): string[] => {
   const projectMismatches: ReadonlyMap<
     string,
     ReadonlyMap<string, readonly VersionMismatchFinderEntity[]>
-  > = getProjectMismatches(projectName);
+  > = getProjectMismatches(projectName, rootPath);
 
   const mismatchedDependencies: string[] = Array.from(projectMismatches.keys());
   if (mismatchedDependencies.length === 0) {
@@ -157,16 +167,19 @@ const fetchProjectMismatches = (projectName: string): string[] => {
   return mismatchedDependencies;
 };
 
-export const syncProjectMismatchedDependencies = async (projectName: string): Promise<boolean> => {
+export const syncProjectMismatchedDependencies = async (
+  projectName: string,
+  rootPath: string
+): Promise<boolean> => {
   Console.title(`🔄 Syncing version mismatches for project ${Colorize.bold(projectName)}...`);
 
-  let mismatchedDependencies: string[] = fetchProjectMismatches(projectName);
+  let mismatchedDependencies: string[] = fetchProjectMismatches(projectName, rootPath);
   if (mismatchedDependencies.length === 0) {
     Console.success(`No mismatches found in the project ${Colorize.bold(projectName)}!`);
     return true;
   }
 
-  const project: IRushConfigurationProjectJson | undefined = queryProject(projectName);
+  const project: IRushConfigurationProjectJson | undefined = queryProject(projectName, rootPath);
   if (!project || !project.subspaceName) {
     Console.error(`Project ${Colorize.bold(projectName)} is not part of a subspace!`);
     return true;
@@ -175,15 +188,21 @@ export const syncProjectMismatchedDependencies = async (projectName: string): Pr
   const nextCommand: string = await chooseSyncCommandPrompt(project.packageName);
   switch (nextCommand) {
     case 'report':
-      await generateReport(project.packageName);
+      await generateReport(project.packageName, rootPath);
       break;
     case 'fix':
       do {
-        const selectedDependency: string = await chooseDependencyPrompt(mismatchedDependencies);
-        if (await syncDependencyVersion(selectedDependency, projectName)) {
-          mismatchedDependencies = fetchProjectMismatches(projectName);
+        const selectedDependency: string = await chooseDependencyPrompt(
+          mismatchedDependencies,
+          ` (${Colorize.bold(`${mismatchedDependencies.length}`)} mismatched dependencies)`
+        );
+        if (await syncDependencyVersion(selectedDependency, projectName, rootPath)) {
+          mismatchedDependencies = fetchProjectMismatches(projectName, rootPath);
         }
-      } while (mismatchedDependencies.length > 0 && (await confirmNextDependencyPrompt(projectName)));
+      } while (
+        mismatchedDependencies.length > 0 &&
+        (await confirmNextDependencyPrompt(` (Current project: ${Colorize.bold(projectName)})`))
+      );
 
       break;
     case 'skip':

@@ -7,15 +7,16 @@ import Console from '../providers/console';
 export const updateProjectDependency = async (
   projectName: string,
   dependencyName: string,
-  newVersion: string
+  newVersion: string,
+  rootPath: string
 ): Promise<boolean> => {
-  const project: IRushConfigurationProjectJson | undefined = queryProject(projectName);
+  const project: IRushConfigurationProjectJson | undefined = queryProject(projectName, rootPath);
   if (!project) {
     Console.error(`Could not load find the project ${Colorize.bold(projectName)}.`);
     return false;
   }
 
-  const pkgJsonPath: string = getProjectPackageFilePath(project.projectFolder);
+  const pkgJsonPath: string = getProjectPackageFilePath(project.projectFolder, rootPath);
   if (!FileSystem.exists(pkgJsonPath)) {
     Console.error(`Could not load ${Colorize.bold(pkgJsonPath)}.`);
     return false;
