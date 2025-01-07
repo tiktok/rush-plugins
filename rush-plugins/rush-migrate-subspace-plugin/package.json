@@ -1,6 +1,6 @@
 {
   "name": "rush-migrate-subspace-plugin",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Rush plugin to migrate existing projects into a subspace",
   "keywords": [
     "rush",
