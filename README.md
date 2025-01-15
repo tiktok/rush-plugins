@@ -91,3 +91,12 @@ The rush subspace is a new feature that intends to move common projects into 1 w
 Are you struggling with the complex dependencies between packages? This plugin helps you visualize the dependency relationships between packages.
 
 [More](./rush-plugins/rush-dep-graph-plugin/README.md)
+
+# rush-dep-graph-plugin
+
+[![npm](https://img.shields.io/npm/dt/rush-link-project-plugin.svg?style=flat-square)](https://www.npmjs.com/package/rush-link-project-plugin)
+[![npm](https://img.shields.io/npm/dw/rush-link-project-plugin.svg?style=flat-square)](https://www.npmjs.com/package/rush-link-project-plugin)
+
+Having trouble managing symbolic links for your packages? This plugin helps you easily create and manage symbolic links for your packages in the rush project.
+
+[More](./rush-plugins/rush-link-project-plugin/README.md)
