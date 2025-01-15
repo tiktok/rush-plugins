@@ -13,7 +13,7 @@ import { lookUpPackageJson, logger } from './utils';
   const targetJsonPath: string = path.resolve(targetPath, PACKAGE_JSON);
 
   if (!fs.existsSync(targetJsonPath)) {
-    throw new Error(`Can not find ${PACKAGE_JSON} in the path ${argv.path}`);
+    throw new Error(`Cannot find ${PACKAGE_JSON} in the path ${argv.path}`);
   }
 
   const originJsonPath: string | undefined = lookUpPackageJson(RUSH_EVOKE_FOLDER);
