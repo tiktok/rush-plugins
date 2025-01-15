@@ -1,6 +1,6 @@
-# rush-dep-graph-plugin
+# rush-link-project-plugin
 
-A Rush plugin that displays the dependency graph.
+A plugin to create a symbolic link for a package.
 
 # Prerequisite
 
@@ -13,13 +13,12 @@ Rush.js >= 5.83.2
 
 Please follow the [official doc](https://rushjs.io/pages/maintainer/using_rush_plugins/) to enable this plugin in your repo.
 
-2. Running `dep-graph` command
+2. Running `link-project` command
 
 ```
-Usage: rush dep-graph [OPTIONS]
+usage: rush link-project [-h] [--path PATH]
 
-Options:
-  -t, --to <PROJECT_NAME>       Select the packages that depend on specific project.
-  -f, --from <PROJECT_NAME>     Select the package that is dependent on specific package.
-  --filter <PROJECT_NAME>       Select the packages based on a custom filter criteria, such as specific keywords in the package name.
+Optional arguments:
+  -h, --help   Show this help message and exit.
+  --path PATH
 ```

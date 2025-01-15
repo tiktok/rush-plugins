@@ -1,7 +1,7 @@
 {
   "name": "rush-link-project-plugin",
   "version": "0.1.0",
-  "description": "Creates a symbolic link for a package",
+  "description": "A plugin to create a symbolic link for a package.",
   "keywords": [
     "rush",
     "plugin",
