@@ -1,0 +1,22 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/command-line.schema.json",
+  "commands": [
+    {
+      "name": "link-project",
+      "commandKind": "global",
+      "summary": "Creates a symbolic link for a package",
+      "description": "Creates a symbolic link for a package",
+      "shellCommand": "ts-node common/autoinstallers/link-package/src/index.ts",
+      "autoinstallerName": "link-project"
+    }
+  ],
+  "parameters": [
+    {
+      "parameterKind": "string",
+      "argumentName": "PATH",
+      "description": "The path to the package you want to link. This can be an absolute or relative path. If it's a relative path, it will be resolved from the current working directory.",
+      "longName": "--path",
+      "associatedCommands": ["link-project"]
+    }
+  ]
+}
