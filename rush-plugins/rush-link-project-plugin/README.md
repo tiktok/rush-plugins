@@ -1,6 +1,6 @@
 # rush-link-project-plugin
 
-A plugin to create a symbolic link for a package.
+A plugin that makes the current local package accessible in another location.
 
 # Prerequisite
 

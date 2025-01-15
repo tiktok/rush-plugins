@@ -97,6 +97,6 @@ Are you struggling with the complex dependencies between packages? This plugin h
 [![npm](https://img.shields.io/npm/dt/rush-link-project-plugin.svg?style=flat-square)](https://www.npmjs.com/package/rush-link-project-plugin)
 [![npm](https://img.shields.io/npm/dw/rush-link-project-plugin.svg?style=flat-square)](https://www.npmjs.com/package/rush-link-project-plugin)
 
-Having trouble managing symbolic links for your packages? This plugin helps you easily create and manage symbolic links for your packages in the rush project.
+Tired of manually managing local packages in your Rush project? This plugin links your local package to the project, making it easily accessible in other locations.
 
 [More](./rush-plugins/rush-link-project-plugin/README.md)

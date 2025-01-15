@@ -3,7 +3,7 @@
   "plugins": [
     {
       "pluginName": "link-project",
-      "description": "Creates a symbolic link for a package",
+      "description": "A plugin that makes the current local package accessible in another location.",
       "commandLineJsonFilePath": "command-line.json"
     }
   ]

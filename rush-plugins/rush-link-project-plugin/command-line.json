@@ -4,8 +4,8 @@
     {
       "name": "link-project",
       "commandKind": "global",
-      "summary": "Creates a symbolic link for a package",
-      "description": "Creates a symbolic link for a package",
+      "summary": "A plugin that makes the current local package accessible in another location.",
+      "description": "A plugin that makes the current local package accessible in another location.",
       "shellCommand": "ts-node common/autoinstallers/link-package/src/index.ts",
       "autoinstallerName": "link-project"
     }
