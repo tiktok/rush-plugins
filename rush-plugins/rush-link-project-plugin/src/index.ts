@@ -33,7 +33,6 @@ import { lookUpPackageJson, logger } from './utils';
   }
 
   if (!fs.existsSync(nodeModulesPath)) {
-    logger.writeLine(`'node_modules' directory does not exist at ${nodeModulesPath}. Creating...`);
     fs.mkdirSync(nodeModulesPath, { recursive: true });
   }
 
