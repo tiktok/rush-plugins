@@ -14,7 +14,7 @@
     {
       "parameterKind": "string",
       "argumentName": "PATH",
-      "description": "The path to the package you want to link. This can be an absolute or relative path. If it's a relative path, it will be resolved from the current working directory.",
+      "description": "The path to the package you want to link. This can be an absolute or relative path.",
       "longName": "--path",
       "associatedCommands": ["link-project"]
     }
