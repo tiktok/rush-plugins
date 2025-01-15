@@ -92,7 +92,7 @@ Are you struggling with the complex dependencies between packages? This plugin h
 
 [More](./rush-plugins/rush-dep-graph-plugin/README.md)
 
-# rush-dep-graph-plugin
+# rush-link-project-plugin
 
 [![npm](https://img.shields.io/npm/dt/rush-link-project-plugin.svg?style=flat-square)](https://www.npmjs.com/package/rush-link-project-plugin)
 [![npm](https://img.shields.io/npm/dw/rush-link-project-plugin.svg?style=flat-square)](https://www.npmjs.com/package/rush-link-project-plugin)
