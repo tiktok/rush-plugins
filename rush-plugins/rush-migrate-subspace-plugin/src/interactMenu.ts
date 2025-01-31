@@ -4,7 +4,7 @@ import { chooseCommandPrompt } from './prompts/command';
 import Console from './providers/console';
 import { syncVersions } from './syncVersions';
 
-export const interactMenu = async (sourceMonorepoPath: string, targetMonorepoPath: string): Promise<void> => {
+export const interactMenu = async (targetMonorepoPath: string): Promise<void> => {
   let exitApplication: boolean = false;
   do {
     const nextCommand: string = await chooseCommandPrompt();
@@ -14,7 +14,7 @@ export const interactMenu = async (sourceMonorepoPath: string, targetMonorepoPat
         break;
 
       case 'move':
-        await migrateProject(sourceMonorepoPath, targetMonorepoPath);
+        await migrateProject(targetMonorepoPath);
         Console.newLine();
         break;
 
