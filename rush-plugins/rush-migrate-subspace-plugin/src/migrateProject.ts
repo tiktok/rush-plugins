@@ -74,7 +74,7 @@ export const migrateProject = async (targetMonorepoPath: string): Promise<void> 
     }
 
     Console.title(
-      `🏃 Migrating project ${sourceProjectToMigrate.packageName} to subspace ${targetSubspace}...`
+      `🏃 Migrating source project ${sourceProjectToMigrate.packageName} to target subspace ${targetSubspace}...`
     );
 
     if (sourceProjectToMigrate.subspaceName) {

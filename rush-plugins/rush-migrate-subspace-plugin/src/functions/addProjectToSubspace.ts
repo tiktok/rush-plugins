@@ -6,7 +6,7 @@ import { Colorize } from '@rushstack/terminal';
 import { IRushConfigurationProjectJson } from '@rushstack/rush-sdk/lib/api/RushConfigurationProject';
 import { enterNewProjectLocationPrompt, moveProjectPrompt } from '../prompts/project';
 import { RushConstants } from '@rushstack/rush-sdk';
-import { addProjectToRushConfiguration } from './updateRushConfiguration';
+import { addProjectToRushConfiguration, removeProjectFromRushConfiguration } from './updateRushConfiguration';
 import {
   getRushSubspacesConfigurationJsonPath,
   isExternalMonorepo,
@@ -73,7 +73,7 @@ export const addProjectToSubspace = async (
   targetMonorepoPath: string
 ): Promise<void> => {
   Console.debug(
-    `Adding project ${Colorize.bold(sourceProject.packageName)} to subspace ${Colorize.bold(
+    `Adding source project ${Colorize.bold(sourceProject.packageName)} to target subspace ${Colorize.bold(
       targetSubspace
     )}...`
   );
@@ -99,11 +99,6 @@ export const addProjectToSubspace = async (
     }
   }
 
-  /** WARN: Disabling different repositories for now.
-  addProjectToRushConfiguration(sourceProject, targetSubspace, targetProjectFolderPath);
-  removeProjectFromRushConfiguration(sourceProject, sourceMonorepoPath);
-   */
-
   const targetLegacySubspaceFolderPath: string = `${targetProjectFolderPath}/subspace`;
   if (FileSystem.exists(targetLegacySubspaceFolderPath)) {
     Console.debug(`Removing legacy subspace folder ${Colorize.bold(targetLegacySubspaceFolderPath)}...`);
@@ -111,13 +106,14 @@ export const addProjectToSubspace = async (
   }
 
   addProjectToRushConfiguration(sourceProject, targetSubspace, targetProjectFolderPath, targetMonorepoPath);
+  removeProjectFromRushConfiguration(sourceProject, sourceMonorepoPath);
   if (sourceProject.subspaceName) {
     refreshSubspace(sourceProject.subspaceName, sourceMonorepoPath);
   }
 
   Console.success(
-    `Project ${Colorize.bold(
+    `Source project ${Colorize.bold(
       sourceProject.packageName
-    )} has been successfully added to subspace ${Colorize.bold(targetSubspace)}.`
+    )} has been successfully added to target subspace ${Colorize.bold(targetSubspace)}.`
   );
 };
