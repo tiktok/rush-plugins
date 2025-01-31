@@ -19,7 +19,9 @@ export const removeProjectFromRushConfiguration = (
 
   if (projectIndex < 0) {
     Console.error(
-      `The project ${Colorize.bold(project.packageName)} wasn't found in ${RushConstants.rushJsonFilename}!`
+      `The source project ${Colorize.bold(project.packageName)} wasn't found in ${
+        RushConstants.rushJsonFilename
+      }!`
     );
     return;
   }

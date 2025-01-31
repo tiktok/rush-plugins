@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "rush-migrate-subspace-plugin",
+      "comment": "Supports external repository subspace migration",
+      "type": "minor"
+    }
+  ],
+  "packageName": "rush-migrate-subspace-plugin"
+}

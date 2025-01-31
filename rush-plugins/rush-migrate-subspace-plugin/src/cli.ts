@@ -27,17 +27,16 @@ program
     Console.title(`🚀 Rush Migrate Subspace Plugin - version ${packageJson.version}`);
     Console.newLine();
 
-    const sourceMonorepoPath: string = getRootPath();
     const targetMonorepoPath: string = getRootPath();
 
     if (sync) {
       await syncVersions(targetMonorepoPath);
     } else if (move) {
-      await migrateProject(sourceMonorepoPath, targetMonorepoPath);
+      await migrateProject(targetMonorepoPath);
     } else if (clean) {
       await cleanSubspace(targetMonorepoPath);
     } else {
-      await interactMenu(sourceMonorepoPath, targetMonorepoPath);
+      await interactMenu(targetMonorepoPath);
     }
   });
 
