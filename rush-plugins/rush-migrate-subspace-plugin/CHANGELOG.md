@@ -1,6 +1,13 @@
 # Change Log - rush-migrate-subspace-plugin
 
-This log was last generated on Tue, 07 Jan 2025 10:49:32 GMT and should not be manually modified.
+This log was last generated on Mon, 03 Feb 2025 05:39:03 GMT and should not be manually modified.
+
+## 1.4.0
+Mon, 03 Feb 2025 05:39:03 GMT
+
+### Minor changes
+
+- Supports external repository subspace migration
 
 ## 1.3.0
 Tue, 07 Jan 2025 10:49:32 GMT
