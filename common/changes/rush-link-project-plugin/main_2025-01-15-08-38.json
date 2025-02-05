@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "rush-link-project-plugin",
+      "comment": "A new plugin to create a symbolic link for a package.",
+      "type": "minor"
+    }
+  ],
+  "packageName": "rush-link-project-plugin"
+}
