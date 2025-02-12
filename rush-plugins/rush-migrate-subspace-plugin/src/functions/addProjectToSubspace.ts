@@ -79,7 +79,8 @@ export const addProjectToSubspace = async (
   );
 
   let targetProjectFolderPath: string | undefined = `${targetMonorepoPath}/${sourceProject.projectFolder}`;
-  if (isExternalMonorepo(sourceMonorepoPath, targetMonorepoPath) || (await moveProjectPrompt())) {
+  const isExternal = isExternalMonorepo(sourceMonorepoPath, targetMonorepoPath);
+  if (isExternal || (await moveProjectPrompt())) {
     const sourceProjectFolderPath: string = `${sourceMonorepoPath}/${sourceProject.projectFolder}`;
     targetProjectFolderPath = await moveProjectToSubspaceFolder(
       sourceProjectFolderPath,
@@ -106,7 +107,10 @@ export const addProjectToSubspace = async (
   }
 
   addProjectToRushConfiguration(sourceProject, targetSubspace, targetProjectFolderPath, targetMonorepoPath);
-  removeProjectFromRushConfiguration(sourceProject, sourceMonorepoPath);
+  if (isExternal) {
+    removeProjectFromRushConfiguration(sourceProject, sourceMonorepoPath);
+  }
+
   if (sourceProject.subspaceName) {
     refreshSubspace(sourceProject.subspaceName, sourceMonorepoPath);
   }
