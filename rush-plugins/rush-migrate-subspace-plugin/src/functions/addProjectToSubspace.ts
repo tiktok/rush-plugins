@@ -79,7 +79,7 @@ export const addProjectToSubspace = async (
   );
 
   let targetProjectFolderPath: string | undefined = `${targetMonorepoPath}/${sourceProject.projectFolder}`;
-  const isExternal = isExternalMonorepo(sourceMonorepoPath, targetMonorepoPath);
+  const isExternal: boolean = isExternalMonorepo(sourceMonorepoPath, targetMonorepoPath);
   if (isExternal || (await moveProjectPrompt())) {
     const sourceProjectFolderPath: string = `${sourceMonorepoPath}/${sourceProject.projectFolder}`;
     targetProjectFolderPath = await moveProjectToSubspaceFolder(
