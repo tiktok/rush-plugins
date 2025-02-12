@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "rush-migrate-subspace-plugin",
+      "comment": "Fixes rush.json removing project",
+      "type": "patch"
+    }
+  ],
+  "packageName": "rush-migrate-subspace-plugin"
+}

@@ -18,9 +18,9 @@ program
   .option('--sync', 'to sync the versions in a subspace')
   .option('--move', 'to move projects to a new subspace')
   .option('--clean', 'to reduce subspace alternative versions')
-  .option('--debug', 'to provide debug logs')
-  .description('Example: rush migrate-subspace [--move] [--sync] [--debug] [--clean]')
-  .action(async ({ sync, debug, move, clean }) => {
+  .option('--debug-logs', 'to provide debug logs')
+  .description('Example: rush migrate-subspace [--move] [--sync] [--debug-logs] [--clean]')
+  .action(async ({ sync, debugLogs: debug, move, clean }) => {
     const packageJson: IPackageJson = JsonFile.load(`${path.resolve(__dirname, '../package.json')}`);
 
     Console.enableDebug(debug);
