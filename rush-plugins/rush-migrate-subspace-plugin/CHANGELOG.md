@@ -1,6 +1,13 @@
 # Change Log - rush-migrate-subspace-plugin
 
-This log was last generated on Mon, 03 Feb 2025 05:39:03 GMT and should not be manually modified.
+This log was last generated on Thu, 13 Feb 2025 03:23:57 GMT and should not be manually modified.
+
+## 1.4.1
+Thu, 13 Feb 2025 03:23:57 GMT
+
+### Patches
+
+- Fixes rush.json removing project
 
 ## 1.4.0
 Mon, 03 Feb 2025 05:39:03 GMT

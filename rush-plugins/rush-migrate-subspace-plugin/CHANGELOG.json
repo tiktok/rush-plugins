@@ -2,6 +2,18 @@
   "name": "rush-migrate-subspace-plugin",
   "entries": [
     {
+      "version": "1.4.1",
+      "tag": "rush-migrate-subspace-plugin_v1.4.1",
+      "date": "Thu, 13 Feb 2025 03:23:57 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fixes rush.json removing project"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.4.0",
       "tag": "rush-migrate-subspace-plugin_v1.4.0",
       "date": "Mon, 03 Feb 2025 05:39:03 GMT",
