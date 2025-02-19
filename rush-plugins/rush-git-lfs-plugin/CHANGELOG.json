@@ -2,6 +2,18 @@
   "name": "rush-git-lfs-plugin",
   "entries": [
     {
+      "version": "0.3.5",
+      "tag": "rush-git-lfs-plugin_v0.3.5",
+      "date": "Wed, 19 Feb 2025 04:45:10 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Print detailed logs when git lfs pull failed"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.3.4",
       "tag": "rush-git-lfs-plugin_v0.3.4",
       "date": "Tue, 29 Oct 2024 03:43:55 GMT",
