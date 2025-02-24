@@ -1,0 +1,10 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/rush-plugin-manifest.schema.json",
+  "plugins": [
+    {
+      "pluginName": "link-project",
+      "description": "A plugin that makes the current local package accessible in another location.",
+      "commandLineJsonFilePath": "command-line.json"
+    }
+  ]
+}

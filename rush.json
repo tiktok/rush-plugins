@@ -506,6 +506,11 @@
       "packageName": "rush-dep-graph-plugin",
       "projectFolder": "rush-plugins/rush-dep-graph-plugin",
       "shouldPublish": true
+    },
+    {
+      "packageName": "rush-link-project-plugin",
+      "projectFolder": "rush-plugins/rush-link-project-plugin",
+      "shouldPublish": true
     }
   ]
 }

@@ -307,6 +307,49 @@ importers:
         specifier: ~5.0.4
         version: 5.0.4
 
+  ../../rush-plugins/rush-link-project-plugin:
+    dependencies:
+      '@rushstack/node-core-library':
+        specifier: 3.62.0
+        version: 3.62.0(@types/node@18.17.15)
+      '@rushstack/rush-sdk':
+        specifier: ^5.139.0
+        version: 5.140.0(@types/node@18.17.15)
+      '@rushstack/terminal':
+        specifier: ~0.14.2
+        version: 0.14.2(@types/node@18.17.15)
+      fs-extra:
+        specifier: ~10.1.0
+        version: 10.1.0
+      minimist:
+        specifier: ^1.2.8
+        version: 1.2.8
+    devDependencies:
+      '@rushstack/eslint-config':
+        specifier: 3.3.4
+        version: 3.3.4(eslint@8.57.1)(typescript@5.0.4)
+      '@rushstack/heft':
+        specifier: 0.61.0
+        version: 0.61.0(@types/node@18.17.15)
+      '@rushstack/heft-node-rig':
+        specifier: 2.2.25
+        version: 2.2.25(@rushstack/heft@0.61.0)(@types/node@18.17.15)(ts-node@11.0.0-beta.1)
+      '@types/fs-extra':
+        specifier: ~9.0.13
+        version: 9.0.13
+      '@types/heft-jest':
+        specifier: 1.0.1
+        version: 1.0.1
+      '@types/minimist':
+        specifier: 1.2.2
+        version: 1.2.2
+      '@types/node':
+        specifier: 18.17.15
+        version: 18.17.15
+      typescript:
+        specifier: ~5.0.4
+        version: 5.0.4
+
   ../../rush-plugins/rush-lint-staged-plugin:
     dependencies:
       '@rushstack/node-core-library':
@@ -1873,6 +1916,10 @@ packages:
 
   /@types/minimatch@5.1.2:
     resolution: {integrity: sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==}
+
+  /@types/minimist@1.2.2:
+    resolution: {integrity: sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==}
+    dev: true
 
   /@types/node-fetch@1.6.9:
     resolution: {integrity: sha512-n2r6WLoY7+uuPT7pnEtKJCmPUGyJ+cbyBR8Avnu4+m1nzz7DwBVuyIvvlBzCZ/nrpC7rIgb3D6pNavL7rFEa9g==}
