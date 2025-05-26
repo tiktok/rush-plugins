@@ -25,7 +25,7 @@
     },
     {
       "parameterKind": "flag",
-      "longName": "--debug",
+      "longName": "--debug-logs",
       "description": "Provide debug logs",
       "associatedCommands": ["migrate-subspace"]
     },

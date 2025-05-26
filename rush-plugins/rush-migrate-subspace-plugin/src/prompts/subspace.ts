@@ -3,7 +3,7 @@ import inquirer from 'inquirer';
 export const chooseSubspacePrompt = async (subspaces: string[]): Promise<string> => {
   const { subspaceNameInput } = await inquirer.prompt([
     {
-      message: 'Please select the subspace name (Type to filter).',
+      message: 'Please select the target subspace name (Type to filter).',
       type: 'search-list',
       name: 'subspaceNameInput',
       choices: subspaces.sort().map((name) => ({ name, value: name }))

@@ -34,7 +34,7 @@ export const enterNewProjectLocationPrompt = async (
 export const chooseProjectPrompt = async (projects: string[]): Promise<string> => {
   const { projectName } = await inquirer.prompt([
     {
-      message: `Please select the project name (Type to filter).`,
+      message: `Please select the source project name (Type to filter).`,
       type: 'search-list',
       name: 'projectName',
       choices: projects.sort().map((name) => ({ name, value: name }))

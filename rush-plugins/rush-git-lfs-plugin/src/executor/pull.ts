@@ -57,6 +57,8 @@ const gitLfsPullByProject = (projectNames: Array<string>): void => {
       includePaths
     ]);
     if (result.status !== 0) {
+      terminal.writeLine(withPrefix('Logs:\n'), result.stdout);
+      terminal.writeErrorLine(withPrefix('Errors:\n'), result.stderr);
       throw new Error(`git lfs pull --include failed  ${result.status}`);
     }
   } else {

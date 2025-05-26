@@ -5,7 +5,7 @@ import { FileSystem } from '@rushstack/node-core-library';
 export const chooseRepositoryPrompt = async (): Promise<string> => {
   const { repoPathInput } = await inquirer.prompt([
     {
-      message: 'Please enter the repository root path.',
+      message: 'Please enter the source repository root path.',
       type: 'input',
       name: 'repoPathInput',
       default: getRootPath(),

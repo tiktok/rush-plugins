@@ -18,26 +18,25 @@ program
   .option('--sync', 'to sync the versions in a subspace')
   .option('--move', 'to move projects to a new subspace')
   .option('--clean', 'to reduce subspace alternative versions')
-  .option('--debug', 'to provide debug logs')
-  .description('Example: rush migrate-subspace [--move] [--sync] [--debug] [--clean]')
-  .action(async ({ sync, debug, move, clean }) => {
+  .option('--debug-logs', 'to provide debug logs')
+  .description('Example: rush migrate-subspace [--move] [--sync] [--debug-logs] [--clean]')
+  .action(async ({ sync, debugLogs: debug, move, clean }) => {
     const packageJson: IPackageJson = JsonFile.load(`${path.resolve(__dirname, '../package.json')}`);
 
     Console.enableDebug(debug);
     Console.title(`🚀 Rush Migrate Subspace Plugin - version ${packageJson.version}`);
     Console.newLine();
 
-    const sourceMonorepoPath: string = getRootPath();
     const targetMonorepoPath: string = getRootPath();
 
     if (sync) {
       await syncVersions(targetMonorepoPath);
     } else if (move) {
-      await migrateProject(sourceMonorepoPath, targetMonorepoPath);
+      await migrateProject(targetMonorepoPath);
     } else if (clean) {
       await cleanSubspace(targetMonorepoPath);
     } else {
-      await interactMenu(sourceMonorepoPath, targetMonorepoPath);
+      await interactMenu(targetMonorepoPath);
     }
   });
 

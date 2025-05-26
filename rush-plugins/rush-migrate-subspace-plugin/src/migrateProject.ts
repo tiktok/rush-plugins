@@ -14,24 +14,12 @@ import {
 } from './utilities/repository';
 import { RushConstants } from '@rushstack/rush-sdk';
 import { syncProjectMismatchedDependencies } from './functions/syncProjectDependencies';
+import { chooseRepositoryPrompt } from './prompts/repository';
 
-export const migrateProject = async (
-  sourceMonorepoPath: string,
-  targetMonorepoPath: string
-): Promise<void> => {
+export const migrateProject = async (targetMonorepoPath: string): Promise<void> => {
   Console.debug('Executing project migration command...');
 
   Console.title(`🔍 Analyzing if monorepo ${Colorize.underline(targetMonorepoPath)} supports subspaces...`);
-
-  /**
-   * WARN: Disabling auto subspace initialization for now.
-   * if (!isSubspaceSupported()) {
-   *     Console.warn(
-   *  `The monorepo ${Colorize.bold(rootPath)} doesn't contain subspaces. Initializing subspaces...`
-   *);
-   * await initSubspaces();
-   * }
-   */
 
   const targetSubspaces: string[] = querySubspaces(targetMonorepoPath);
   if (!isSubspaceSupported(targetMonorepoPath) || targetSubspaces.length === 0) {
@@ -49,27 +37,12 @@ export const migrateProject = async (
 
   Console.title(`🔍 Finding projects to migrate to ${Colorize.bold(targetMonorepoPath)}...`);
 
-  /**
-   * WARN: Disabling different repository selection for now.
-   * const sourceMonorepoPath: string = await chooseRepositoryPrompt();
-   * Console.warn(
-   *   `The script will migrate from ${Colorize.bold(sourceMonorepoPath)} to ${Colorize.bold(getRootPath())}`
-   * );
-   */
-
-  /**
-   * WARN: Disabling creating new subspaces for now.
-   *   const subspaceSelectionType: string = await chooseCreateOrSelectSubspacePrompt(targetSubspaces);
-   *
-   * const targetSubspace: string =
-   *  subspaceSelectionType === 'new'
-   *    ? await createSubspacePrompt(targetSubspaces)
-   *    : await chooseSubspacePrompt(targetSubspaces);
-   *
-   * if (!targetSubspaces.includes(targetSubspace)) {
-   *  await createSubspace(targetSubspace);
-   *}
-   */
+  const sourceMonorepoPath: string = await chooseRepositoryPrompt();
+  Console.warn(
+    `The script will migrate from ${Colorize.bold(sourceMonorepoPath)} to ${Colorize.bold(
+      targetMonorepoPath
+    )}`
+  );
 
   const targetSubspace: string = await chooseSubspacePrompt(targetSubspaces);
 
@@ -101,7 +74,7 @@ export const migrateProject = async (
     }
 
     Console.title(
-      `🏃 Migrating project ${sourceProjectToMigrate.packageName} to subspace ${targetSubspace}...`
+      `🏃 Migrating source project ${sourceProjectToMigrate.packageName} to target subspace ${targetSubspace}...`
     );
 
     if (sourceProjectToMigrate.subspaceName) {
