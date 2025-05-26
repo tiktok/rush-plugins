@@ -16,6 +16,9 @@
   },
   "license": "MIT",
   "main": "lib/index.js",
+  "bin": {
+    "rush-dep-graph": "./bin/rush-dep-graph.js"
+  },
   "scripts": {
     "build": "heft build --clean",
     "build:watch": "heft build --watch",
