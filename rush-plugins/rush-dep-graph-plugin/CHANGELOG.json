@@ -2,6 +2,18 @@
   "name": "rush-dep-graph-plugin",
   "entries": [
     {
+      "version": "0.1.1",
+      "tag": "rush-dep-graph-plugin_v0.1.1",
+      "date": "Mon, 26 May 2025 10:54:12 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Add bin script for rush dep-graph plugin"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.1.0",
       "tag": "rush-dep-graph-plugin_v0.1.0",
       "date": "Tue, 17 Dec 2024 03:42:09 GMT",
