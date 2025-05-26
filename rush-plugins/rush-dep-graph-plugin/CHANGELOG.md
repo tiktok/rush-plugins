@@ -1,6 +1,13 @@
 # Change Log - rush-dep-graph-plugin
 
-This log was last generated on Mon, 26 May 2025 10:54:12 GMT and should not be manually modified.
+This log was last generated on Mon, 26 May 2025 11:11:13 GMT and should not be manually modified.
+
+## 0.1.2
+Mon, 26 May 2025 11:11:13 GMT
+
+### Patches
+
+- Update rush-dep-graph-plugin command-line
 
 ## 0.1.1
 Mon, 26 May 2025 10:54:12 GMT

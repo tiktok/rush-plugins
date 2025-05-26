@@ -2,6 +2,18 @@
   "name": "rush-dep-graph-plugin",
   "entries": [
     {
+      "version": "0.1.2",
+      "tag": "rush-dep-graph-plugin_v0.1.2",
+      "date": "Mon, 26 May 2025 11:11:13 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Update rush-dep-graph-plugin command-line"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.1.1",
       "tag": "rush-dep-graph-plugin_v0.1.1",
       "date": "Mon, 26 May 2025 10:54:12 GMT",
