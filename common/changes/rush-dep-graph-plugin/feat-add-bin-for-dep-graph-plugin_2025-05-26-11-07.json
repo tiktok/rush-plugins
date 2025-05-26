@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "rush-dep-graph-plugin",
+      "comment": "Update rush-dep-graph-plugin command-line",
+      "type": "patch"
+    }
+  ],
+  "packageName": "rush-dep-graph-plugin"
+}
