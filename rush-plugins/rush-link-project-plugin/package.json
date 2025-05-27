@@ -1,0 +1,42 @@
+{
+  "name": "rush-link-project-plugin",
+  "version": "0.1.0",
+  "description": "A plugin that makes the current local package accessible in another location.",
+  "keywords": [
+    "rush",
+    "plugin",
+    "command",
+    "link"
+  ],
+  "homepage": "https://github.com/tiktok/rush-plugins#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tiktok/rush-plugins",
+    "directory": "rush-plugins/rush-link-project-plugin"
+  },
+  "license": "MIT",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "heft build --clean",
+    "build:watch": "heft build --watch",
+    "prepublishOnly": "npm run build",
+    "test": "heft test"
+  },
+  "dependencies": {
+    "@rushstack/node-core-library": "3.62.0",
+    "@rushstack/rush-sdk": "^5.139.0",
+    "@rushstack/terminal": "~0.14.2",
+    "fs-extra": "~10.1.0",
+    "minimist": "^1.2.8"
+  },
+  "devDependencies": {
+    "@rushstack/eslint-config": "3.3.4",
+    "@rushstack/heft": "0.61.0",
+    "@rushstack/heft-node-rig": "2.2.25",
+    "@types/fs-extra": "~9.0.13",
+    "@types/heft-jest": "1.0.1",
+    "@types/minimist": "1.2.2",
+    "@types/node": "18.17.15",
+    "typescript": "~5.0.4"
+  }
+}
